@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-labelledby="t d">
+  <title id="t">Software supply chain from source commit to running pod, with the security control at each step</title>
+  <desc id="d">Eight steps: commit, CI job, dependencies, build and scan, SBOM and sign, push to registry, admission verify, runtime. Each step names its control and how to verify it.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .role { font-size: 13px; fill: #8A9185; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .cmd { font-size: 13px; fill: #7CC4F8; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="620" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Supply chain: a control at every step from commit to pod</text>
+  <text class="sub" x="40" y="78">Each step either proves where the artifact came from or refuses one that cannot prove it.</text>
+  <rect class="box" x="40" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="168.0" y="128" text-anchor="middle">1. Commit</text>
+  <text class="role" x="168.0" y="148" text-anchor="middle">developer pushes code</text>
+  <rect class="band" x="40" y="170" width="256" height="140" rx="10"/>
+  <text class="key" x="56" y="194" xml:space="preserve">signed commits, branch rules</text>
+  <text class="note" x="56" y="214" xml:space="preserve">review required, no push</text>
+  <text class="note" x="56" y="234" xml:space="preserve">secret scanning on push</text>
+  <text class="cmd" x="56" y="254" xml:space="preserve">git log --show-signature -1</text>
+  <text class="cmd" x="56" y="274" xml:space="preserve">gitleaks detect</text>
+  <path class="flow" d="M296 133.0L318 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="320" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="448.0" y="128" text-anchor="middle">2. CI job</text>
+  <text class="role" x="448.0" y="148" text-anchor="middle">GitHub Actions or GitLab CI</text>
+  <rect class="band" x="320" y="170" width="256" height="140" rx="10"/>
+  <text class="key" x="336" y="194" xml:space="preserve">OIDC token, no stored keys</text>
+  <text class="note" x="336" y="214" xml:space="preserve">permissions: id-token: write</text>
+  <text class="note" x="336" y="234" xml:space="preserve">actions pinned by SHA</text>
+  <text class="cmd" x="336" y="254" xml:space="preserve">aws sts get-caller-identity</text>
+  <text class="cmd" x="336" y="274" xml:space="preserve">trust: sub = repo:org/repo:*</text>
+  <path class="flow" d="M576 133.0L598 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="600" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="728.0" y="128" text-anchor="middle">3. Dependencies</text>
+  <text class="role" x="728.0" y="148" text-anchor="middle">go.sum, lockfiles, base image</text>
+  <rect class="band" x="600" y="170" width="256" height="140" rx="10"/>
+  <text class="key" x="616" y="194" xml:space="preserve">pin by version and digest</text>
+  <text class="note" x="616" y="214" xml:space="preserve">lockfile, private registry</text>
+  <text class="note" x="616" y="234" xml:space="preserve">stops dependency confusion</text>
+  <text class="cmd" x="616" y="254" xml:space="preserve">FROM alpine:3.20@sha256:...</text>
+  <text class="cmd" x="616" y="274" xml:space="preserve">go mod verify</text>
+  <path class="flow" d="M856 133.0L878 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="880" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="1008.0" y="128" text-anchor="middle">4. Build and scan</text>
+  <text class="role" x="1008.0" y="148" text-anchor="middle">multi-stage, non-root image</text>
+  <rect class="band" x="880" y="170" width="256" height="140" rx="10"/>
+  <text class="key" x="896" y="194" xml:space="preserve">Trivy gate on CRITICAL</text>
+  <text class="note" x="896" y="214" xml:space="preserve">fail the job, not only warn</text>
+  <text class="note" x="896" y="234" xml:space="preserve">ignore-unfixed for noise</text>
+  <text class="cmd" x="896" y="254" xml:space="preserve">trivy image -s CRITICAL</text>
+  <text class="cmd" x="896" y="274" xml:space="preserve">  --exit-code 1 $IMAGE</text>
+  <rect class="hot" x="40" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="168.0" y="380" text-anchor="middle">5. SBOM and sign</text>
+  <text class="role" x="168.0" y="400" text-anchor="middle">what is inside, who built it</text>
+  <rect class="band" x="40" y="422" width="256" height="140" rx="10"/>
+  <text class="key" x="56" y="446" xml:space="preserve">cosign keyless + SBOM attest</text>
+  <text class="note" x="56" y="466" xml:space="preserve">identity = the CI workflow</text>
+  <text class="note" x="56" y="486" xml:space="preserve">recorded in the Rekor log</text>
+  <text class="cmd" x="56" y="506" xml:space="preserve">trivy image --format cyclonedx</text>
+  <text class="cmd" x="56" y="526" xml:space="preserve">cosign sign $IMAGE@sha256:...</text>
+  <path class="flow" d="M296 385.0L318 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="320" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="448.0" y="380" text-anchor="middle">6. Registry</text>
+  <text class="role" x="448.0" y="400" text-anchor="middle">ECR, private, immutable tags</text>
+  <rect class="band" x="320" y="422" width="256" height="140" rx="10"/>
+  <text class="key" x="336" y="446" xml:space="preserve">immutable tags, scan on push</text>
+  <text class="note" x="336" y="466" xml:space="preserve">deploy by digest, not latest</text>
+  <text class="note" x="336" y="486" xml:space="preserve">pull through VPC endpoint</text>
+  <text class="cmd" x="336" y="506" xml:space="preserve">aws ecr describe-images</text>
+  <text class="cmd" x="336" y="526" xml:space="preserve">  --image-ids imageDigest=...</text>
+  <path class="flow" d="M576 385.0L598 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="600" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="728.0" y="380" text-anchor="middle">7. Admission</text>
+  <text class="role" x="728.0" y="400" text-anchor="middle">Kyverno verifies at apply</text>
+  <rect class="band" x="600" y="422" width="256" height="140" rx="10"/>
+  <text class="key" x="616" y="446" xml:space="preserve">verifyImages: sig and issuer</text>
+  <text class="note" x="616" y="466" xml:space="preserve">Pod Security: restricted</text>
+  <text class="note" x="616" y="486" xml:space="preserve">deny if unsigned or mutable</text>
+  <text class="cmd" x="616" y="506" xml:space="preserve">kubectl apply pod.yaml: denied</text>
+  <text class="cmd" x="616" y="526" xml:space="preserve">kubectl get policyreport -A</text>
+  <path class="flow" d="M856 385.0L878 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="880" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="1008.0" y="380" text-anchor="middle">8. Runtime</text>
+  <text class="role" x="1008.0" y="400" text-anchor="middle">pod on a node, in a VPC</text>
+  <rect class="band" x="880" y="422" width="256" height="140" rx="10"/>
+  <text class="key" x="896" y="446" xml:space="preserve">non-root, read-only, no caps</text>
+  <text class="note" x="896" y="466" xml:space="preserve">NetworkPolicy default deny</text>
+  <text class="note" x="896" y="486" xml:space="preserve">Falco alerts on shell spawn</text>
+  <text class="cmd" x="896" y="506" xml:space="preserve">kubectl get pod -o yaml | grep</text>
+  <text class="cmd" x="896" y="526" xml:space="preserve">  securityContext</text>
+  <path class="flow" d="M1008.0 310L1008.0 332L168.0 332L168.0 354" marker-end="url(#a)"/>
+  <text class="small" x="1160" y="78" text-anchor="end">lime: the control | blue: how to verify</text>
+  <text class="note" x="40" y="596">A secret never touches Git: CI uses OIDC, pods use Pod Identity, apps read from Secrets Manager through the External Secrets Operator.</text>
+</svg>

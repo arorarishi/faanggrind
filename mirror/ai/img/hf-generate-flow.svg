@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 690" width="1200" height="690" role="img" aria-labelledby="t d">
+  <title id="t">From a Hub repository to generated text: what each stage returns</title>
+  <desc id="d">Five stages in order: load files from the Hub, apply the chat template, tokenize, generate, decode. Each row shows what the stage does and the object it returns: files, a template string, token ids with an attention mask, prompt ids plus new ids, and text.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .col { font-size: 14px; font-weight: 600; fill: #8A9185; letter-spacing: 0.04em; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .fn { font-size: 14px; fill: #B7BDB1; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .ret { font-size: 14px; fill: #C6F432; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .retn { font-size: 13px; fill: #8A9185; }
+    .warn { font-size: 13px; fill: #F2C14B; }
+    .box { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .out { fill: #0B0E0B; stroke: #C6F432; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2; fill: none; }
+    .num { font-size: 15px; font-weight: 700; fill: #0B0E0B; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="690" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One generation call: what each stage returns</text>
+  <text class="sub" x="40" y="78">The model never sees text. Follow the object in the right column as it changes type.</text>
+
+  <text class="col" x="40" y="116">STAGE</text>
+  <text class="col" x="330" y="116">WHAT IT DOES</text>
+  <text class="col" x="720" y="116">WHAT IT RETURNS</text>
+
+  <!-- row 1 -->
+  <rect class="box" x="40" y="130" width="640" height="86" rx="10"/>
+  <circle cx="68" cy="160" r="13" fill="#C6F432"/><text class="num" x="68" y="165" text-anchor="middle">1</text>
+  <text class="lab" x="92" y="165">Load from the Hub</text>
+  <text class="fn" x="56" y="196">from_pretrained(model_id)</text>
+  <text class="note" x="330" y="165">Downloads the repository files once and</text>
+  <text class="note" x="330" y="187">caches them on disk.</text>
+  <rect class="out" x="704" y="130" width="456" height="86" rx="10"/>
+  <text class="retn" x="720" y="154">files</text>
+  <text class="ret" x="720" y="178">config.json  model.safetensors</text>
+  <text class="ret" x="720" y="200">tokenizer files + chat template</text>
+
+  <!-- row 2 -->
+  <rect class="box" x="40" y="240" width="640" height="86" rx="10"/>
+  <circle cx="68" cy="270" r="13" fill="#C6F432"/><text class="num" x="68" y="275" text-anchor="middle">2</text>
+  <text class="lab" x="92" y="275">Chat template</text>
+  <text class="fn" x="56" y="306">apply_chat_template(messages)</text>
+  <text class="note" x="330" y="265">Wraps each message in this model's</text>
+  <text class="note" x="330" y="287">control tokens, then opens the</text>
+  <text class="note" x="330" y="309">assistant turn.</text>
+  <rect class="out" x="704" y="240" width="456" height="86" rx="10"/>
+  <text class="retn" x="720" y="264">one string (pass tokenize=False to see it)</text>
+  <text class="ret" x="720" y="288">&lt;|im_start|&gt;user\nHi&lt;|im_end|&gt;\n</text>
+  <text class="ret" x="720" y="310">&lt;|im_start|&gt;assistant\n</text>
+
+  <!-- row 3 -->
+  <rect class="box" x="40" y="350" width="640" height="86" rx="10"/>
+  <circle cx="68" cy="380" r="13" fill="#C6F432"/><text class="num" x="68" y="385" text-anchor="middle">3</text>
+  <text class="lab" x="92" y="385">Tokenizer</text>
+  <text class="fn" x="56" y="416">tokenizer(text, padding=True)</text>
+  <text class="note" x="330" y="375">Maps pieces of text to integer ids.</text>
+  <text class="note" x="330" y="397">Pads a batch to a rectangle and marks</text>
+  <text class="note" x="330" y="419">real tokens with 1, padding with 0.</text>
+  <rect class="out" x="704" y="350" width="456" height="86" rx="10"/>
+  <text class="retn" x="720" y="374">two integer tensors, shape (batch, length)</text>
+  <text class="ret" x="720" y="398">input_ids [[1,10,4,16,2,4,1,15,4]]</text>
+  <text class="ret" x="720" y="420">attention_mask [[1,1,1,1,1,1,1,1,1]]</text>
+
+  <!-- row 4 -->
+  <rect class="box" x="40" y="460" width="640" height="86" rx="10"/>
+  <circle cx="68" cy="490" r="13" fill="#C6F432"/><text class="num" x="68" y="495" text-anchor="middle">4</text>
+  <text class="lab" x="92" y="495">Model in a loop</text>
+  <text class="fn" x="56" y="526">generate(max_new_tokens=...)</text>
+  <text class="note" x="330" y="485">Forward pass gives one score per</text>
+  <text class="note" x="330" y="507">vocabulary token. Pick or sample one,</text>
+  <text class="note" x="330" y="529">append, repeat until end token or limit.</text>
+  <rect class="out" x="704" y="460" width="456" height="86" rx="10"/>
+  <text class="retn" x="720" y="484">prompt ids followed by new ids</text>
+  <text class="ret" x="720" y="508">[[1,10,4,16,2,4,1,15,4, 21,22,23,2]]</text>
+  <text class="warn" x="720" y="532">the first 9 ids are your own prompt</text>
+
+  <!-- row 5 -->
+  <rect class="box" x="40" y="570" width="640" height="86" rx="10"/>
+  <circle cx="68" cy="600" r="13" fill="#C6F432"/><text class="num" x="68" y="605" text-anchor="middle">5</text>
+  <text class="lab" x="92" y="605">Decode</text>
+  <text class="fn" x="56" y="636">batch_decode(ids[:, 9:])</text>
+  <text class="note" x="330" y="595">Slice off the prompt, map ids back to</text>
+  <text class="note" x="330" y="617">text, and skip special tokens such as</text>
+  <text class="note" x="330" y="639">the end token.</text>
+  <rect class="out" x="704" y="570" width="456" height="86" rx="10"/>
+  <text class="retn" x="720" y="594">text</text>
+  <text class="ret" x="720" y="622">"Hello! How can I help?"</text>
+
+  <!-- flow arrows between returned objects -->
+  <path class="flow" d="M932 216L932 238" marker-end="url(#a)"/>
+  <path class="flow" d="M932 326L932 348" marker-end="url(#a)"/>
+  <path class="flow" d="M932 436L932 458" marker-end="url(#a)"/>
+  <path class="flow" d="M932 546L932 568" marker-end="url(#a)"/>
+</svg>

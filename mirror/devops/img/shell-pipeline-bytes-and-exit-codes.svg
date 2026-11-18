@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-labelledby="t d">
+  <title id="t">How a shell pipeline moves bytes and reports exit codes</title>
+  <desc id="d">Three processes, grep, sort and head, run at the same time. Each has file descriptors 0, 1 and 2. Standard output of one flows through a 64 KiB kernel pipe buffer into standard input of the next; standard error of each goes straight to the terminal. Each process returns its own exit code; the shell reports the last one unless pipefail is set, and PIPESTATUS holds all three.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .coral { font-size: 13px; fill: #FF8A80; }
+    .amber { font-size: 13px; fill: #F2C14B; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; fill: #F2F4EC; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .fd { fill: #121612; stroke: #4A5348; stroke-width: 1; }
+    .pipe { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .err { stroke: #FF8A80; stroke-width: 1.8; fill: none; stroke-dasharray: 5 4; }
+    .code { stroke: #F2C14B; stroke-width: 1.6; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="e" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#FF8A80"/>
+    </marker>
+    <marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="600" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">A pipeline: three processes, three streams each, one exit code per process</text>
+  <text class="mono" x="40" y="80">grep ' 5[0-9][0-9] ' access.log | sort | head -3</text>
+  <text class="sub" x="470" y="80">all three start at once; bytes stream through kernel buffers; stderr skips the pipe</text>
+
+  <!-- band -->
+  <rect class="band" x="40" y="104" width="1120" height="300" rx="10"/>
+  <text class="lab" x="56" y="130">User space: three processes forked by the shell</text>
+  <text class="small" x="430" y="130">fd 0 stdin, fd 1 stdout, fd 2 stderr</text>
+
+  <!-- process 1: grep -->
+  <rect class="box" x="60" y="150" width="280" height="150" rx="8"/>
+  <text class="lab" x="200" y="176" text-anchor="middle">grep, PID 4101</text>
+  <rect class="fd" x="76" y="190" width="248" height="26" rx="5"/>
+  <text class="note" x="86" y="208">fd 0: access.log (opened by grep)</text>
+  <rect class="fd" x="76" y="224" width="248" height="26" rx="5"/>
+  <text class="key" x="86" y="242">fd 1: write end of pipe A</text>
+  <rect class="fd" x="76" y="258" width="248" height="26" rx="5"/>
+  <text class="coral" x="86" y="276">fd 2: the terminal</text>
+
+  <!-- pipe A -->
+  <rect class="pipe" x="366" y="206" width="104" height="52" rx="8"/>
+  <text class="key" x="418" y="228" text-anchor="middle">pipe A</text>
+  <text class="small" x="418" y="246" text-anchor="middle">64 KiB buffer</text>
+  <path class="flow" d="M324 237L364 237" marker-end="url(#a)"/>
+  <path class="flow" d="M470 237L502 237" marker-end="url(#a)"/>
+
+  <!-- process 2: sort -->
+  <rect class="box" x="506" y="150" width="280" height="150" rx="8"/>
+  <text class="lab" x="646" y="176" text-anchor="middle">sort, PID 4102</text>
+  <rect class="fd" x="522" y="190" width="248" height="26" rx="5"/>
+  <text class="key" x="532" y="208">fd 0: read end of pipe A</text>
+  <rect class="fd" x="522" y="224" width="248" height="26" rx="5"/>
+  <text class="key" x="532" y="242">fd 1: write end of pipe B</text>
+  <rect class="fd" x="522" y="258" width="248" height="26" rx="5"/>
+  <text class="coral" x="532" y="276">fd 2: the terminal</text>
+
+  <!-- pipe B -->
+  <rect class="pipe" x="812" y="206" width="104" height="52" rx="8"/>
+  <text class="key" x="864" y="228" text-anchor="middle">pipe B</text>
+  <text class="small" x="864" y="246" text-anchor="middle">64 KiB buffer</text>
+  <path class="flow" d="M770 237L810 237" marker-end="url(#a)"/>
+  <path class="flow" d="M916 237L948 237" marker-end="url(#a)"/>
+
+  <!-- process 3: head -->
+  <rect class="box" x="952" y="150" width="190" height="150" rx="8"/>
+  <text class="lab" x="1047" y="176" text-anchor="middle">head, PID 4103</text>
+  <rect class="fd" x="968" y="190" width="158" height="26" rx="5"/>
+  <text class="key" x="978" y="208">fd 0: pipe B</text>
+  <rect class="fd" x="968" y="224" width="158" height="26" rx="5"/>
+  <text class="note" x="978" y="242">fd 1: the terminal</text>
+  <rect class="fd" x="968" y="258" width="158" height="26" rx="5"/>
+  <text class="coral" x="978" y="276">fd 2: the terminal</text>
+
+  <!-- back-pressure note -->
+  <text class="amber" x="418" y="192" text-anchor="middle">full: writer blocks</text>
+  <text class="amber" x="864" y="192" text-anchor="middle">reader gone: SIGPIPE</text>
+
+  <!-- stderr lines to terminal -->
+  <path class="err" d="M200 300L200 340" marker-end="url(#e)"/>
+  <path class="err" d="M646 300L646 340" marker-end="url(#e)"/>
+  <path class="err" d="M1047 300L1047 340" marker-end="url(#e)"/>
+  <rect class="box" x="60" y="344" width="1082" height="44" rx="8"/>
+  <text class="coral" x="76" y="371">fd 2 of every process goes to the terminal, not into the pipe. Only "2>&amp;1" puts errors into the stream, and only "2>&amp;1 | tee log" captures them.</text>
+
+  <!-- exit codes band -->
+  <rect class="band" x="40" y="424" width="1120" height="150" rx="10"/>
+  <text class="lab" x="56" y="450">Exit codes: each process returns its own</text>
+
+  <rect class="box" x="60" y="466" width="200" height="40" rx="6"/>
+  <text class="mono" x="160" y="492" text-anchor="middle">grep exits 2</text>
+  <rect class="box" x="300" y="466" width="200" height="40" rx="6"/>
+  <text class="mono" x="400" y="492" text-anchor="middle">sort exits 0</text>
+  <rect class="box" x="540" y="466" width="200" height="40" rx="6"/>
+  <text class="mono" x="640" y="492" text-anchor="middle">head exits 0</text>
+  <text class="small" x="160" y="526" text-anchor="middle">file missing, error on fd 2</text>
+  <text class="small" x="400" y="526" text-anchor="middle">sorted nothing, happily</text>
+  <text class="small" x="640" y="526" text-anchor="middle">printed nothing, happily</text>
+
+  <path class="code" d="M740 486L792 486" marker-end="url(#c)"/>
+  <rect class="box" x="796" y="458" width="346" height="98" rx="8"/>
+  <text class="note" x="812" y="482">PIPESTATUS=(2 0 0)</text>
+  <text class="note" x="812" y="504">default:        $? is 0, the last command</text>
+  <text class="key" x="812" y="526">set -o pipefail: $? is 2, the last non-zero</text>
+  <text class="small" x="812" y="546">set -e then stops the script here, as it should</text>
+
+  <text class="small" x="60" y="556">128 + signal number: 137 is SIGKILL, 141 is SIGPIPE, 143 is SIGTERM; 127 command not found</text>
+</svg>

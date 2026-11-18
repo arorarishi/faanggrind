@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-labelledby="t d">
+  <title id="t">Layout of a context window: stable cached prefix first, changing suffix last</title>
+  <desc id="d">A context window drawn as a stack read from top to bottom. The top three blocks (system prompt, tool definitions, few-shot examples) are the stable prefix of 5,400 tokens and are cached. The next two (summary of older turns, recent turns) grow only by appending. The last two (retrieved chunks, current user message) change on every call. A final block is reserved for the output.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .tok { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .key { font-size: 14px; font-weight: 700; fill: #C6F432; letter-spacing: 0.04em; }
+    .mid { font-size: 14px; font-weight: 700; fill: #F2F4EC; letter-spacing: 0.04em; }
+    .blue { font-size: 14px; font-weight: 700; fill: #7CC4F8; letter-spacing: 0.04em; }
+    .amber { font-size: 14px; font-weight: 700; fill: #F2C14B; letter-spacing: 0.04em; }
+    .p { fill: #171D10; stroke: #C6F432; stroke-width: 1.5; }
+    .m { fill: #121612; stroke: #8A9185; stroke-width: 1.5; }
+    .s { fill: #101820; stroke: #7CC4F8; stroke-width: 1.5; }
+    .o { fill: #0B0E0B; stroke: #F2C14B; stroke-width: 1.5; stroke-dasharray: 6 5; }
+  </style>
+  <rect x="0" y="0" width="1200" height="660" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One model call: stable content first, changing content last</text>
+  <text class="sub" x="40" y="78">The window is read top to bottom. Token counts are from the worked example (budget 32,000).</text>
+
+  <!-- stack -->
+  <rect class="p" x="40" y="104" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="128">System prompt</text>
+  <text class="small" x="58" y="148">role and rules</text>
+  <text class="tok" x="502" y="138" text-anchor="end">1,500</text>
+
+  <rect class="p" x="40" y="166" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="190">Tool definitions</text>
+  <text class="small" x="58" y="210">12 tools, always in the same order</text>
+  <text class="tok" x="502" y="200" text-anchor="end">3,000</text>
+
+  <rect class="p" x="40" y="228" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="252">Few-shot examples</text>
+  <text class="small" x="58" y="272">3 fixed input-output pairs</text>
+  <text class="tok" x="502" y="262" text-anchor="end">900</text>
+
+  <rect class="m" x="40" y="290" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="314">Summary of older turns</text>
+  <text class="small" x="58" y="334">decisions, open items, key facts</text>
+  <text class="tok" x="502" y="324" text-anchor="end">1,200</text>
+
+  <rect class="m" x="40" y="352" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="376">Recent turns, verbatim</text>
+  <text class="small" x="58" y="396">newest 8 turns, about 1,800 each</text>
+  <text class="tok" x="502" y="386" text-anchor="end">14,400</text>
+
+  <rect class="s" x="40" y="414" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="438">Retrieved chunks</text>
+  <text class="small" x="58" y="458">6 chunks chosen for this question</text>
+  <text class="tok" x="502" y="448" text-anchor="end">3,000</text>
+
+  <rect class="s" x="40" y="476" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="500">Current user message</text>
+  <text class="small" x="58" y="520">the question, at the bottom edge</text>
+  <text class="tok" x="502" y="510" text-anchor="end">200</text>
+
+  <rect class="o" x="40" y="538" width="480" height="56" rx="8"/>
+  <text class="lab" x="58" y="562">Reserved for the output</text>
+  <text class="small" x="58" y="582">not sent; kept free for the answer</text>
+  <text class="tok" x="502" y="572" text-anchor="end">2,000</text>
+
+  <text class="note" x="40" y="626">Used: 5,400 + 15,600 + 3,200 + 2,000 = 26,200 of 32,000. Spare: 5,800.</text>
+
+  <!-- group bars -->
+  <path d="M538 106V282" stroke="#C6F432" stroke-width="4" stroke-linecap="round"/>
+  <path d="M538 292V406" stroke="#8A9185" stroke-width="4" stroke-linecap="round"/>
+  <path d="M538 416V530" stroke="#7CC4F8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M538 540V592" stroke="#F2C14B" stroke-width="4" stroke-linecap="round"/>
+
+  <text class="key" x="556" y="140">STABLE PREFIX: 5,400</text>
+  <text class="note" x="556" y="166">Identical on every call.</text>
+  <text class="note" x="556" y="188">Computed once, then served</text>
+  <text class="note" x="556" y="210">from the cache.</text>
+
+  <text class="mid" x="556" y="316">GROWS BY APPENDING: 15,600</text>
+  <text class="note" x="556" y="342">Old turns match the last call,</text>
+  <text class="note" x="556" y="364">so they are cached too. Only</text>
+  <text class="note" x="556" y="386">the newest turn is new.</text>
+
+  <text class="blue" x="556" y="440">CHANGING SUFFIX: 3,200</text>
+  <text class="note" x="556" y="466">Different on every call, so it</text>
+  <text class="note" x="556" y="488">goes last. Nothing after it</text>
+  <text class="note" x="556" y="510">can be reused.</text>
+
+  <text class="amber" x="556" y="562">OUTPUT: 2,000</text>
+  <text class="note" x="556" y="584">Input plus output share the window.</text>
+
+  <!-- notes panel -->
+  <rect x="836" y="104" width="324" height="490" rx="10" fill="#121612" stroke="#2A312A"/>
+  <text class="lab" x="854" y="138">Why this order</text>
+  <text class="note" x="854" y="166">1. The cache matches an exact prefix.</text>
+  <text class="note" x="872" y="188">Reuse stops at the first token</text>
+  <text class="note" x="872" y="210">that differs from the last call.</text>
+  <text class="note" x="854" y="240">2. Models use the start and the end</text>
+  <text class="note" x="872" y="262">of a long context best. Rules go</text>
+  <text class="note" x="872" y="284">first, the question goes last.</text>
+
+  <text class="lab" x="854" y="332">What breaks the prefix</text>
+  <text class="note" x="854" y="360">A timestamp or user name on top</text>
+  <text class="note" x="854" y="384">Tools sent in a different order</text>
+  <text class="note" x="854" y="408">Editing or deleting an old turn</text>
+  <text class="note" x="854" y="432">Rewriting the summary every turn</text>
+
+  <text class="lab" x="854" y="480">Cost of one call</text>
+  <text class="small" x="854" y="502">assumed 3 USD per million input tokens,</text>
+  <text class="small" x="854" y="520">cached tokens at an assumed 10% of that</text>
+  <text class="note" x="854" y="548">No cache: 24,200 tokens = 0.073 USD</text>
+  <text class="key" x="854" y="574">19,200 cached: 0.021 USD</text>
+</svg>

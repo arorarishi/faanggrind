@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-labelledby="t d">
+  <title id="t">The controller loop: informer, cache, work queue, reconcile, write back with resourceVersion</title>
+  <desc id="d">Inside the controller process an informer watches the API server and fills a cache; event handlers put object keys on a work queue; a worker calls Reconcile, which reads from the cache and writes back to the API server using the resourceVersion. Errors are requeued with rate limiting. On the cluster side a WebApp custom resource owns a Deployment and a Service through owner references, and a stale resourceVersion gets a 409 Conflict.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 16px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .blue { font-size: 13px; fill: #7CC4F8; }
+    .coral { font-size: 13px; fill: #FF8A80; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .own { fill: #121612; stroke: #7CC4F8; stroke-width: 1.5; }
+    .edge { stroke: #8A9185; stroke-width: 1.5; fill: none; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .watch { stroke: #7CC4F8; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+    .retry { stroke: #FF8A80; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+    <marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#FF8A80"/>
+    </marker>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="720" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The controller loop: watch, cache, queue, reconcile, write back</text>
+  <text class="sub" x="40" y="78">Dashed blue: watch stream and cache reads. Lime: writes to the API server. Dashed coral: requeue after an error.</text>
+
+  <!-- left panel: the controller process -->
+  <rect class="band" x="40" y="104" width="620" height="560" rx="10"/>
+  <text class="lab" x="56" y="130">Controller process</text>
+  <text class="small" x="210" y="130">one binary, leader-elected, one or more worker goroutines</text>
+
+  <!-- cache -->
+  <rect class="box" x="70" y="150" width="250" height="96" rx="8"/>
+  <text class="lab" x="86" y="176">Cache (indexer, listers)</text>
+  <text class="note" x="86" y="198">in-memory copy of every</text>
+  <text class="note" x="86" y="218">watched object; Get and List</text>
+  <text class="note" x="86" y="238">read here, not the server</text>
+
+  <!-- informer -->
+  <rect class="box" x="380" y="150" width="260" height="96" rx="8"/>
+  <text class="lab" x="396" y="176">Informer (reflector)</text>
+  <text class="note" x="396" y="198">LIST once, then WATCH from</text>
+  <text class="note" x="396" y="218">the last resourceVersion seen</text>
+  <text class="note" x="396" y="238">410 Gone: relist and rewatch</text>
+  <path class="watch" d="M380 204L328 204" marker-end="url(#b)"/>
+  <text class="blue" x="350" y="194" text-anchor="middle">store</text>
+
+  <!-- work queue -->
+  <rect class="box" x="370" y="290" width="270" height="64" rx="8"/>
+  <text class="lab" x="386" y="316">Work queue</text>
+  <text class="note" x="386" y="338">dedupe keys, rate-limit retries</text>
+  <path class="edge" d="M505 246L505 282" marker-end="url(#g)"/>
+  <text class="small" x="515" y="272">handlers Add(key)</text>
+
+  <!-- reconcile -->
+  <rect class="hot" x="170" y="410" width="380" height="96" rx="8"/>
+  <text class="key" x="186" y="436">Reconcile(ctx, req) (Result, error)</text>
+  <text class="note" x="186" y="458">read WebApp and Deployment from the cache</text>
+  <text class="note" x="186" y="478">compare spec with actual; create or update</text>
+  <text class="note" x="186" y="498">set status and conditions; return</text>
+  <path class="edge" d="M505 354L505 402" marker-end="url(#g)"/>
+  <text class="small" x="515" y="395">Get(key)</text>
+  <path class="retry" d="M550 430L600 430L600 362" marker-end="url(#c)"/>
+  <text class="coral" x="606" y="375">requeue</text>
+  <path class="watch" d="M200 246L200 402" marker-end="url(#b)"/>
+  <text class="blue" x="210" y="320">reads here, not</text>
+  <text class="blue" x="210" y="338">from the server</text>
+
+  <!-- outcomes -->
+  <rect class="box" x="70" y="550" width="570" height="100" rx="8"/>
+  <path class="edge" d="M360 506L360 542" marker-end="url(#g)"/>
+  <text class="lab" x="86" y="576">What the return value does</text>
+  <text class="note" x="86" y="600">return Result{}, nil</text>
+  <text class="small" x="330" y="600">Forget(key); wait for the next event</text>
+  <text class="note" x="86" y="620">return Result{RequeueAfter: 30s}</text>
+  <text class="small" x="330" y="620">back in the queue after 30 s</text>
+  <text class="note" x="86" y="640">return Result{}, err</text>
+  <text class="small" x="330" y="640">AddRateLimited: 5 ms, doubling to 1000 s</text>
+
+  <!-- right panel: the cluster -->
+  <rect class="band" x="690" y="104" width="470" height="560" rx="10"/>
+  <text class="lab" x="706" y="130">Cluster</text>
+  <text class="small" x="780" y="130">every read and write goes through the API server</text>
+
+  <rect class="hot" x="720" y="150" width="410" height="64" rx="8"/>
+  <text class="key" x="736" y="176">kube-apiserver</text>
+  <text class="small" x="736" y="198">authn, RBAC, admission webhooks, validation, etcd</text>
+  <path class="watch" d="M720 190L648 190" marker-end="url(#b)"/>
+  <text class="blue" x="684" y="180" text-anchor="middle">watch</text>
+
+  <!-- write back -->
+  <path class="flow" d="M550 470L675 470L675 206L712 206" marker-end="url(#a)"/>
+  <text class="small" x="560" y="456">write back</text>
+
+  <!-- WebApp CR -->
+  <path class="edge" d="M925 214L925 282" marker-end="url(#g)"/>
+  <text class="small" x="935" y="256">stored in etcd</text>
+  <rect class="own" x="720" y="290" width="410" height="96" rx="8"/>
+  <text class="lab" x="736" y="316">WebApp shop (custom resource)</text>
+  <text class="small" x="736" y="338">spec.replicas 3 | resourceVersion 6 | generation 2</text>
+  <text class="note" x="736" y="360">status: readyReplicas 3, observedGeneration 2</text>
+  <text class="small" x="736" y="378">finalizers: webapp.example.com/cleanup</text>
+
+  <!-- owned objects -->
+  <path class="edge" d="M817 386L817 422" marker-end="url(#g)"/>
+  <path class="edge" d="M1032 386L1032 422" marker-end="url(#g)"/>
+  <text class="small" x="827" y="412">owns</text>
+  <rect class="box" x="720" y="430" width="195" height="70" rx="8"/>
+  <text class="lab" x="736" y="454">Deployment shop</text>
+  <text class="note" x="736" y="474">replicas 3, ready 3</text>
+  <text class="small" x="736" y="492">ownerReference: WebApp</text>
+  <rect class="box" x="935" y="430" width="195" height="70" rx="8"/>
+  <text class="lab" x="951" y="454">Service shop</text>
+  <text class="note" x="951" y="474">port 80 to pod 8080</text>
+  <text class="small" x="951" y="492">ownerReference: WebApp</text>
+
+  <text class="note" x="720" y="536">Delete the WebApp: finalizer runs first, then the</text>
+  <text class="note" x="720" y="556">garbage collector removes both owned children.</text>
+  <text class="amber" x="720" y="594">409 Conflict</text>
+  <text class="note" x="836" y="594">the resourceVersion you sent is stale.</text>
+  <text class="note" x="720" y="614">Re-read the object, apply the change again, retry.</text>
+  <text class="small" x="720" y="640">retry.RetryOnConflict does this: 5 tries, 10 ms apart</text>
+
+  <text class="note" x="40" y="700">The loop never acts on the event itself. It reads the current state and fixes the difference: level-based, not edge-based.</text>
+</svg>

@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-labelledby="t d">
+  <title id="t">Break-even between paying per token and renting two GPUs</title>
+  <desc id="d">A line chart of monthly cost in USD against requests per day, from 0 to 240,000. On-demand token cost rises in a straight line to 5,832 USD. Batch token cost rises half as fast, to 2,916 USD. Two self-hosted GPUs cost a flat 2,160 USD. The on-demand line crosses the GPU line at 88,889 requests a day and the batch line crosses it at 177,778 requests a day. All prices are assumptions.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .lab14 { font-size: 14px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .small { font-size: 13px; fill: #B7BDB1; }
+    .tick { font-size: 13px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .grid { stroke: #232A22; stroke-width: 1; fill: none; }
+    .axis { stroke: #4A5348; stroke-width: 1.5; fill: none; }
+    .drop { stroke: #8A9185; stroke-width: 1.5; stroke-dasharray: 4 5; fill: none; }
+    .od { stroke: #7CC4F8; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .bt { stroke: #FF8A80; stroke-width: 2.5; stroke-dasharray: 9 6; fill: none; }
+    .gpu { stroke: #C6F432; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .pt { fill: #C6F432; stroke: #121612; stroke-width: 2.5; }
+    .m { text-anchor: middle; }
+    .e { text-anchor: end; }
+  </style>
+  <rect x="0" y="0" width="1200" height="660" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Tokens or GPUs: where the lines cross</text>
+  <text class="sub" x="40" y="78">Per-token cost grows with volume. GPU cost is flat, busy or idle. Every price here is an assumption.</text>
+
+  <!-- chart panel -->
+  <rect class="band" x="40" y="104" width="740" height="516" rx="10"/>
+  <text class="lab" x="56" y="130">Monthly cost, USD</text>
+
+  <!-- horizontal grid and y ticks: 0 to 6,000 USD, 0.065 px per USD -->
+  <path class="grid" d="M118 475H610M118 410H610M118 345H610M118 280H610M118 215H610M118 150H610"/>
+  <text class="tick e" x="108" y="545">0</text>
+  <text class="tick e" x="108" y="480">1,000</text>
+  <text class="tick e" x="108" y="415">2,000</text>
+  <text class="tick e" x="108" y="350">3,000</text>
+  <text class="tick e" x="108" y="285">4,000</text>
+  <text class="tick e" x="108" y="220">5,000</text>
+  <text class="tick e" x="108" y="155">6,000</text>
+
+  <!-- axes -->
+  <path class="axis" d="M118 150V540H610"/>
+  <path class="axis" d="M200 540v6M282 540v6M364 540v6M446 540v6M528 540v6M610 540v6"/>
+  <text class="tick m" x="118" y="564">0</text>
+  <text class="tick m" x="200" y="564">40,000</text>
+  <text class="tick m" x="282" y="564">80,000</text>
+  <text class="tick m" x="364" y="564">120,000</text>
+  <text class="tick m" x="446" y="564">160,000</text>
+  <text class="tick m" x="528" y="564">200,000</text>
+  <text class="tick m" x="610" y="564">240,000</text>
+  <text class="note m" x="364" y="596">Requests per day</text>
+
+  <!-- drop lines from the two break-even points to the x axis -->
+  <path class="drop" d="M300.2 399.6V540M482.4 399.6V540"/>
+
+  <!-- series: x = 118 + requests x 0.00205, y = 540 - USD x 0.065 -->
+  <path class="bt" d="M118 540L610 350.5"/>
+  <path class="od" d="M118 540L610 160.9"/>
+  <path class="gpu" d="M118 399.6H610"/>
+
+  <!-- break-even points -->
+  <circle class="pt" cx="300.2" cy="399.6" r="7"/>
+  <circle class="pt" cx="482.4" cy="399.6" r="7"/>
+
+  <text class="key e" x="288" y="350">88,889 a day</text>
+  <text class="small e" x="288" y="369">break-even</text>
+  <text class="small e" x="288" y="387">with on-demand</text>
+
+  <text class="key" x="496" y="426">177,778 a day</text>
+  <text class="small" x="496" y="445">break-even</text>
+  <text class="small" x="496" y="463">with batch</text>
+
+  <!-- direct labels at the line ends -->
+  <text class="lab14" x="622" y="160">On-demand tokens</text>
+  <text class="small" x="622" y="179">solid blue line</text>
+  <text class="lab14" x="622" y="344">Batch tokens</text>
+  <text class="small" x="622" y="363">dashed coral line</text>
+  <text class="lab14" x="622" y="404">Two GPUs</text>
+  <text class="small" x="622" y="423">flat at 2,160 USD</text>
+
+  <!-- notes panel -->
+  <rect x="812" y="104" width="348" height="516" rx="10" fill="#121612" stroke="#2A312A"/>
+  <text class="lab" x="832" y="138">Assumptions, not price quotes</text>
+  <text class="note" x="832" y="168">One request: 1,500 input tokens,</text>
+  <text class="note" x="832" y="188">300 output tokens.</text>
+  <text class="note" x="832" y="212">On-demand: 0.30 USD per million input</text>
+  <text class="note" x="832" y="232">tokens, 1.20 USD per million output.</text>
+  <text class="note" x="832" y="252">That is 0.00081 USD per request.</text>
+  <text class="note" x="832" y="276">Batch: half the on-demand rate.</text>
+  <text class="note" x="832" y="300">GPUs: 2 at 1.50 USD per hour for</text>
+  <text class="note" x="832" y="320">720 hours = 2,160 USD per month.</text>
+
+  <text class="lab" x="832" y="366">The two crossings</text>
+  <text class="key" x="832" y="396">88,889 requests a day</text>
+  <text class="note" x="850" y="416">2,160 / 0.00081 / 30 days</text>
+  <text class="note" x="850" y="436">above it, the two GPUs cost less</text>
+  <text class="key" x="832" y="466">177,778 requests a day</text>
+  <text class="note" x="850" y="486">2,160 / 0.000405 / 30 days</text>
+  <text class="note" x="850" y="506">if the work can wait for batch</text>
+
+  <text class="lab" x="832" y="550">Not on the chart</text>
+  <text class="note" x="832" y="574">Add 1,000 USD a month of engineering</text>
+  <text class="note" x="832" y="594">time and 88,889 becomes 130,041.</text>
+</svg>

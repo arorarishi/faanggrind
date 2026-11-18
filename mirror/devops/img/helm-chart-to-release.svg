@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" role="img" aria-labelledby="t d">
+  <title id="t">How a Helm chart becomes a release, and how revisions move on upgrade and rollback</title>
+  <desc id="d">Top: values.yaml, values-prod.yaml and --set are merged into one values object, rendered through the chart templates into manifests, applied to the API server and stored as a release secret. Bottom: a timeline of revisions 1 to 6 showing install, upgrade, a failed upgrade and a rollback that creates a new revision copying revision 4.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 15px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .coral { font-size: 14px; font-weight: 600; fill: #FF8A80; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .warn { fill: #0B0E0B; stroke: #FF8A80; stroke-width: 2; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .edge { stroke: #4A5348; stroke-width: 1.5; fill: none; }
+    .back { stroke: #F2C14B; stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#4A5348"/>
+    </marker>
+    <marker id="y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="720" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Helm: merge values, render templates, apply, store a revision</text>
+  <text class="sub" x="40" y="78">helm upgrade --install api ./api -n shop -f values-prod.yaml --set image.tag=1.8.0 --wait --rollback-on-failure</text>
+
+  <!-- top band: pipeline -->
+  <rect class="band" x="40" y="100" width="1120" height="300" rx="10"/>
+  <text class="lab" x="56" y="126">1. One chart, one command, one release</text>
+
+  <!-- inputs column -->
+  <rect class="box" x="60" y="146" width="220" height="56" rx="8"/>
+  <text class="lab" x="170" y="169" text-anchor="middle">values.yaml</text>
+  <text class="small" x="170" y="189" text-anchor="middle">chart defaults: replicaCount 1</text>
+
+  <rect class="box" x="60" y="214" width="220" height="56" rx="8"/>
+  <text class="lab" x="170" y="237" text-anchor="middle">values-prod.yaml</text>
+  <text class="small" x="170" y="257" text-anchor="middle">-f file: replicaCount 3, host</text>
+
+  <rect class="box" x="60" y="282" width="220" height="56" rx="8"/>
+  <text class="lab" x="170" y="305" text-anchor="middle">--set image.tag=1.8.0</text>
+  <text class="small" x="170" y="325" text-anchor="middle">command line, wins over files</text>
+
+  <!-- merge -->
+  <rect class="hot" x="320" y="200" width="230" height="84" rx="8"/>
+  <text class="key" x="435" y="228" text-anchor="middle">merged .Values</text>
+  <text class="small" x="435" y="248" text-anchor="middle">left to right, maps merge per key</text>
+  <text class="small" x="435" y="266" text-anchor="middle">checked by values.schema.json</text>
+
+  <path class="edge" d="M280 174L300 174L300 230L312 230" marker-end="url(#g)"/>
+  <path class="edge" d="M280 242L312 242" marker-end="url(#g)"/>
+  <path class="edge" d="M280 310L300 310L300 254L312 254" marker-end="url(#g)"/>
+
+  <!-- templates -->
+  <rect class="box" x="580" y="146" width="200" height="56" rx="8"/>
+  <text class="lab" x="680" y="169" text-anchor="middle">templates/*.yaml</text>
+  <text class="small" x="680" y="189" text-anchor="middle">Go templates, _helpers.tpl</text>
+
+  <rect class="box" x="580" y="282" width="200" height="56" rx="8"/>
+  <text class="lab" x="680" y="305" text-anchor="middle">Chart.yaml</text>
+  <text class="small" x="680" y="325" text-anchor="middle">.Chart.Name, .Chart.Version</text>
+
+  <rect class="hot" x="580" y="214" width="200" height="56" rx="8"/>
+  <text class="key" x="680" y="237" text-anchor="middle">render</text>
+  <text class="small" x="680" y="257" text-anchor="middle">= helm template output</text>
+
+  <path class="flow" d="M550 242L572 242" marker-end="url(#a)"/>
+  <path class="edge" d="M680 202L680 206" marker-end="url(#g)"/>
+  <path class="edge" d="M680 282L680 278" marker-end="url(#g)"/>
+
+  <!-- manifests -->
+  <rect class="box" x="830" y="214" width="150" height="56" rx="8"/>
+  <text class="lab" x="905" y="237" text-anchor="middle">7 manifests</text>
+  <text class="small" x="905" y="257" text-anchor="middle">Deployment, Service...</text>
+  <path class="flow" d="M780 242L822 242" marker-end="url(#a)"/>
+
+  <!-- api server + secret -->
+  <rect class="box" x="1010" y="146" width="130" height="56" rx="8"/>
+  <text class="lab" x="1075" y="169" text-anchor="middle">API server</text>
+  <text class="small" x="1075" y="189" text-anchor="middle">3-way merge, apply</text>
+
+  <rect class="hot" x="1010" y="282" width="130" height="72" rx="8"/>
+  <text class="key" x="1075" y="305" text-anchor="middle">release secret</text>
+  <text class="small" x="1075" y="324" text-anchor="middle">sh.helm.release.v1</text>
+  <text class="small" x="1075" y="342" text-anchor="middle">.api.v5 in ns shop</text>
+
+  <path class="flow" d="M980 232L996 232L996 174L1002 174" marker-end="url(#a)"/>
+  <path class="flow" d="M980 252L996 252L996 318L1002 318" marker-end="url(#a)"/>
+
+  <text class="note" x="60" y="372">Hooks with helm.sh/hook: pre-upgrade run before the apply, in hook-weight order. --wait polls readiness until --timeout, default 5m.</text>
+  <text class="note" x="60" y="391">Values and manifests are copied into the secret: anything in values is readable by anyone who can read Secrets in the namespace.</text>
+
+  <!-- bottom band: timeline -->
+  <rect class="band" x="40" y="424" width="1120" height="272" rx="10"/>
+  <text class="lab" x="56" y="450">2. Revisions: a rollback is one more revision, never a deleted one</text>
+  <text class="small" x="620" y="450">helm history api -n shop</text>
+
+  <path class="edge" d="M80 560L1120 560"/>
+
+  <!-- rev 1 -->
+  <rect class="box" x="80" y="478" width="150" height="60" rx="8"/>
+  <text class="lab" x="155" y="501" text-anchor="middle">rev 1: install</text>
+  <text class="small" x="155" y="521" text-anchor="middle">chart 0.1.0, tag 1.5.0</text>
+  <text class="small" x="155" y="586" text-anchor="middle">superseded</text>
+
+  <!-- rev 2 -->
+  <rect class="box" x="252" y="478" width="150" height="60" rx="8"/>
+  <text class="lab" x="327" y="501" text-anchor="middle">rev 2: upgrade</text>
+  <text class="small" x="327" y="521" text-anchor="middle">chart 0.2.0, tag 1.6.0</text>
+  <text class="small" x="327" y="586" text-anchor="middle">superseded</text>
+
+  <!-- rev 3 -->
+  <rect class="box" x="424" y="478" width="150" height="60" rx="8"/>
+  <text class="lab" x="499" y="501" text-anchor="middle">rev 3: upgrade</text>
+  <text class="small" x="499" y="521" text-anchor="middle">chart 0.3.0, tag 1.7.0</text>
+  <text class="small" x="499" y="586" text-anchor="middle">superseded</text>
+
+  <!-- rev 4 -->
+  <rect class="hot" x="596" y="478" width="150" height="60" rx="8"/>
+  <text class="key" x="671" y="501" text-anchor="middle">rev 4: upgrade</text>
+  <text class="small" x="671" y="521" text-anchor="middle">chart 0.3.0, tag 1.7.2</text>
+  <text class="small" x="671" y="586" text-anchor="middle">last good</text>
+
+  <!-- rev 5 -->
+  <rect class="warn" x="768" y="478" width="150" height="60" rx="8"/>
+  <text class="coral" x="843" y="501" text-anchor="middle">rev 5: upgrade</text>
+  <text class="small" x="843" y="521" text-anchor="middle">tag 1.8.0 crash loops</text>
+  <text class="coral" x="843" y="586" text-anchor="middle">failed after 5m wait</text>
+
+  <!-- rev 6 -->
+  <rect class="hot" x="940" y="478" width="180" height="60" rx="8"/>
+  <text class="key" x="1030" y="501" text-anchor="middle">rev 6: rollback to 4</text>
+  <text class="small" x="1030" y="521" text-anchor="middle">same content as rev 4</text>
+  <text class="small" x="1030" y="586" text-anchor="middle">deployed</text>
+
+  <!-- ticks -->
+  <path class="edge" d="M155 538L155 560"/>
+  <path class="edge" d="M327 538L327 560"/>
+  <path class="edge" d="M499 538L499 560"/>
+  <path class="edge" d="M671 538L671 560"/>
+  <path class="edge" d="M843 538L843 560"/>
+  <path class="edge" d="M1030 538L1030 560"/>
+
+  <!-- rollback arrow: from rev 6 back to rev 4 -->
+  <path class="back" d="M1030 612L1030 626L671 626L671 612" marker-end="url(#y)"/>
+  <text class="amber" x="850" y="646" text-anchor="middle">--rollback-on-failure writes the content of rev 4 as rev 6; old pods never left</text>
+
+  <text class="note" x="60" y="680">--history-max 10 keeps the last 10 secrets. helm uninstall removes them too unless --keep-history is set.</text>
+</svg>

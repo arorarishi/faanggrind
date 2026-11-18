@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">LoRA: a frozen weight matrix W with a small trainable path B times A beside it</title>
+  <desc id="d">The input x goes through two paths. The left path is the frozen matrix W with 4096 by 4096 values. The right path goes through A, which squeezes the input down to rank r = 8 values, then B, which expands it back. The two outputs are added. Only A and B are trained.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .mut { font-size: 14px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .big { font-size: 30px; font-weight: 700; fill: #F2F4EC; }
+    .bigk { font-size: 24px; font-weight: 700; fill: #C6F432; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .frozen { fill: #0B0E0B; stroke: #8A9185; stroke-width: 2; }
+    .train { fill: #1B2410; stroke: #C6F432; stroke-width: 2; }
+    .wire { stroke: #8A9185; stroke-width: 2; fill: none; }
+    .wirek { stroke: #C6F432; stroke-width: 2; fill: none; }
+  </style>
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+    <marker id="k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">LoRA: freeze W, train the small B and A beside it</text>
+  <text class="sub" x="40" y="78">The input goes through both paths and the two outputs are added. Shapes are for one 4096 x 4096 layer with rank r = 8.</text>
+
+  <!-- diagram panel -->
+  <rect class="band" x="40" y="104" width="740" height="496" rx="10"/>
+
+  <!-- legend -->
+  <rect x="56" y="120" width="16" height="16" rx="3" class="frozen"/>
+  <text class="note" x="82" y="133">frozen base weight</text>
+  <rect x="56" y="144" width="16" height="16" rx="3" class="train"/>
+  <text class="note" x="82" y="157">trainable adapter</text>
+
+  <!-- output -->
+  <path class="wire" d="M410 172L410 132" marker-end="url(#g)"/>
+  <text class="lab" x="426" y="138">output h (d = 4096 values)</text>
+  <circle cx="410" cy="190" r="18" fill="#0B0E0B" stroke="#F2F4EC" stroke-width="2"/>
+  <path d="M400 190L420 190M410 180L410 200" stroke="#F2F4EC" stroke-width="2"/>
+
+  <!-- frozen W -->
+  <rect class="frozen" x="110" y="250" width="220" height="220" rx="6"/>
+  <text class="big" x="220" y="342" text-anchor="middle">W</text>
+  <text class="note" x="220" y="372" text-anchor="middle">d x k = 4096 x 4096</text>
+  <text class="note" x="220" y="392" text-anchor="middle">16,777,216 values</text>
+  <text class="mut" x="220" y="424" text-anchor="middle">frozen: no gradients</text>
+  <path class="wire" d="M220 250L220 190L390 190" marker-end="url(#g)"/>
+
+  <!-- B (expands r to d) -->
+  <path class="train" d="M570 320L630 320L700 250L500 250z"/>
+  <text class="bigk" x="600" y="294" text-anchor="middle">B</text>
+  <text class="note" x="490" y="268" text-anchor="end">d x r = 4096 x 8</text>
+  <text class="note" x="490" y="288" text-anchor="end">32,768 values</text>
+  <text class="key" x="490" y="308" text-anchor="end">starts at zero</text>
+
+  <!-- bottleneck -->
+  <path class="wirek" d="M600 400L600 322" marker-end="url(#k)"/>
+  <text class="key" x="646" y="356" style="font-size:15px">rank r = 8</text>
+  <text class="note" x="646" y="376">8 values wide</text>
+
+  <!-- A (squeezes k to r) -->
+  <path class="train" d="M500 470L700 470L630 400L570 400z"/>
+  <text class="bigk" x="600" y="446" text-anchor="middle">A</text>
+  <text class="note" x="490" y="428" text-anchor="end">r x k = 8 x 4096</text>
+  <text class="note" x="490" y="448" text-anchor="end">32,768 values</text>
+  <text class="key" x="490" y="468" text-anchor="end">random start</text>
+
+  <!-- B to sum -->
+  <path class="wirek" d="M600 250L600 190L430 190" marker-end="url(#k)"/>
+  <text class="key" x="515" y="180" text-anchor="middle">scaled by alpha / r</text>
+
+  <!-- input -->
+  <rect x="300" y="525" width="220" height="40" rx="8" fill="#0B0E0B" stroke="#F2F4EC" stroke-width="1.5"/>
+  <text class="lab" x="410" y="550" text-anchor="middle">input x (k = 4096 values)</text>
+  <path class="wire" d="M300 545L220 545L220 472" marker-end="url(#g)"/>
+  <path class="wirek" d="M520 545L600 545L600 472" marker-end="url(#k)"/>
+
+  <!-- notes panel -->
+  <rect x="812" y="104" width="348" height="496" rx="10" fill="#121612" stroke="#2A312A"/>
+  <text class="lab" x="832" y="138">One layer, two paths</text>
+  <text class="key" x="832" y="166">h = W x + (alpha / r) B A x</text>
+  <text class="note" x="832" y="190">W stays frozen. B and A are trained.</text>
+
+  <text class="lab" x="832" y="236">Count the values</text>
+  <text class="note" x="832" y="264">Full fine-tuning: 4096 x 4096</text>
+  <text class="note" x="850" y="284">= 16,777,216 values</text>
+  <text class="note" x="832" y="310">LoRA with r = 8: 2 x 4096 x 8</text>
+  <text class="key" x="850" y="330">= 65,536 values, about 0.39%</text>
+
+  <text class="lab" x="832" y="378">At the start</text>
+  <text class="note" x="832" y="406">B is all zeros, so B A = 0 and the</text>
+  <text class="note" x="832" y="426">output equals the base model's.</text>
+
+  <text class="lab" x="832" y="474">After training</text>
+  <text class="note" x="832" y="502">Merge: W' = W + (alpha / r) B A.</text>
+  <text class="note" x="832" y="522">One matrix again, no extra latency.</text>
+  <text class="note" x="832" y="548">Or keep B and A as a small file</text>
+  <text class="note" x="832" y="568">and swap adapters per task.</text>
+</svg>

@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 580" width="1200" height="580" role="img" aria-labelledby="t d">
+  <title id="t">One request through Nginx: TLS termination, server and location match, upstream pool, app processes</title>
+  <desc id="d">A client sends an HTTPS request. Nginx terminates TLS, picks the server block by name, picks a location by path, applies rate limits and body size, then forwards plain HTTP to one of three Node processes in the upstream pool, adding Host, X-Forwarded-For and X-Forwarded-Proto headers.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .mono { font-size: 14px; fill: #F2F4EC; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .app { fill: #121612; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .plain { stroke: #7CC4F8; stroke-width: 1.8; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="580" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One request through Nginx</text>
+  <text class="sub" x="40" y="78">TLS ends at Nginx. The app only ever sees plain HTTP on localhost, plus the headers Nginx adds.</text>
+
+  <!-- client -->
+  <rect class="box" x="40" y="176" width="130" height="72" rx="8"/>
+  <text class="lab" x="105" y="206" text-anchor="middle">Client</text>
+  <text class="small" x="105" y="226" text-anchor="middle">browser, mobile</text>
+  <text class="small" x="105" y="268" text-anchor="middle">HTTPS, port 443</text>
+  <path class="flow" d="M170 212L198 212" marker-end="url(#a)"/>
+
+  <!-- nginx band -->
+  <rect class="band" x="190" y="104" width="780" height="216" rx="10"/>
+  <text class="lab" x="206" y="130">Nginx on the VM</text>
+  <text class="small" x="340" y="130">one process, event loop, config in /etc/nginx/sites-enabled/app.conf</text>
+
+  <!-- stage 1 TLS -->
+  <rect class="hot" x="206" y="150" width="175" height="120" rx="8"/>
+  <text class="key" x="293" y="176" text-anchor="middle">1. TLS ends here</text>
+  <text class="note" x="293" y="200" text-anchor="middle">listen 443 ssl</text>
+  <text class="note" x="293" y="220" text-anchor="middle">fullchain.pem</text>
+  <text class="note" x="293" y="240" text-anchor="middle">privkey.pem</text>
+  <text class="small" x="293" y="260" text-anchor="middle">certbot renews it</text>
+  <path class="flow" d="M381 210L391 210" marker-end="url(#a)"/>
+
+  <!-- stage 2 server -->
+  <rect class="box" x="393" y="150" width="175" height="120" rx="8"/>
+  <text class="key" x="480" y="176" text-anchor="middle">2. server_name</text>
+  <text class="note" x="480" y="200" text-anchor="middle">app.example.com</text>
+  <text class="note" x="480" y="220" text-anchor="middle">picks the 443 block</text>
+  <text class="note" x="480" y="240" text-anchor="middle">80 block: 301 to https</text>
+  <text class="small" x="480" y="260" text-anchor="middle">HSTS header added</text>
+  <path class="flow" d="M568 210L578 210" marker-end="url(#a)"/>
+
+  <!-- stage 3 location -->
+  <rect class="box" x="580" y="150" width="175" height="120" rx="8"/>
+  <text class="key" x="667" y="176" text-anchor="middle">3. location match</text>
+  <text class="note" x="667" y="200" text-anchor="middle">/api/  /ws/  /static/</text>
+  <text class="note" x="667" y="220" text-anchor="middle">limit_req burst=20</text>
+  <text class="note" x="667" y="240" text-anchor="middle">client_max_body_size</text>
+  <text class="small" x="667" y="260" text-anchor="middle">/static/ served from disk</text>
+  <path class="flow" d="M755 210L765 210" marker-end="url(#a)"/>
+
+  <!-- stage 4 upstream -->
+  <rect class="box" x="767" y="150" width="175" height="120" rx="8"/>
+  <text class="key" x="854" y="176" text-anchor="middle">4. upstream app</text>
+  <text class="note" x="854" y="200" text-anchor="middle">round robin default</text>
+  <text class="note" x="854" y="220" text-anchor="middle">least_conn, ip_hash</text>
+  <text class="note" x="854" y="240" text-anchor="middle">max_fails=3 30s</text>
+  <text class="small" x="854" y="260" text-anchor="middle">retries on error, timeout</text>
+
+  <!-- app processes -->
+  <rect class="app" x="1000" y="140" width="160" height="44" rx="8"/>
+  <text class="mono" x="1080" y="167" text-anchor="middle">node :3000</text>
+  <rect class="app" x="1000" y="194" width="160" height="44" rx="8"/>
+  <text class="mono" x="1080" y="221" text-anchor="middle">node :3001</text>
+  <rect class="app" x="1000" y="248" width="160" height="44" rx="8"/>
+  <text class="mono" x="1080" y="275" text-anchor="middle">node :3002</text>
+  <text class="small" x="1080" y="312" text-anchor="middle">PM2 cluster or 3 systemd units</text>
+  <path class="plain" d="M942 196L992 162" marker-end="url(#b)"/>
+  <path class="plain" d="M942 212L992 216" marker-end="url(#b)"/>
+  <path class="plain" d="M942 228L992 270" marker-end="url(#b)"/>
+
+  <!-- headers panel -->
+  <rect class="band" x="40" y="344" width="560" height="184" rx="10"/>
+  <text class="lab" x="56" y="370">Headers Nginx adds before proxy_pass</text>
+  <text class="mono" x="56" y="400">Host: app.example.com</text>
+  <text class="small" x="330" y="400">without it the app sees Host: app</text>
+  <text class="mono" x="56" y="424">X-Forwarded-For: 203.0.113.9</text>
+  <text class="small" x="330" y="424">real client IP for logs and rate limits</text>
+  <text class="mono" x="56" y="448">X-Forwarded-Proto: https</text>
+  <text class="small" x="330" y="448">app builds https links and secure cookies</text>
+  <text class="mono" x="56" y="472">Upgrade: websocket, Connection: upgrade</text>
+  <text class="small" x="56" y="494">only on /ws/; without them the WebSocket handshake fails</text>
+  <text class="small" x="56" y="514">Nginx keeps 499, 502 and 504 in access.log; the app never logs those</text>
+
+  <!-- what each side sees -->
+  <rect class="band" x="624" y="344" width="536" height="184" rx="10"/>
+  <text class="lab" x="640" y="370">What each side sees</text>
+  <text class="key" x="640" y="400">Client</text>
+  <text class="note" x="640" y="422">HTTPS, HTTP/2, a Let's Encrypt certificate,</text>
+  <text class="note" x="640" y="442">gzip responses, one public IP and port 443</text>
+  <text class="key" x="640" y="472">App process</text>
+  <text class="note" x="640" y="494">plain HTTP/1.1 from 127.0.0.1, one of three</text>
+  <text class="note" x="640" y="514">ports, no TLS code, no certificate files</text>
+
+  <text class="note" x="40" y="560">Lime arrows: the encrypted request. Blue arrows: plain HTTP inside the VM. Everything the client cannot see is behind step 1.</text>
+</svg>

@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" role="img" aria-labelledby="t d">
+  <title id="t">RLHF, DPO and GRPO: the signal each one needs and the training it runs</title>
+  <desc id="d">Three columns. RLHF with PPO needs human comparisons, trains a reward model, then loops: generate, score, clipped update. DPO needs fixed pairs of chosen and rejected answers and runs one loss with no loop. GRPO needs a verifier program and loops: generate a group, score each answer, raise the above-average ones.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .name { font-size: 20px; font-weight: 700; fill: #F2F4EC; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .cap { font-size: 13px; font-weight: 700; fill: #8A9185; letter-spacing: 1px; }
+    .key { font-size: 13px; font-weight: 700; fill: #C6F432; letter-spacing: 1px; }
+    .bad { font-size: 13px; font-weight: 700; fill: #FF8A80; letter-spacing: 1px; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #3A423A; stroke-width: 1; }
+    .sig { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .arr { stroke: #8A9185; stroke-width: 1.5; fill: none; }
+    .loop { stroke: #7CC4F8; stroke-width: 1.5; fill: none; stroke-dasharray: 5 5; }
+    .div { stroke: #2A312A; stroke-width: 1; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="760" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">RLHF, DPO, GRPO: choose by the signal you have</text>
+  <text class="sub" x="40" y="78">All three start from a model that already had supervised fine-tuning. They differ in where the score comes from.</text>
+
+  <rect class="panel" x="40" y="104" width="360" height="596" rx="10"/>
+  <text class="name" x="60" y="140">RLHF with PPO</text>
+  <text class="note" x="60" y="164">Learn a scorer, then optimise against it</text>
+  <text class="key" x="60" y="196">SIGNAL YOU NEED</text>
+  <rect class="sig" x="60" y="206" width="320" height="62" rx="8"/>
+  <text class="lab" x="76" y="232">Human comparisons</text>
+  <text class="note" x="76" y="253">“answer A is better than answer B”</text>
+  <text class="cap" x="60" y="298">TRAINING</text>
+  <rect class="box" x="60" y="308" width="296" height="58" rx="8"/>
+  <text class="note" x="76" y="333" style="fill:#F2F4EC">1. Train a reward model</text>
+  <text class="note" x="94" y="353">on the comparisons</text>
+  <rect class="box" x="60" y="384" width="296" height="58" rx="8"/>
+  <text class="note" x="76" y="409" style="fill:#F2F4EC">2. LLM generates new answers</text>
+  <text class="note" x="94" y="429">(online sampling)</text>
+  <path class="arr" d="M208 366L208 381" marker-end="url(#a)"/>
+  <rect class="box" x="60" y="460" width="296" height="58" rx="8"/>
+  <text class="note" x="76" y="485" style="fill:#F2F4EC">3. Reward model scores them,</text>
+  <text class="note" x="94" y="505">PPO makes a clipped update</text>
+  <path class="arr" d="M208 442L208 457" marker-end="url(#a)"/>
+  <path class="loop" d="M356 489L378 489L378 413L360 413" marker-end="url(#b)"/>
+  <text class="note" x="391" y="451" text-anchor="middle" transform="rotate(-90 391 451)" style="fill:#7CC4F8;font-size:13px">repeat</text>
+  <path class="div" d="M60 540L380 540"/>
+  <text class="cap" x="60" y="566">WHAT IT COSTS</text>
+  <text class="note" x="60" y="587">Human labels, a reward model,</text>
+  <text class="note" x="60" y="607">a value model, online sampling</text>
+  <text class="bad" x="60" y="638">HOW IT FAILS</text>
+  <text class="note" x="60" y="659">The LLM exploits mistakes</text>
+  <text class="note" x="60" y="679">in the reward model</text>
+  <rect class="panel" x="420" y="104" width="360" height="596" rx="10"/>
+  <text class="name" x="440" y="140">DPO</text>
+  <text class="note" x="440" y="164">One loss on a fixed set of pairs</text>
+  <text class="key" x="440" y="196">SIGNAL YOU NEED</text>
+  <rect class="sig" x="440" y="206" width="320" height="62" rx="8"/>
+  <text class="lab" x="456" y="232">Preference pairs</text>
+  <text class="note" x="456" y="253">one chosen and one rejected answer</text>
+  <text class="cap" x="440" y="298">TRAINING</text>
+  <rect class="box" x="440" y="308" width="296" height="58" rx="8"/>
+  <text class="note" x="456" y="333" style="fill:#F2F4EC">1. Score each pair with the model</text>
+  <text class="note" x="474" y="353">and with a frozen copy of it</text>
+  <rect class="box" x="440" y="384" width="296" height="58" rx="8"/>
+  <text class="note" x="456" y="409" style="fill:#F2F4EC">2. One loss: raise the chosen</text>
+  <text class="note" x="474" y="429">answer, lower the rejected one</text>
+  <path class="arr" d="M588 366L588 381" marker-end="url(#a)"/>
+  <text class="note" x="440" y="485">One pass over the data.</text>
+  <text class="note" x="440" y="505">No reward model and no sampling loop.</text>
+  <path class="div" d="M440 540L760 540"/>
+  <text class="cap" x="440" y="566">WHAT IT COSTS</text>
+  <text class="note" x="440" y="587">About 1,000 to 5,000 pairs,</text>
+  <text class="note" x="440" y="607">one frozen reference copy</text>
+  <text class="bad" x="440" y="638">HOW IT FAILS</text>
+  <text class="note" x="440" y="659">It learns only what the pairs</text>
+  <text class="note" x="440" y="679">cover; it never tries new answers</text>
+  <rect class="panel" x="800" y="104" width="360" height="596" rx="10"/>
+  <text class="name" x="820" y="140">GRPO (RLVR)</text>
+  <text class="note" x="820" y="164">Score a group with an automatic check</text>
+  <text class="key" x="820" y="196">SIGNAL YOU NEED</text>
+  <rect class="sig" x="820" y="206" width="320" height="62" rx="8"/>
+  <text class="lab" x="836" y="232">A verifier program</text>
+  <text class="note" x="836" y="253">tests pass, maths correct, valid JSON</text>
+  <text class="cap" x="820" y="298">TRAINING</text>
+  <rect class="box" x="820" y="308" width="296" height="58" rx="8"/>
+  <text class="note" x="836" y="333" style="fill:#F2F4EC">1. LLM generates a group of</text>
+  <text class="note" x="854" y="353">answers for each prompt</text>
+  <rect class="box" x="820" y="384" width="296" height="58" rx="8"/>
+  <text class="note" x="836" y="409" style="fill:#F2F4EC">2. Verifier scores each answer:</text>
+  <text class="note" x="854" y="429">rewards 1, 0, 0, 1</text>
+  <path class="arr" d="M968 366L968 381" marker-end="url(#a)"/>
+  <rect class="box" x="820" y="460" width="296" height="58" rx="8"/>
+  <text class="note" x="836" y="485" style="fill:#F2F4EC">3. Raise the above-average</text>
+  <text class="note" x="854" y="505">answers with a clipped update</text>
+  <path class="arr" d="M968 442L968 457" marker-end="url(#a)"/>
+  <path class="loop" d="M1116 489L1138 489L1138 337L1120 337" marker-end="url(#b)"/>
+  <text class="note" x="1151" y="413" text-anchor="middle" transform="rotate(-90 1151 413)" style="fill:#7CC4F8;font-size:13px">repeat</text>
+  <path class="div" d="M820 540L1140 540"/>
+  <text class="cap" x="820" y="566">WHAT IT COSTS</text>
+  <text class="note" x="820" y="587">Tasks a program can check,</text>
+  <text class="note" x="820" y="607">compute to sample at every step</text>
+  <text class="bad" x="820" y="638">HOW IT FAILS</text>
+  <text class="note" x="820" y="659">A weak verifier gets gamed;</text>
+  <text class="note" x="820" y="679">identical groups give no signal</text>
+  <text class="sub" x="40" y="734">Comparisons and a budget for the loop: RLHF. A fixed set of pairs: DPO. A program that can check answers: GRPO.</text>
+</svg>

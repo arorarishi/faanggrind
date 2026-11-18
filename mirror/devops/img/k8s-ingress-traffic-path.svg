@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 724" width="1200" height="724" role="img" aria-labelledby="t d">
+  <title id="t">The path of an HTTP request from the internet to a pod on EKS</title>
+  <desc id="d">A client reaches an ALB created by the AWS Load Balancer Controller, which forwards to pod IPs directly in IP target mode. Inside the cluster, a Service has a virtual IP that kube-proxy or Cilium rewrites on every node to one of the ready pod IPs listed in the EndpointSlice. Pods on two nodes hold VPC IPs assigned by the VPC CNI. A pod that fails readiness is still Running but is in none of the three lists.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .blue { font-size: 14px; font-weight: 600; fill: #7CC4F8; }
+    .amber { font-size: 13px; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .pod { fill: #121612; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .watch { stroke: #7CC4F8; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="724" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">From the internet to a pod: who rewrites the destination at each hop</text>
+  <text class="sub" x="40" y="78">Solid lime: the request. Dashed blue: what each hop watches to learn where the ready pods are.</text>
+
+  <!-- row 1: client, DNS, ALB, VPC CNI note -->
+  <rect class="box" x="40" y="110" width="210" height="64" rx="8"/>
+  <text class="lab" x="145" y="136" text-anchor="middle">Client</text>
+  <text class="note" x="145" y="158" text-anchor="middle">GET shop.example.com/</text>
+
+  <rect class="box" x="280" y="110" width="210" height="64" rx="8"/>
+  <text class="lab" x="385" y="136" text-anchor="middle">Route 53</text>
+  <text class="note" x="385" y="158" text-anchor="middle">CNAME to the ALB name</text>
+  <path class="flow" d="M250 142L272 142" marker-end="url(#a)"/>
+
+  <rect class="hot" x="520" y="98" width="360" height="88" rx="8"/>
+  <text class="key" x="700" y="122" text-anchor="middle">ALB (AWS Load Balancer Controller)</text>
+  <text class="note" x="700" y="142" text-anchor="middle">TLS ends here (ACM cert); host and path rules</text>
+  <text class="note" x="700" y="160" text-anchor="middle">copied from the Ingress or HTTPRoute object</text>
+  <text class="small" x="700" y="178" text-anchor="middle">target-type ip: pod IPs, not NodePorts</text>
+  <path class="flow" d="M490 142L512 142" marker-end="url(#a)"/>
+
+
+  <!-- lime: ALB to pods in both nodes, via the side corridors -->
+  <path class="flow" d="M540 186L540 198L56 198L56 571L118 571" marker-end="url(#a)"/>
+  <path class="flow" d="M860 186L860 198L1144 198L1144 571L1090 571" marker-end="url(#a)"/>
+  <text class="key" x="70" y="190">ALB sends to pod IP:8080 directly, one target per ready pod</text>
+
+  <!-- API objects band -->
+  <rect class="band" x="110" y="214" width="980" height="120" rx="10"/>
+  <text class="lab" x="126" y="240">API server objects the data path is built from</text>
+
+  <rect class="box" x="126" y="256" width="220" height="64" rx="8"/>
+  <text class="lab" x="236" y="280" text-anchor="middle">Ingress / HTTPRoute</text>
+  <text class="small" x="236" y="300" text-anchor="middle">shop.example.com / -> web:80</text>
+
+  <rect class="box" x="362" y="256" width="220" height="64" rx="8"/>
+  <text class="lab" x="472" y="280" text-anchor="middle">Service web (ClusterIP)</text>
+  <text class="small" x="472" y="300" text-anchor="middle">10.100.21.7:80 -> port 8080</text>
+
+  <rect class="hot" x="598" y="256" width="220" height="64" rx="8"/>
+  <text class="key" x="708" y="280" text-anchor="middle">EndpointSlice web-abc12</text>
+  <text class="small" x="708" y="300" text-anchor="middle">10.0.1.11, 10.0.2.12 ready</text>
+
+  <rect class="box" x="834" y="256" width="240" height="64" rx="8"/>
+  <text class="lab" x="954" y="280" text-anchor="middle">Pods with label app=web</text>
+  <text class="small" x="954" y="300" text-anchor="middle">readiness decides membership</text>
+
+  <!-- blue: slice to ALB controller, slice to node rules -->
+  <path class="watch" d="M708 256L708 194" marker-end="url(#b)"/>
+  <text class="small" x="720" y="244">controller registers the slice IPs as ALB targets</text>
+  <path class="watch" d="M708 320L708 350L350 350L350 402" marker-end="url(#b)"/>
+  <path class="watch" d="M708 350L850 350L850 402" marker-end="url(#b)"/>
+  <text class="small" x="360" y="346">every node watches the slice</text>
+
+  <!-- nodes -->
+  <rect class="band" x="110" y="366" width="480" height="290" rx="10"/>
+  <rect class="band" x="610" y="366" width="480" height="290" rx="10"/>
+  <text class="lab" x="126" y="392">Node 1   10.0.1.5   zone ap-south-1a</text>
+  <text class="lab" x="626" y="392">Node 2   10.0.2.6   zone ap-south-1b</text>
+
+  <rect class="box" x="126" y="410" width="448" height="76" rx="8"/>
+  <text class="lab" x="142" y="434">kube-proxy (iptables or IPVS) or Cilium eBPF</text>
+  <text class="note" x="142" y="454">dst 10.100.21.7:80 -> 10.0.1.11:8080 or 10.0.2.12:8080</text>
+  <text class="small" x="142" y="474">rewritten on the caller's own node; no source NAT</text>
+
+  <rect class="box" x="626" y="410" width="448" height="76" rx="8"/>
+  <text class="lab" x="642" y="434">kube-proxy (iptables or IPVS) or Cilium eBPF</text>
+  <text class="note" x="642" y="454">the same rules on every node, even without a web pod</text>
+  <text class="small" x="642" y="474">a failing pod leaves the rules within seconds</text>
+
+  <!-- pods node 1 -->
+  <rect class="pod" x="126" y="506" width="220" height="130" rx="8"/>
+  <text class="lab" x="236" y="532" text-anchor="middle">Pod web-7d9f-a1</text>
+  <text class="blue" x="236" y="556" text-anchor="middle">IP 10.0.1.11 (VPC CNI)</text>
+  <text class="small" x="236" y="578" text-anchor="middle">container listens on 8080</text>
+  <text class="small" x="236" y="598" text-anchor="middle">readiness GET /healthz, 5 s</text>
+  <text class="amber" x="236" y="620" text-anchor="middle">ALB target: healthy</text>
+
+  <rect class="pod" x="362" y="506" width="220" height="130" rx="8"/>
+  <text class="lab" x="472" y="532" text-anchor="middle">Pod api-2c11-b7</text>
+  <text class="blue" x="472" y="556" text-anchor="middle">IP 10.0.1.13</text>
+  <text class="small" x="472" y="578" text-anchor="middle">calls web.shop.svc (DNS)</text>
+  <text class="small" x="472" y="598" text-anchor="middle">gets 10.100.21.7, which the</text>
+  <text class="small" x="472" y="618" text-anchor="middle">rules above map to a pod IP</text>
+
+  <!-- pods node 2 -->
+  <rect class="pod" x="626" y="506" width="220" height="130" rx="8"/>
+  <text class="lab" x="736" y="532" text-anchor="middle">Pod web-7d9f-d4</text>
+  <text class="blue" x="736" y="556" text-anchor="middle">IP 10.0.2.14</text>
+  <text class="small" x="736" y="578" text-anchor="middle">readiness failing: not in</text>
+  <text class="small" x="736" y="598" text-anchor="middle">the slice, no ALB target</text>
+  <text class="amber" x="736" y="620" text-anchor="middle">Running, gets no traffic</text>
+
+  <rect class="pod" x="862" y="506" width="220" height="130" rx="8"/>
+  <text class="lab" x="972" y="532" text-anchor="middle">Pod web-7d9f-c3</text>
+  <text class="blue" x="972" y="556" text-anchor="middle">IP 10.0.2.12 (VPC CNI)</text>
+  <text class="small" x="972" y="578" text-anchor="middle">container listens on 8080</text>
+  <text class="small" x="972" y="598" text-anchor="middle">readiness GET /healthz, 5 s</text>
+  <text class="amber" x="972" y="620" text-anchor="middle">ALB target: healthy</text>
+
+  <text class="note" x="40" y="680">Why pod IPs are routable: the VPC CNI gives each pod an IP from the node's ENI, so the ALB and every node reach a pod without NAT.</text>
+  <text class="note" x="40" y="706">Three lists must agree for a request to arrive: ALB targets, the EndpointSlice and the node rules. All three come from the same readiness signal.</text>
+</svg>

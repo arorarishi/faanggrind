@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img" aria-labelledby="t d">
+  <title id="t">The delivery pipeline and the feedback loop</title>
+  <desc id="d">A change moves left to right through commit, build, test, scan, artifact, deploy and observe. Telemetry from production flows back through alerts and postmortems to the next commit. A dashed rollback arrow returns from observe to deploy.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .coral { font-size: 13px; fill: #FF8A80; }
+    .blue { font-size: 13px; fill: #7CC4F8; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .fb { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .back { stroke: #7CC4F8; stroke-width: 2; fill: none; }
+    .roll { stroke: #FF8A80; stroke-width: 1.8; fill: none; stroke-dasharray: 6 5; }
+    .brk { stroke: #8A9185; stroke-width: 1.2; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+    <marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#FF8A80"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="560" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The delivery pipeline and the feedback loop</text>
+  <text class="sub" x="40" y="78">The forward arrow carries a change to production. The backward arrow carries what production saw back to the team.</text>
+
+  <!-- forward band -->
+  <rect class="band" x="40" y="100" width="1120" height="230" rx="10"/>
+  <text class="lab" x="56" y="126">Delivery pipeline</text>
+  <text class="small" x="196" y="126">every step is automated; the only human step is the code review</text>
+
+  <!-- rollback arrow, drawn above the boxes -->
+  <text class="coral" x="990" y="112" text-anchor="middle">rollback when the canary fails</text>
+  <path class="roll" d="M1068 146L1068 124L912 124L912 142" marker-end="url(#c)"/>
+
+  <!-- stage boxes: x = 64 + 156*i, width 136, height 92 -->
+  <rect class="box" x="64" y="146" width="136" height="92" rx="8"/>
+  <text class="lab" x="132" y="172" text-anchor="middle">Commit</text>
+  <text class="small" x="132" y="196" text-anchor="middle">PR opened</text>
+  <text class="small" x="132" y="214" text-anchor="middle">on a branch</text>
+
+  <rect class="box" x="220" y="146" width="136" height="92" rx="8"/>
+  <text class="lab" x="288" y="172" text-anchor="middle">Build</text>
+  <text class="small" x="288" y="196" text-anchor="middle">image tagged</text>
+  <text class="small" x="288" y="214" text-anchor="middle">with commit SHA</text>
+
+  <rect class="box" x="376" y="146" width="136" height="92" rx="8"/>
+  <text class="lab" x="444" y="172" text-anchor="middle">Test</text>
+  <text class="small" x="444" y="196" text-anchor="middle">unit, integration</text>
+  <text class="small" x="444" y="214" text-anchor="middle">a failure blocks</text>
+
+  <rect class="box" x="532" y="146" width="136" height="92" rx="8"/>
+  <text class="lab" x="600" y="172" text-anchor="middle">Scan</text>
+  <text class="small" x="600" y="196" text-anchor="middle">Trivy: CVEs,</text>
+  <text class="small" x="600" y="214" text-anchor="middle">leaked secrets</text>
+
+  <rect class="box" x="688" y="146" width="136" height="92" rx="8"/>
+  <text class="lab" x="756" y="172" text-anchor="middle">Artifact</text>
+  <text class="small" x="756" y="196" text-anchor="middle">pushed to ECR,</text>
+  <text class="small" x="756" y="214" text-anchor="middle">signed, SBOM</text>
+
+  <rect class="hot" x="844" y="146" width="136" height="92" rx="8"/>
+  <text class="key" x="912" y="172" text-anchor="middle">Deploy</text>
+  <text class="small" x="912" y="196" text-anchor="middle">Argo CD syncs,</text>
+  <text class="small" x="912" y="214" text-anchor="middle">canary 10 percent</text>
+
+  <rect class="box" x="1000" y="146" width="136" height="92" rx="8"/>
+  <text class="lab" x="1068" y="172" text-anchor="middle">Observe</text>
+  <text class="small" x="1068" y="196" text-anchor="middle">errors, latency</text>
+  <text class="small" x="1068" y="214" text-anchor="middle">against the SLO</text>
+
+  <!-- forward arrows -->
+  <path class="flow" d="M200 192L218 192" marker-end="url(#a)"/>
+  <path class="flow" d="M356 192L374 192" marker-end="url(#a)"/>
+  <path class="flow" d="M512 192L530 192" marker-end="url(#a)"/>
+  <path class="flow" d="M668 192L686 192" marker-end="url(#a)"/>
+  <path class="flow" d="M824 192L842 192" marker-end="url(#a)"/>
+  <path class="flow" d="M980 192L998 192" marker-end="url(#a)"/>
+
+  <!-- lead time bracket -->
+  <path class="brk" d="M140 262L140 272L904 272L904 262"/>
+  <text class="note" x="522" y="296" text-anchor="middle">change lead time: from commit to running in production, measured per change</text>
+
+  <!-- feedback band -->
+  <rect class="band" x="40" y="350" width="1120" height="150" rx="10"/>
+  <text class="lab" x="56" y="376">Feedback loop</text>
+  <text class="small" x="176" y="376">what production saw goes back to the people who made the change</text>
+  <text class="blue" x="1088" y="380" text-anchor="end">telemetry from production</text>
+
+  <rect class="fb" x="820" y="398" width="240" height="56" rx="8"/>
+  <text class="lab" x="940" y="421" text-anchor="middle">Telemetry</text>
+  <text class="note" x="940" y="441" text-anchor="middle">metrics, logs, traces, cost</text>
+
+  <rect class="fb" x="470" y="398" width="260" height="56" rx="8"/>
+  <text class="lab" x="600" y="421" text-anchor="middle">Alerts and SLO burn rate</text>
+  <text class="note" x="600" y="441" text-anchor="middle">page the on-call engineer</text>
+
+  <rect class="fb" x="150" y="398" width="240" height="56" rx="8"/>
+  <text class="lab" x="270" y="421" text-anchor="middle">Postmortem, action items</text>
+  <text class="note" x="270" y="441" text-anchor="middle">become the next commit</text>
+
+  <!-- feedback arrows: observe -> telemetry -> alerts -> postmortem -> commit -->
+  <path class="back" d="M1100 238L1100 426L1064 426" marker-end="url(#b)"/>
+  <path class="back" d="M820 426L734 426" marker-end="url(#b)"/>
+  <path class="back" d="M470 426L394 426" marker-end="url(#b)"/>
+  <path class="back" d="M150 426L100 426L100 242" marker-end="url(#b)"/>
+
+  <!-- footer -->
+  <text class="note" x="40" y="536">Forward arrow: CI/CD, containers, Kubernetes, GitOps. Backward arrow: observability, SLOs, incidents, postmortems. A team needs both.</text>
+</svg>

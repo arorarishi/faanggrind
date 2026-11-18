@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680" role="img" aria-labelledby="t d">
+  <title id="t">One request as a trace: a waterfall of nested spans</title>
+  <desc id="d">A support request drawn as a root span of 4,100 ms with six child spans on a time axis: input guardrail 60 ms, retrieval 180 ms, model call one 800 ms, a tool call 320 ms, model call two 2,600 ms and output guardrail 140 ms. Token counts are shown per model call. The two model calls take 3,400 ms.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .mut { font-size: 13px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .on { font-size: 14px; font-weight: 600; fill: #0B0E0B; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .grid { stroke: #232923; stroke-width: 1; }
+    .tree { stroke: #4A5348; stroke-width: 1.5; fill: none; }
+    .root { fill: none; stroke: #8A9185; stroke-width: 1.5; }
+    .step { fill: #4A5348; stroke: #8A9185; stroke-width: 1; }
+    .llm { fill: #C6F432; }
+  </style>
+  <rect x="0" y="0" width="1200" height="680" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One request, one trace: a tree of timed spans</text>
+  <text class="sub" x="40" y="78">Support question: "Where is my refund for order 8841?" Each bar is a span. Indented spans are children of the root.</text>
+
+  <!-- waterfall panel -->
+  <rect class="panel" x="40" y="104" width="1120" height="398" rx="10"/>
+  <text class="mut" x="60" y="140">SPAN</text>
+  <text class="mut" x="866" y="140">DURATION AND WHAT IT LOGGED</text>
+
+  <!-- time axis: 0.125 px per ms, origin x=320 -->
+  <text class="mut" x="320" y="140">0 ms</text>
+  <text class="mut" x="445" y="140" text-anchor="middle">1,000</text>
+  <text class="mut" x="570" y="140" text-anchor="middle">2,000</text>
+  <text class="mut" x="695" y="140" text-anchor="middle">3,000</text>
+  <text class="mut" x="820" y="140" text-anchor="middle">4,000</text>
+  <path class="grid" d="M320 152V490M445 152V490M570 152V490M695 152V490M820 152V490"/>
+  <path class="grid" d="M56 152H1144"/>
+
+  <!-- tree connectors -->
+  <path class="tree" d="M68 204V467M68 237H86M68 283H86M68 329H86M68 375H86M68 421H86M68 467H86"/>
+
+  <!-- row 0: root -->
+  <text class="lab" x="60" y="196">support_request (root)</text>
+  <rect class="root" x="320" y="179" width="512.5" height="24" rx="4"/>
+  <text class="lab" x="866" y="188">4,100 ms</text>
+  <text class="note" x="866" y="207">6,050 in + 300 out tokens</text>
+
+  <!-- row 1: input guardrail 0 to 60 -->
+  <text class="note" x="92" y="242">guardrail: input</text>
+  <rect class="step" x="320" y="225" width="7.5" height="24" rx="2"/>
+  <text class="lab" x="866" y="234">60 ms</text>
+  <text class="note" x="866" y="253">1 email masked, injection: pass</text>
+
+  <!-- row 2: retrieval 60 to 240 -->
+  <text class="note" x="92" y="288">retrieval</text>
+  <rect class="step" x="327.5" y="271" width="22.5" height="24" rx="2"/>
+  <text class="lab" x="866" y="280">180 ms</text>
+  <text class="note" x="866" y="299">50 candidates, 6 chunks kept</text>
+
+  <!-- row 3: LLM call 1, 240 to 1040 -->
+  <text class="key" x="92" y="334">LLM call 1</text>
+  <rect class="llm" x="350" y="317" width="100" height="24" rx="3"/>
+  <text class="on" x="400" y="334" text-anchor="middle">picks a tool</text>
+  <text class="lab" x="866" y="326">800 ms</text>
+  <text class="note" x="866" y="345">2,900 in + 60 out tokens</text>
+
+  <!-- row 4: tool 1040 to 1360 -->
+  <text class="note" x="92" y="380">tool: get_order</text>
+  <rect class="step" x="450" y="363" width="40" height="24" rx="2"/>
+  <text class="lab" x="866" y="372">320 ms</text>
+  <text class="note" x="866" y="391">status ok, 1 order row</text>
+
+  <!-- row 5: LLM call 2, 1360 to 3960 -->
+  <text class="key" x="92" y="426">LLM call 2</text>
+  <rect class="llm" x="490" y="409" width="325" height="24" rx="3"/>
+  <text class="on" x="652" y="426" text-anchor="middle">writes the answer, token by token</text>
+  <text class="lab" x="866" y="418">2,600 ms</text>
+  <text class="note" x="866" y="437">3,150 in + 240 out tokens</text>
+
+  <!-- row 6: output guardrail 3960 to 4100 -->
+  <text class="note" x="92" y="472">guardrail: output</text>
+  <rect class="step" x="815" y="455" width="17.5" height="24" rx="2"/>
+  <text class="lab" x="866" y="464">140 ms</text>
+  <text class="note" x="866" y="483">format ok, faithfulness: pass</text>
+
+  <!-- bottom panels -->
+  <rect class="panel" x="40" y="518" width="362" height="142" rx="10"/>
+  <text class="lab" x="56" y="546">Totals on the root span</text>
+  <text class="key" x="56" y="572">Model calls: 3,400 ms, 83% of the total</text>
+  <text class="note" x="56" y="594">Tokens: 6,050 in, 300 out</text>
+  <text class="note" x="56" y="616">Cost: 0.023 USD at assumed prices of 3</text>
+  <text class="note" x="56" y="638">and 15 USD per million in and out tokens</text>
+
+  <rect class="panel" x="418" y="518" width="362" height="142" rx="10"/>
+  <text class="lab" x="434" y="546">Every span records</text>
+  <text class="note" x="434" y="572">trace id, span id, parent span id</text>
+  <text class="note" x="434" y="594">name, start time, duration, status</text>
+  <text class="note" x="434" y="616">attributes: model, prompt version,</text>
+  <text class="note" x="434" y="638">tokens, chunk ids, verdict, error</text>
+
+  <rect class="panel" x="796" y="518" width="364" height="142" rx="10"/>
+  <text class="lab" x="812" y="546">What this trace tells you</text>
+  <text class="note" x="812" y="572">Retrieval is 180 ms: not the bottleneck.</text>
+  <text class="note" x="812" y="594">Output tokens set the time: call 2</text>
+  <text class="note" x="812" y="616">writes 240 tokens and takes 2,600 ms.</text>
+  <text class="note" x="812" y="638">Wrong answer? Read the chunk ids first.</text>
+</svg>

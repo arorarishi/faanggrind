@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 664" width="1200" height="664" role="img" aria-labelledby="t d">
+  <title id="t">An LLM inference platform on Kubernetes</title>
+  <desc id="d">Clients call an OpenAI-compatible gateway that checks keys, quotas and concurrent streams and meters tokens. An orchestrator routes each request to a healthy GPU node. Each GPU node runs one vLLM replica per model with the weights loaded from an S3 cache. DCGM and vLLM metrics flow to Prometheus, and KEDA and Karpenter scale replicas and nodes on queue depth.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .gpu { fill: #121612; stroke: #F2C14B; stroke-width: 1.5; }
+    .tel { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .edge { stroke: #8A9185; stroke-width: 1.5; fill: none; }
+    .watch { stroke: #7CC4F8; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="664" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">LLM inference platform: gateway, orchestrator, GPU nodes, telemetry</text>
+  <text class="sub" x="40" y="78">Lime: the request path. Dashed blue: metrics and scaling. The GPU is the only expensive box, so everything else exists to keep it busy.</text>
+
+  <!-- request path row -->
+  <rect class="box" x="40" y="110" width="140" height="70" rx="8"/>
+  <text class="lab" x="110" y="140" text-anchor="middle">Clients</text>
+  <text class="small" x="110" y="160" text-anchor="middle">POST /v1/chat</text>
+
+  <rect class="hot" x="210" y="104" width="290" height="82" rx="8"/>
+  <text class="key" x="355" y="128" text-anchor="middle">OpenAI-compatible gateway</text>
+  <text class="small" x="355" y="148" text-anchor="middle">API key or JWT, per-model routing</text>
+  <text class="small" x="355" y="166" text-anchor="middle">quotas, streams, token metering</text>
+
+  <rect class="box" x="530" y="104" width="230" height="82" rx="8"/>
+  <text class="lab" x="645" y="128" text-anchor="middle">Orchestrator</text>
+  <text class="small" x="645" y="148" text-anchor="middle">least-loaded healthy replica</text>
+  <text class="small" x="645" y="166" text-anchor="middle">heartbeats, Redis shared state</text>
+
+  <rect class="box" x="800" y="110" width="150" height="70" rx="8"/>
+  <text class="lab" x="875" y="140" text-anchor="middle">Redis</text>
+  <text class="small" x="875" y="160" text-anchor="middle">routing state, quotas</text>
+
+  <path class="flow" d="M180 145L204 145" marker-end="url(#a)"/>
+  <path class="flow" d="M500 145L524 145" marker-end="url(#a)"/>
+  <path class="edge" d="M760 145L794 145" marker-end="url(#g)"/>
+  <text class="small" x="990" y="140">streamed tokens flow back</text>
+  <text class="small" x="990" y="158">along the same path</text>
+
+  <!-- GPU nodes band -->
+  <rect class="band" x="40" y="220" width="740" height="284" rx="10"/>
+  <text class="lab" x="56" y="246">GPU node pool</text>
+  <text class="small" x="190" y="246">Karpenter NodePool</text>
+  <text class="small" x="56" y="488">g6 or g6e instances, taint nvidia.com/gpu, accelerated AMI; each node is one replica of one model</text>
+
+  <rect class="gpu" x="56" y="266" width="340" height="196" rx="8"/>
+  <text class="amber" x="72" y="290">GPU node 1: 1 GPU, 80 GB</text>
+  <rect class="box" x="72" y="304" width="308" height="64" rx="6"/>
+  <text class="note" x="226" y="328" text-anchor="middle">vLLM replica: llama-8b</text>
+  <text class="small" x="226" y="348" text-anchor="middle">continuous batching, KV-cache, /metrics</text>
+  <rect class="tel" x="72" y="380" width="148" height="64" rx="6"/>
+  <text class="note" x="146" y="404" text-anchor="middle">DCGM exporter</text>
+  <text class="small" x="146" y="424" text-anchor="middle">GPU util, FB used</text>
+  <rect class="box" x="232" y="380" width="148" height="64" rx="6"/>
+  <text class="note" x="306" y="404" text-anchor="middle">weights cache</text>
+  <text class="small" x="306" y="424" text-anchor="middle">hostPath or PVC</text>
+
+  <rect class="gpu" x="424" y="266" width="340" height="196" rx="8"/>
+  <text class="amber" x="440" y="290">GPU node 2: 1 GPU, 80 GB</text>
+  <rect class="box" x="440" y="304" width="308" height="64" rx="6"/>
+  <text class="note" x="594" y="328" text-anchor="middle">vLLM replica: llama-8b</text>
+  <text class="small" x="594" y="348" text-anchor="middle">one pod per GPU, readiness after load</text>
+  <rect class="tel" x="440" y="380" width="148" height="64" rx="6"/>
+  <text class="note" x="514" y="404" text-anchor="middle">DCGM exporter</text>
+  <text class="small" x="514" y="424" text-anchor="middle">port 9400</text>
+  <rect class="box" x="600" y="380" width="148" height="64" rx="6"/>
+  <text class="note" x="674" y="404" text-anchor="middle">weights cache</text>
+  <text class="small" x="674" y="424" text-anchor="middle">second replica: no pull</text>
+
+  <!-- orchestrator to replicas -->
+  <path class="flow" d="M600 186L600 206L350 206L350 298" marker-end="url(#a)"/>
+  <path class="flow" d="M660 186L660 206L720 206L720 298" marker-end="url(#a)"/>
+
+  <!-- model storage -->
+  <rect class="box" x="820" y="266" width="340" height="90" rx="8"/>
+  <text class="lab" x="990" y="292" text-anchor="middle">Model storage: S3</text>
+  <text class="small" x="990" y="312" text-anchor="middle">weights never in the image</text>
+  <text class="small" x="990" y="332" text-anchor="middle">FSx for Lustre for large shared fleets</text>
+  <path class="edge" d="M820 340L800 340L800 412L756 412" marker-end="url(#g)"/>
+  <text class="small" x="836" y="372">pulled once per node on first start</text>
+
+  <!-- telemetry and scaling -->
+  <rect class="tel" x="820" y="400" width="340" height="80" rx="8"/>
+  <text class="lab" x="990" y="426" text-anchor="middle">Prometheus</text>
+  <text class="small" x="990" y="446" text-anchor="middle">vllm:num_requests_waiting, kv_cache_usage_perc</text>
+  <text class="small" x="990" y="466" text-anchor="middle">time_to_first_token, DCGM_FI_DEV_FB_USED</text>
+  <path class="watch" d="M748 330L790 330L790 440L812 440" marker-end="url(#b)"/>
+
+  <rect class="tel" x="40" y="524" width="340" height="66" rx="8"/>
+  <text class="lab" x="210" y="550" text-anchor="middle">KEDA ScaledObject</text>
+  <text class="small" x="210" y="570" text-anchor="middle">adds a vLLM replica per 8 waiting requests</text>
+  <rect class="tel" x="420" y="524" width="340" height="66" rx="8"/>
+  <text class="lab" x="590" y="550" text-anchor="middle">Karpenter</text>
+  <text class="small" x="590" y="570" text-anchor="middle">Pending GPU pod: launches a g6 node in minutes</text>
+  <rect class="box" x="820" y="524" width="340" height="66" rx="8"/>
+  <text class="lab" x="990" y="550" text-anchor="middle">Grafana</text>
+  <text class="small" x="990" y="570" text-anchor="middle">TTFT, tokens per second per GPU, utilisation</text>
+
+  <path class="watch" d="M820 470L800 470L800 612L210 612L210 596" marker-end="url(#b)"/>
+  <path class="watch" d="M380 557L412 557" marker-end="url(#b)"/>
+  <path class="edge" d="M990 480L990 518" marker-end="url(#g)"/>
+  <text class="small" x="500" y="606">queue depth drives scaling</text>
+
+  <text class="note" x="40" y="644">Scale early and scale down late: a new replica needs a node and a model load, and an idle GPU costs the same per hour as a busy one.</text>
+</svg>

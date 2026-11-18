@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-labelledby="t d">
+  <title id="t">How an image becomes tokens: patches, vision encoder, projector, language model</title>
+  <desc id="d">A 224 by 224 pixel image is cut into a 14 by 14 grid of 16 pixel patches. Each patch is flattened into 768 numbers, a vision encoder turns the 196 patches into 196 vectors, a projector maps them to the language model's embedding width, and the language model reads 196 image tokens followed by text tokens as one sequence.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .small { font-size: 13px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .blue { font-size: 14px; font-weight: 600; fill: #7CC4F8; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .grid { stroke: #C6F432; stroke-width: 1.5; fill: none; }
+    .patch { fill: #1B2118; stroke: #C6F432; stroke-width: 1.5; }
+    .layer { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .flow { stroke: #8A9185; stroke-width: 2; fill: none; }
+    .wire { stroke: #4A5348; stroke-width: 1.2; fill: none; }
+    .itok { fill: #C6F432; }
+    .ttok { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 1.5; }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="600" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">How an image becomes tokens</text>
+  <text class="sub" x="40" y="78">Example: a 224 x 224 image with 16 x 16 pixel patches. The grid is drawn as 4 x 4 to keep it readable.</text>
+
+  <!-- five stage panels -->
+  <rect class="panel" x="40" y="104" width="200" height="268" rx="10"/>
+  <rect class="panel" x="268" y="104" width="220" height="268" rx="10"/>
+  <rect class="panel" x="516" y="104" width="196" height="268" rx="10"/>
+  <rect class="panel" x="740" y="104" width="196" height="268" rx="10"/>
+  <rect class="panel" x="964" y="104" width="196" height="268" rx="10"/>
+
+  <!-- arrows between panels -->
+  <path class="flow" d="M242 238L264 238" marker-end="url(#ar)"/>
+  <path class="flow" d="M490 238L512 238" marker-end="url(#ar)"/>
+  <path class="flow" d="M714 238L736 238" marker-end="url(#ar)"/>
+  <path class="flow" d="M938 238L960 238" marker-end="url(#ar)"/>
+
+  <!-- 1. image -->
+  <text class="lab" x="56" y="132">1. Image</text>
+  <rect x="70" y="150" width="140" height="140" fill="#0B0E0B" stroke="#8A9185" stroke-width="1.5"/>
+  <circle cx="172" cy="184" r="16" fill="#F2C14B"/>
+  <path d="M70 290L112 222L140 258L166 232L210 290z" fill="#2A312A" stroke="#8A9185" stroke-width="1.2"/>
+  <path class="grid" stroke-dasharray="4 4" d="M105 150L105 290M140 150L140 290M175 150L175 290M70 185L210 185M70 220L210 220M70 255L210 255"/>
+  <text class="note" x="56" y="316">224 x 224 pixels</text>
+  <text class="note" x="56" y="336">3 colour channels</text>
+
+  <!-- 2. patches -->
+  <text class="lab" x="284" y="132">2. Cut into patches</text>
+  <g>
+    <rect class="patch" x="310" y="152" width="28" height="28"/><rect class="patch" x="346" y="152" width="28" height="28"/><rect class="patch" x="382" y="152" width="28" height="28"/><rect class="patch" x="418" y="152" width="28" height="28"/>
+    <rect class="patch" x="310" y="188" width="28" height="28"/><rect class="patch" x="346" y="188" width="28" height="28"/><rect class="patch" x="382" y="188" width="28" height="28"/><rect class="patch" x="418" y="188" width="28" height="28"/>
+    <rect class="patch" x="310" y="224" width="28" height="28"/><rect class="patch" x="346" y="224" width="28" height="28"/><rect class="patch" x="382" y="224" width="28" height="28"/><rect class="patch" x="418" y="224" width="28" height="28"/>
+    <rect class="patch" x="310" y="260" width="28" height="28"/><rect class="patch" x="346" y="260" width="28" height="28"/><rect class="patch" x="382" y="260" width="28" height="28"/><rect class="patch" x="418" y="260" width="28" height="28"/>
+  </g>
+  <text class="key" x="284" y="316">14 x 14 = 196 patches</text>
+  <text class="note" x="284" y="336">each 16 x 16 x 3 = 768</text>
+  <text class="note" x="284" y="356">numbers, flattened</text>
+
+  <!-- 3. vision encoder -->
+  <text class="lab" x="532" y="132">3. Vision encoder</text>
+  <rect class="layer" x="544" y="156" width="140" height="34" rx="6"/>
+  <rect class="layer" x="544" y="202" width="140" height="34" rx="6"/>
+  <rect class="layer" x="544" y="248" width="140" height="34" rx="6"/>
+  <text class="small" x="614" y="178" text-anchor="middle">attention + MLP</text>
+  <text class="small" x="614" y="224" text-anchor="middle">attention + MLP</text>
+  <text class="small" x="614" y="270" text-anchor="middle">attention + MLP</text>
+  <text class="note" x="532" y="316">a transformer over</text>
+  <text class="note" x="532" y="336">the 196 patches</text>
+  <text class="key" x="532" y="356">out: 196 vectors</text>
+
+  <!-- 4. projector -->
+  <text class="lab" x="756" y="132">4. Projector</text>
+  <path class="wire" d="M802 166L874 176M802 166L874 216M802 166L874 256M802 206L874 176M802 206L874 216M802 206L874 256M802 246L874 176M802 246L874 216M802 246L874 256M802 276L874 176M802 276L874 216M802 276L874 256"/>
+  <rect x="780" y="156" width="22" height="130" rx="4" fill="#0B0E0B" stroke="#8A9185" stroke-width="1.5"/>
+  <rect x="874" y="166" width="22" height="100" rx="4" fill="#C6F432"/>
+  <text class="note" x="756" y="316">linear layer or MLP</text>
+  <text class="note" x="756" y="336">maps each vector to</text>
+  <text class="key" x="756" y="356">the LLM's width</text>
+
+  <!-- 5. language model -->
+  <text class="lab" x="980" y="132">5. Language model</text>
+  <rect class="layer" x="992" y="156" width="140" height="126" rx="8"/>
+  <text class="lab" x="1062" y="214" text-anchor="middle">LLM</text>
+  <text class="small" x="1062" y="238" text-anchor="middle">decoder blocks</text>
+  <text class="note" x="980" y="316">image tokens sit next</text>
+  <text class="note" x="980" y="336">to text tokens in</text>
+  <text class="note" x="980" y="356">one context</text>
+
+  <!-- the sequence -->
+  <rect class="panel" x="40" y="396" width="1120" height="172" rx="10"/>
+  <text class="lab" x="60" y="426">What the language model reads: one sequence</text>
+  <g>
+    <rect class="itok" x="60" y="444" width="30" height="30" rx="4"/>
+    <rect class="itok" x="96" y="444" width="30" height="30" rx="4"/>
+    <rect class="itok" x="132" y="444" width="30" height="30" rx="4"/>
+    <rect class="itok" x="168" y="444" width="30" height="30" rx="4"/>
+    <rect class="itok" x="204" y="444" width="30" height="30" rx="4"/>
+    <rect class="itok" x="240" y="444" width="30" height="30" rx="4"/>
+    <text class="key" x="290" y="464" text-anchor="middle" style="font-size:18px">...</text>
+    <rect class="itok" x="310" y="444" width="30" height="30" rx="4"/>
+    <rect class="itok" x="346" y="444" width="30" height="30" rx="4"/>
+  </g>
+  <text class="key" x="60" y="498">196 image tokens</text>
+  <g>
+    <rect class="ttok" x="400" y="444" width="62" height="30" rx="4"/>
+    <rect class="ttok" x="468" y="444" width="62" height="30" rx="4"/>
+    <rect class="ttok" x="536" y="444" width="62" height="30" rx="4"/>
+    <rect class="ttok" x="604" y="444" width="62" height="30" rx="4"/>
+    <rect class="ttok" x="672" y="444" width="62" height="30" rx="4"/>
+    <rect class="ttok" x="740" y="444" width="62" height="30" rx="4"/>
+    <text class="small" x="431" y="464" text-anchor="middle">What</text>
+    <text class="small" x="499" y="464" text-anchor="middle">does</text>
+    <text class="small" x="567" y="464" text-anchor="middle">the</text>
+    <text class="small" x="635" y="464" text-anchor="middle">chart</text>
+    <text class="small" x="703" y="464" text-anchor="middle">show</text>
+    <text class="small" x="771" y="464" text-anchor="middle">?</text>
+  </g>
+  <text class="blue" x="400" y="498">text tokens</text>
+  <text class="note" x="836" y="452">Attention treats both kinds the same:</text>
+  <text class="note" x="836" y="472">a text token can look at any image token.</text>
+  <text class="note" x="60" y="542">More pixels or smaller patches mean more tokens: 336 px with 14 px patches gives 24 x 24 = 576.</text>
+</svg>

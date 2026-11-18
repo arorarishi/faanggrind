@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 740" width="1200" height="740" role="img" aria-labelledby="t d">
+  <title id="t">Fine-tuning workflow from the decision to a served adapter, with a gate after every stage</title>
+  <desc id="d">Six stages in a column: decide, build the dataset, format and split, train with QLoRA, evaluate against the base, merge and serve. Between each pair of stages is a gate, a check that must pass before the next stage starts. Beside each gate is what to do when it fails.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .col { font-size: 13px; font-weight: 600; fill: #8A9185; letter-spacing: 1px; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .gate { font-size: 14px; fill: #F2F4EC; }
+    .key { font-size: 13px; font-weight: 700; fill: #C6F432; letter-spacing: 1px; }
+    .num { font-size: 15px; font-weight: 700; fill: #0B0E0B; text-anchor: middle; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .pill { fill: #0B0E0B; stroke: #C6F432; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2; fill: none; }
+    .fail { stroke: #F2C14B; stroke-width: 1.5; stroke-dasharray: 4 5; fill: none; }
+  </style>
+  <defs>
+    <marker id="k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="740" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Fine-tuning workflow: a gate after every stage</text>
+  <text class="sub" x="40" y="78">Pass the check before you spend time on the next stage. Numbers are from this lesson's ticket-triage example.</text>
+  <text class="col" x="40" y="106">STAGE, THEN THE GATE TO PASS</text>
+  <text class="col" x="846" y="106">WHEN THE GATE FAILS</text>
+
+  <rect class="band" x="40" y="120" width="740" height="54" rx="10"/>
+  <circle cx="72" cy="147" r="14" fill="#C6F432"/>
+  <text class="num" x="72" y="152">1</text>
+  <text class="lab" x="100" y="143">Decide</text>
+  <text class="note" x="100" y="163">Measure the best prompt and RAG first. That score is the bar to beat.</text>
+  <path class="flow" d="M72 174L72 224" marker-end="url(#k)"/>
+  <path class="flow" d="M72 200L100 200"/>
+  <rect class="pill" x="100" y="184" width="680" height="32" rx="16"/>
+  <text class="key" x="118" y="205">GATE</text>
+  <text class="gate" x="172" y="205">Stable task, real eval, 500+ good examples, and prompting misses the target</text>
+  <path class="fail" d="M780 200L834 200" marker-end="url(#m)"/>
+  <text class="amber" x="846" y="197">Stay with prompting and RAG</text>
+  <text class="note" x="846" y="217">Cheaper to change, nothing to retrain.</text>
+  <rect class="band" x="40" y="226" width="740" height="54" rx="10"/>
+  <circle cx="72" cy="253" r="14" fill="#C6F432"/>
+  <text class="num" x="72" y="258">2</text>
+  <text class="lab" x="100" y="249">Build the dataset</text>
+  <text class="note" x="100" y="269">60,000 raw tickets become 2,400 clean examples: filter, mask PII, dedupe, balance.</text>
+  <path class="flow" d="M72 280L72 330" marker-end="url(#k)"/>
+  <path class="flow" d="M72 306L100 306"/>
+  <rect class="pill" x="100" y="290" width="680" height="32" rx="16"/>
+  <text class="key" x="118" y="311">GATE</text>
+  <text class="gate" x="172" y="311">Every target parses, PII masked, no duplicates, nothing over max length</text>
+  <path class="fail" d="M780 306L834 306" marker-end="url(#m)"/>
+  <text class="amber" x="846" y="303">Fix the data first</text>
+  <text class="note" x="846" y="323">No hyperparameter repairs bad labels.</text>
+  <rect class="band" x="40" y="332" width="740" height="54" rx="10"/>
+  <circle cx="72" cy="359" r="14" fill="#C6F432"/>
+  <text class="num" x="72" y="364">3</text>
+  <text class="lab" x="100" y="355">Format and split</text>
+  <text class="note" x="100" y="375">Chat template on every example. Split 1,920 / 240 / 240 by customer.</text>
+  <path class="flow" d="M72 386L72 436" marker-end="url(#k)"/>
+  <path class="flow" d="M72 412L100 412"/>
+  <rect class="pill" x="100" y="396" width="680" height="32" rx="16"/>
+  <text class="key" x="118" y="417">GATE</text>
+  <text class="gate" x="172" y="417">One rendered example read by eye. No customer in two splits.</text>
+  <path class="fail" d="M780 412L834 412" marker-end="url(#m)"/>
+  <text class="amber" x="846" y="409">Stop: template or leak bug</text>
+  <text class="note" x="846" y="429">The most common cause of a worse model.</text>
+  <rect class="band" x="40" y="438" width="740" height="54" rx="10"/>
+  <circle cx="72" cy="465" r="14" fill="#C6F432"/>
+  <text class="num" x="72" y="470">4</text>
+  <text class="lab" x="100" y="461">Train with QLoRA</text>
+  <text class="note" x="100" y="481">4-bit base, rank 16, alpha 32, 3 epochs = 360 steps. Evaluate every 30 steps.</text>
+  <path class="flow" d="M72 492L72 542" marker-end="url(#k)"/>
+  <path class="flow" d="M72 518L100 518"/>
+  <rect class="pill" x="100" y="502" width="680" height="32" rx="16"/>
+  <text class="key" x="118" y="523">GATE</text>
+  <text class="gate" x="172" y="523">Validation loss fell. Keep the checkpoint where it was lowest (step 240).</text>
+  <path class="fail" d="M780 518L834 518" marker-end="url(#m)"/>
+  <text class="amber" x="846" y="515">Change one thing, rerun</text>
+  <text class="note" x="846" y="535">Learning rate, epochs, then the data.</text>
+  <rect class="band" x="40" y="544" width="740" height="54" rx="10"/>
+  <circle cx="72" cy="571" r="14" fill="#C6F432"/>
+  <text class="num" x="72" y="576">5</text>
+  <text class="lab" x="100" y="567">Evaluate against the base</text>
+  <text class="note" x="100" y="587">Base, best prompt and tuned model on the same 240 test tickets, greedy decoding.</text>
+  <path class="flow" d="M72 598L72 648" marker-end="url(#k)"/>
+  <path class="flow" d="M72 624L100 624"/>
+  <rect class="pill" x="100" y="608" width="680" height="32" rx="16"/>
+  <text class="key" x="118" y="629">GATE</text>
+  <text class="gate" x="172" y="629">Beats the best prompt by more than the noise. No drop on general tasks.</text>
+  <path class="fail" d="M780 624L834 624" marker-end="url(#m)"/>
+  <text class="amber" x="846" y="621">Do not ship</text>
+  <text class="note" x="846" y="641">Read 20 failures, then back to stage 2.</text>
+  <rect class="band" x="40" y="650" width="740" height="54" rx="10"/>
+  <circle cx="72" cy="677" r="14" fill="#C6F432"/>
+  <text class="num" x="72" y="682">6</text>
+  <text class="lab" x="100" y="673">Merge and serve</text>
+  <text class="note" x="100" y="693">Merge for one model, or keep the adapter for multi-LoRA. Re-score, then canary.</text>
+  <text class="key" x="846" y="673">RESULT IN THE EXAMPLE</text>
+  <text class="note" x="846" y="693">Category accuracy: 80% to 91%.</text>
+</svg>

@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 784" width="1200" height="784" role="img" aria-labelledby="t d">
+  <title id="t">The DevOps roadmap as a map of the stack, with every revision term placed in its module</title>
+  <desc id="d">Six horizontal bands, one per roadmap module: Foundations, Build and ship, Cloud and IaC, Kubernetes, Operate, Contribute. Each band lists the revision-sheet terms that belong to it as small chips. The Kubernetes band is highlighted because it holds the most terms and decides most interviews.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 17px; font-weight: 700; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .chip { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.2; }
+    .chiphot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 1.6; }
+    .chipx { fill: #121612; stroke: #4A5348; stroke-width: 1; stroke-dasharray: 4 3; }
+    .ct { font-size: 14px; fill: #F2F4EC; }
+    .cthot { font-size: 14px; fill: #C6F432; font-weight: 600; }
+    .ctx { font-size: 14px; fill: #B7BDB1; }
+  </style>
+  <rect x="0" y="0" width="1200" height="784" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The roadmap as a map: where each revision term lives</text>
+  <text class="sub" x="40" y="78">Solid chips: the 42 revision-sheet terms plus 3 operator terms from lessons 25 and 26. Dashed: extra ideas asked in the same round.</text>
+  <text class="sub" x="40" y="98">Lime marks the Kubernetes band: most scenario questions start there.</text>
+  <rect x="40" y="124" width="1120" height="106" rx="10" fill="#121612" stroke="#2A312A" stroke-width="1"/>
+  <text class="lab" x="56" y="158" fill="#F2F4EC">Foundations</text>
+  <text class="small" x="56" y="178">lessons 1 to 6</text>
+  <rect class="chip" x="276" y="140" width="110" height="32" rx="7"/>
+  <text class="ct" x="331" y="161" text-anchor="middle">idempotency</text>
+  <rect class="chip" x="396" y="140" width="118" height="32" rx="7"/>
+  <text class="ct" x="455" y="161" text-anchor="middle">token bucket</text>
+  <rect class="chip" x="524" y="140" width="118" height="32" rx="7"/>
+  <text class="ct" x="583" y="161" text-anchor="middle">DORA metrics</text>
+  <rect class="chipx" x="652" y="140" width="126" height="32" rx="7"/>
+  <text class="ctx" x="715" y="161" text-anchor="middle">TCP, DNS, TLS</text>
+  <rect class="chipx" x="788" y="140" width="173" height="32" rx="7"/>
+  <text class="ctx" x="875" y="161" text-anchor="middle">systemd, journalctl</text>
+  <rect class="chipx" x="276" y="182" width="173" height="32" rx="7"/>
+  <text class="ctx" x="362" y="203" text-anchor="middle">git rebase vs merge</text>
+  <rect x="40" y="242" width="1120" height="64" rx="10" fill="#121612" stroke="#2A312A" stroke-width="1"/>
+  <text class="lab" x="56" y="276" fill="#F2F4EC">Build and ship</text>
+  <text class="small" x="56" y="296">lessons 7 to 10</text>
+  <rect class="chip" x="276" y="258" width="142" height="32" rx="7"/>
+  <text class="ct" x="347" y="279" text-anchor="middle">container vs VM</text>
+  <rect class="chip" x="428" y="258" width="118" height="32" rx="7"/>
+  <text class="ct" x="487" y="279" text-anchor="middle">image layers</text>
+  <rect class="chip" x="556" y="258" width="71" height="32" rx="7"/>
+  <text class="ct" x="591" y="279" text-anchor="middle">canary</text>
+  <rect class="chip" x="637" y="258" width="102" height="32" rx="7"/>
+  <text class="ct" x="688" y="279" text-anchor="middle">blue-green</text>
+  <rect class="chip" x="749" y="258" width="55" height="32" rx="7"/>
+  <text class="ct" x="777" y="279" text-anchor="middle">OIDC</text>
+  <rect class="chipx" x="814" y="258" width="173" height="32" rx="7"/>
+  <text class="ctx" x="901" y="279" text-anchor="middle">Nginx reverse proxy</text>
+  <rect x="40" y="318" width="1120" height="64" rx="10" fill="#121612" stroke="#2A312A" stroke-width="1"/>
+  <text class="lab" x="56" y="352" fill="#F2F4EC">Cloud and IaC</text>
+  <text class="small" x="56" y="372">lessons 11 to 14</text>
+  <rect class="chip" x="276" y="334" width="142" height="32" rx="7"/>
+  <text class="ct" x="347" y="355" text-anchor="middle">Terraform state</text>
+  <rect class="chip" x="428" y="334" width="63" height="32" rx="7"/>
+  <text class="ct" x="459" y="355" text-anchor="middle">drift</text>
+  <rect class="chip" x="501" y="334" width="71" height="32" rx="7"/>
+  <text class="ct" x="536" y="355" text-anchor="middle">module</text>
+  <rect class="chip" x="582" y="334" width="181" height="32" rx="7"/>
+  <text class="ct" x="672" y="355" text-anchor="middle">IRSA vs Pod Identity</text>
+  <rect class="chipx" x="773" y="334" width="110" height="32" rx="7"/>
+  <text class="ctx" x="828" y="355" text-anchor="middle">VPC and NAT</text>
+  <rect class="chipx" x="893" y="334" width="102" height="32" rx="7"/>
+  <text class="ctx" x="944" y="355" text-anchor="middle">ALB vs NLB</text>
+  <rect x="40" y="394" width="1120" height="148" rx="10" fill="#121612" stroke="#C6F432" stroke-width="2"/>
+  <text class="lab" x="56" y="428" fill="#C6F432">Kubernetes</text>
+  <text class="small" x="56" y="448">lessons 15 to 19</text>
+  <rect class="chiphot" x="276" y="410" width="48" height="32" rx="7"/>
+  <text class="cthot" x="300" y="431" text-anchor="middle">Pod</text>
+  <rect class="chiphot" x="334" y="410" width="102" height="32" rx="7"/>
+  <text class="cthot" x="385" y="431" text-anchor="middle">Deployment</text>
+  <rect class="chiphot" x="446" y="410" width="126" height="32" rx="7"/>
+  <text class="cthot" x="509" y="431" text-anchor="middle">Service types</text>
+  <rect class="chiphot" x="582" y="410" width="196" height="32" rx="7"/>
+  <text class="cthot" x="680" y="431" text-anchor="middle">Ingress vs Gateway API</text>
+  <rect class="chiphot" x="788" y="410" width="165" height="32" rx="7"/>
+  <text class="cthot" x="871" y="431" text-anchor="middle">requests vs limits</text>
+  <rect class="chiphot" x="963" y="410" width="48" height="32" rx="7"/>
+  <text class="cthot" x="987" y="431" text-anchor="middle">QoS</text>
+  <rect class="chiphot" x="1021" y="410" width="71" height="32" rx="7"/>
+  <text class="cthot" x="1056" y="431" text-anchor="middle">probes</text>
+  <rect class="chiphot" x="276" y="452" width="110" height="32" rx="7"/>
+  <text class="cthot" x="331" y="473" text-anchor="middle">HPA formula</text>
+  <rect class="chiphot" x="396" y="452" width="48" height="32" rx="7"/>
+  <text class="cthot" x="420" y="473" text-anchor="middle">PDB</text>
+  <rect class="chiphot" x="454" y="452" width="71" height="32" rx="7"/>
+  <text class="cthot" x="489" y="473" text-anchor="middle">taints</text>
+  <rect class="chiphot" x="535" y="452" width="55" height="32" rx="7"/>
+  <text class="cthot" x="562" y="473" text-anchor="middle">RBAC</text>
+  <rect class="chiphot" x="600" y="452" width="48" height="32" rx="7"/>
+  <text class="cthot" x="624" y="473" text-anchor="middle">CNI</text>
+  <rect class="chiphot" x="658" y="452" width="126" height="32" rx="7"/>
+  <text class="cthot" x="721" y="473" text-anchor="middle">EndpointSlice</text>
+  <rect class="chiphot" x="794" y="452" width="95" height="32" rx="7"/>
+  <text class="cthot" x="841" y="473" text-anchor="middle">PV vs PVC</text>
+  <rect class="chiphot" x="898" y="452" width="110" height="32" rx="7"/>
+  <text class="cthot" x="953" y="473" text-anchor="middle">StatefulSet</text>
+  <rect class="chiphot" x="1018" y="452" width="118" height="32" rx="7"/>
+  <text class="cthot" x="1077" y="473" text-anchor="middle">Helm release</text>
+  <rect class="chiphot" x="276" y="494" width="118" height="32" rx="7"/>
+  <text class="cthot" x="335" y="515" text-anchor="middle">Argo CD sync</text>
+  <rect x="40" y="554" width="1120" height="106" rx="10" fill="#121612" stroke="#2A312A" stroke-width="1"/>
+  <text class="lab" x="56" y="588" fill="#F2F4EC">Operate</text>
+  <text class="small" x="56" y="608">lessons 20 to 24</text>
+  <rect class="chip" x="276" y="570" width="48" height="32" rx="7"/>
+  <text class="ct" x="300" y="591" text-anchor="middle">SLI</text>
+  <rect class="chip" x="334" y="570" width="48" height="32" rx="7"/>
+  <text class="ct" x="357" y="591" text-anchor="middle">SLO</text>
+  <rect class="chip" x="391" y="570" width="118" height="32" rx="7"/>
+  <text class="ct" x="450" y="591" text-anchor="middle">error budget</text>
+  <rect class="chip" x="519" y="570" width="95" height="32" rx="7"/>
+  <text class="ct" x="566" y="591" text-anchor="middle">burn rate</text>
+  <rect class="chip" x="624" y="570" width="48" height="32" rx="7"/>
+  <text class="ct" x="647" y="591" text-anchor="middle">RED</text>
+  <rect class="chip" x="681" y="570" width="134" height="32" rx="7"/>
+  <text class="ct" x="748" y="591" text-anchor="middle">golden signals</text>
+  <rect class="chip" x="825" y="570" width="110" height="32" rx="7"/>
+  <text class="ct" x="880" y="591" text-anchor="middle">cardinality</text>
+  <rect class="chip" x="945" y="570" width="165" height="32" rx="7"/>
+  <text class="ct" x="1028" y="591" text-anchor="middle">histogram_quantile</text>
+  <rect class="chip" x="276" y="612" width="63" height="32" rx="7"/>
+  <text class="ct" x="308" y="633" text-anchor="middle">trace</text>
+  <rect class="chip" x="349" y="612" width="55" height="32" rx="7"/>
+  <text class="ct" x="377" y="633" text-anchor="middle">SBOM</text>
+  <rect class="chip" x="415" y="612" width="71" height="32" rx="7"/>
+  <text class="ct" x="450" y="633" text-anchor="middle">cosign</text>
+  <rect class="chip" x="496" y="612" width="79" height="32" rx="7"/>
+  <text class="ct" x="535" y="633" text-anchor="middle">Kyverno</text>
+  <rect class="chip" x="584" y="612" width="110" height="32" rx="7"/>
+  <text class="ct" x="640" y="633" text-anchor="middle">RPO and RTO</text>
+  <rect x="40" y="672" width="1120" height="64" rx="10" fill="#121612" stroke="#7CC4F8" stroke-width="2"/>
+  <text class="lab" x="56" y="706" fill="#7CC4F8">Contribute</text>
+  <text class="small" x="56" y="726">lessons 25 to 26</text>
+  <rect class="chip" x="276" y="688" width="134" height="32" rx="7"/>
+  <text class="ct" x="343" y="709" text-anchor="middle">reconcile loop</text>
+  <rect class="chip" x="420" y="688" width="165" height="32" rx="7"/>
+  <text class="ct" x="502" y="709" text-anchor="middle">informer and cache</text>
+  <rect class="chip" x="595" y="688" width="165" height="32" rx="7"/>
+  <text class="ct" x="677" y="709" text-anchor="middle">CRD and controller</text>
+  <rect class="chipx" x="770" y="688" width="149" height="32" rx="7"/>
+  <text class="ctx" x="845" y="709" text-anchor="middle">good first issue</text>
+  <rect class="chipx" x="929" y="688" width="118" height="32" rx="7"/>
+  <text class="ctx" x="988" y="709" text-anchor="middle">LFX and GSoC</text>
+  <text class="note" x="40" y="770">Read the map top to bottom the night before: if a chip has no one-line answer in your head, that is the lesson to reopen.</text>
+</svg>

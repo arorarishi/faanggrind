@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-labelledby="t d">
+  <title id="t">The agent loop as a cycle with four exits</title>
+  <desc id="d">A cycle of three steps: the model decides, the tool runs, the observation returns. Four exits leave the cycle: a final answer, the step limit, the budget, and a pause for human approval that resumes from saved state.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .small { font-size: 13px; fill: #B7BDB1; }
+    .key { font-size: 15px; font-weight: 600; fill: #C6F432; }
+    .amber { font-size: 15px; font-weight: 600; fill: #F2C14B; }
+    .blue { font-size: 15px; font-weight: 600; fill: #7CC4F8; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .core { fill: #121612; stroke: #C6F432; stroke-width: 2; }
+    .gate { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .cyc { stroke: #C6F432; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .in { stroke: #B7BDB1; stroke-width: 2; fill: none; }
+    .xa { stroke: #F2C14B; stroke-width: 2; fill: none; }
+    .xb { stroke: #7CC4F8; stroke-width: 2; fill: none; }
+    .xl { stroke: #C6F432; stroke-width: 2; fill: none; }
+  </style>
+  <defs>
+    <marker id="ml" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#C6F432"/></marker>
+    <marker id="ma" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#F2C14B"/></marker>
+    <marker id="mb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7CC4F8"/></marker>
+    <marker id="mg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#B7BDB1"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="660" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The agent loop: one cycle, four exits</text>
+  <text class="sub" x="40" y="78">The model only decides. The harness runs the tool, returns the observation and owns every exit.</text>
+
+  <!-- entry -->
+  <rect class="panel" x="40" y="110" width="250" height="90" rx="10"/>
+  <text class="lab" x="56" y="138">Start: the goal</text>
+  <text class="note" x="56" y="162">system prompt, tool definitions</text>
+  <text class="note" x="56" y="182">and the user's task</text>
+  <path class="in" d="M290 155L414 155" marker-end="url(#mg)"/>
+
+  <!-- cycle boxes -->
+  <rect class="core" x="420" y="110" width="360" height="90" rx="10"/>
+  <text class="lab" x="600" y="140" text-anchor="middle">1. Model decides</text>
+  <text class="note" x="600" y="164" text-anchor="middle">reads all messages, then returns</text>
+  <text class="note" x="600" y="184" text-anchor="middle">a tool call or a final answer</text>
+
+  <rect class="core" x="630" y="450" width="240" height="90" rx="10"/>
+  <text class="lab" x="750" y="480" text-anchor="middle">2. Tool runs</text>
+  <text class="note" x="750" y="504" text-anchor="middle">your code checks the call</text>
+  <text class="note" x="750" y="524" text-anchor="middle">and executes it</text>
+
+  <rect class="core" x="330" y="450" width="240" height="90" rx="10"/>
+  <text class="lab" x="450" y="480" text-anchor="middle">3. Observation returns</text>
+  <text class="note" x="450" y="504" text-anchor="middle">result or error text is</text>
+  <text class="note" x="450" y="524" text-anchor="middle">added to the message list</text>
+
+  <!-- cycle arrows -->
+  <path class="cyc" d="M750 200L750 294" marker-end="url(#ml)"/>
+  <path class="cyc" d="M750 344L750 444" marker-end="url(#ml)"/>
+  <path class="cyc" d="M630 495L578 495" marker-end="url(#ml)"/>
+  <path class="cyc" d="M450 450L450 350" marker-end="url(#ml)"/>
+  <path class="cyc" d="M450 300L450 206" marker-end="url(#ml)"/>
+
+  <!-- gates -->
+  <rect class="gate" x="665" y="300" width="170" height="44" rx="22"/>
+  <text class="lab" x="750" y="328" text-anchor="middle" style="font-size:15px">needs approval?</text>
+  <rect class="gate" x="365" y="300" width="170" height="44" rx="22"/>
+  <text class="lab" x="450" y="328" text-anchor="middle" style="font-size:15px">limits left?</text>
+
+  <text class="small" x="762" y="400">no: run it</text>
+  <text class="small" x="462" y="258">yes: next step</text>
+  <text class="small" x="762" y="252">tool call</text>
+
+  <!-- exit 1: final answer -->
+  <path class="xl" d="M780 155L904 155" marker-end="url(#ml)"/>
+  <text class="small" x="842" y="145" text-anchor="middle">no tool call</text>
+  <rect class="panel" x="910" y="110" width="250" height="90" rx="10" style="stroke:#C6F432"/>
+  <text class="key" x="926" y="138">Exit 1: final answer</text>
+  <text class="note" x="926" y="162">the model replies with text</text>
+  <text class="note" x="926" y="182">only, so the task is done</text>
+
+  <!-- exits 2 and 3: limits -->
+  <path class="xa" d="M365 322L316 322"/>
+  <path class="xa" d="M316 290L316 390"/>
+  <path class="xa" d="M316 290L296 290" marker-end="url(#ma)"/>
+  <path class="xa" d="M316 390L296 390" marker-end="url(#ma)"/>
+  <text class="small" x="341" y="314" text-anchor="middle">no</text>
+  <rect class="panel" x="40" y="250" width="250" height="80" rx="10" style="stroke:#F2C14B"/>
+  <text class="amber" x="56" y="278">Exit 2: step limit</text>
+  <text class="note" x="56" y="302">max_steps used up, or the</text>
+  <text class="note" x="56" y="320">same call 3 times: stop</text>
+  <rect class="panel" x="40" y="350" width="250" height="80" rx="10" style="stroke:#F2C14B"/>
+  <text class="amber" x="56" y="378">Exit 3: budget</text>
+  <text class="note" x="56" y="402">tokens, time or money ran</text>
+  <text class="note" x="56" y="420">out: stop and report</text>
+
+  <!-- exit 4: human approval -->
+  <path class="xb" d="M835 322L904 322" marker-end="url(#mb)"/>
+  <text class="small" x="868" y="314" text-anchor="middle">yes</text>
+  <rect class="panel" x="910" y="282" width="250" height="80" rx="10" style="stroke:#7CC4F8"/>
+  <text class="blue" x="926" y="310">Exit 4: human approval</text>
+  <text class="note" x="926" y="334">risky tool: save the state,</text>
+  <text class="note" x="926" y="352">pause and wait for a person</text>
+  <path class="xb" d="M1035 362L1035 495L878 495" stroke-dasharray="6 6" marker-end="url(#mb)"/>
+  <text class="small" x="1047" y="424">approved:</text>
+  <text class="small" x="1047" y="442">resume from the</text>
+  <text class="small" x="1047" y="460">saved state</text>
+
+  <!-- bottom note -->
+  <rect class="panel" x="40" y="570" width="1120" height="62" rx="10"/>
+  <text class="key" x="56" y="596">Agent = model + harness.</text>
+  <text class="note" x="250" y="596">The harness is the prompt, tools, loop, context management, permissions and checkpoints.</text>
+  <text class="note" x="56" y="618">One trip around the cycle is one step. Every step sends the whole message list to the model again, so limits matter.</text>
+</svg>

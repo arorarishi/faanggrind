@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">The three Kubernetes autoscalers and what each one changes</title>
+  <desc id="d">HPA changes the replica count of a Deployment from metrics. VPA changes the CPU and memory requests of each pod. Karpenter or the Cluster Autoscaler changes the number and size of nodes when pods are Pending or nodes are underused. Each has its own input, output and reaction time, and the three must not fight.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .blue { font-size: 14px; font-weight: 600; fill: #7CC4F8; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .cold { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 2; }
+    .warm { fill: #0B0E0B; stroke: #F2C14B; stroke-width: 2; }
+    .pod { fill: #121612; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .flowb { stroke: #7CC4F8; stroke-width: 2.2; fill: none; }
+    .flowa { stroke: #F2C14B; stroke-width: 2.2; fill: none; }
+    .watch { stroke: #4A5348; stroke-width: 1.5; fill: none; stroke-dasharray: 5 5; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+    <marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Three autoscalers, three different knobs</text>
+  <text class="sub" x="40" y="78">Each one reads a different signal and writes a different field. They are stacked: HPA makes pods, Karpenter makes room for them.</text>
+
+  <!-- three controller columns -->
+  <rect class="hot" x="40" y="104" width="360" height="150" rx="10"/>
+  <text class="key" x="220" y="130" text-anchor="middle">HPA (HorizontalPodAutoscaler)</text>
+  <text class="note" x="56" y="156">reads: CPU or memory utilisation vs request,</text>
+  <text class="note" x="56" y="174">custom and external metrics (queue length)</text>
+  <text class="note" x="56" y="196">writes: spec.replicas of the Deployment</text>
+  <text class="small" x="56" y="218">every 15 s; scale-down window 300 s; tolerance 10%</text>
+  <text class="small" x="56" y="238">reacts in seconds, pods ready in 10 to 60 s</text>
+
+  <rect class="cold" x="420" y="104" width="360" height="150" rx="10"/>
+  <text class="blue" x="600" y="130" text-anchor="middle">VPA (VerticalPodAutoscaler)</text>
+  <text class="note" x="436" y="156">reads: history of actual CPU and memory use</text>
+  <text class="note" x="436" y="174">per container, over days</text>
+  <text class="note" x="436" y="196">writes: resources.requests (and limits) of pods</text>
+  <text class="small" x="436" y="218">modes: Off (recommend only), Initial, Recreate,</text>
+  <text class="small" x="436" y="238">InPlaceOrRecreate; never on the same metric as HPA</text>
+
+  <rect class="warm" x="800" y="104" width="360" height="150" rx="10"/>
+  <text class="amber" x="980" y="130" text-anchor="middle">Karpenter or Cluster Autoscaler</text>
+  <text class="note" x="816" y="156">reads: Pending pods the scheduler cannot place,</text>
+  <text class="note" x="816" y="174">and nodes that are empty or underused</text>
+  <text class="note" x="816" y="196">writes: EC2 instances (nodes), their size and type</text>
+  <text class="small" x="816" y="218">Karpenter picks the instance per pending pod set;</text>
+  <text class="small" x="816" y="238">new node ready in about 1 to 2 minutes</text>
+
+  <!-- arrows down to the objects -->
+  <path class="flow" d="M220 254L220 300" marker-end="url(#a)"/>
+  <path class="flowb" d="M600 254L600 300" marker-end="url(#b)"/>
+  <path class="flowa" d="M980 254L980 300" marker-end="url(#c)"/>
+
+  <!-- the objects band -->
+  <rect class="band" x="40" y="308" width="1120" height="200" rx="10"/>
+  <text class="lab" x="56" y="334">What changes in the cluster</text>
+
+  <!-- deployment replicas -->
+  <rect class="box" x="60" y="352" width="320" height="136" rx="8"/>
+  <text class="lab" x="220" y="376" text-anchor="middle">Deployment api</text>
+  <text class="key" x="220" y="398" text-anchor="middle">replicas: 4 -> 12</text>
+  <rect class="pod" x="80" y="412" width="40" height="28" rx="4"/>
+  <rect class="pod" x="128" y="412" width="40" height="28" rx="4"/>
+  <rect class="pod" x="176" y="412" width="40" height="28" rx="4"/>
+  <rect class="pod" x="224" y="412" width="40" height="28" rx="4"/>
+  <rect class="pod" x="272" y="412" width="40" height="28" rx="4" stroke-dasharray="4 3"/>
+  <rect class="pod" x="320" y="412" width="40" height="28" rx="4" stroke-dasharray="4 3"/>
+  <text class="small" x="220" y="464" text-anchor="middle">same pod size, more copies</text>
+  <text class="small" x="220" y="482" text-anchor="middle">dashed: new pods, Pending until there is room</text>
+
+  <!-- pod resources -->
+  <rect class="box" x="440" y="352" width="320" height="136" rx="8"/>
+  <text class="lab" x="600" y="376" text-anchor="middle">Pod template resources</text>
+  <text class="blue" x="600" y="398" text-anchor="middle">requests.cpu: 250m -> 410m</text>
+  <text class="blue" x="600" y="418" text-anchor="middle">requests.memory: 256Mi -> 380Mi</text>
+  <text class="small" x="600" y="444" text-anchor="middle">same number of pods, each sized to</text>
+  <text class="small" x="600" y="462" text-anchor="middle">what it really used (p95 plus margin)</text>
+  <text class="small" x="600" y="482" text-anchor="middle">Recreate mode restarts the pod to apply it</text>
+
+  <!-- nodes -->
+  <rect class="box" x="820" y="352" width="320" height="136" rx="8"/>
+  <text class="lab" x="980" y="376" text-anchor="middle">Nodes (NodePool default)</text>
+  <text class="amber" x="980" y="398" text-anchor="middle">3 x m6i.xlarge -> 3 + 2 x c6i.2xlarge</text>
+  <rect class="box" x="850" y="412" width="60" height="28" rx="4"/>
+  <rect class="box" x="918" y="412" width="60" height="28" rx="4"/>
+  <rect class="box" x="986" y="412" width="60" height="28" rx="4"/>
+  <rect class="box" x="1054" y="412" width="60" height="28" rx="4" stroke="#F2C14B" stroke-dasharray="4 3"/>
+  <text class="small" x="980" y="464" text-anchor="middle">launched for the Pending pods, spot first</text>
+  <text class="small" x="980" y="482" text-anchor="middle">consolidated away when they empty out</text>
+
+  <!-- the chain between them -->
+  <path class="watch" d="M380 420L440 420"/>
+  <path class="watch" d="M760 420L820 420"/>
+  <text class="small" x="392" y="410">sizes</text>
+  <text class="small" x="770" y="410">fit on</text>
+
+  <!-- timeline strip -->
+  <rect class="band" x="40" y="528" width="1120" height="84" rx="10"/>
+  <text class="lab" x="56" y="554">A 3x traffic spike at t=0, with the defaults</text>
+  <text class="note" x="56" y="578">t=15 s HPA sees 180% of target and asks for 12 replicas  |  t=20 s 4 new pods fit on free capacity, 4 are Pending  |  t=25 s Karpenter picks an instance</text>
+  <text class="note" x="56" y="598">t=105 s node Ready, Pending pods start  |  t=135 s all 12 ready  |  t=0 to 135 s the 4 original pods ran above target: that is what headroom is for</text>
+</svg>

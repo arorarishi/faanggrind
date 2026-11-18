@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">GitOps flow: from a developer pull request to a synced cluster, and where a rollback happens</title>
+  <desc id="d">Left to right: a developer opens a pull request on the application repo, CI builds and pushes an image by digest to ECR, CI opens a pull request on the GitOps repo with the new digest, a reviewer merges it, Argo CD inside the cluster pulls the repo, renders the manifests, compares them with the live state and syncs. A rollback is a git revert on the GitOps repo, which Argo CD syncs the same way. Nothing outside the cluster holds cluster credentials.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 15px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .blue { font-size: 14px; font-weight: 600; fill: #7CC4F8; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .cold { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .edge { stroke: #4A5348; stroke-width: 1.5; fill: none; }
+    .pull { stroke: #7CC4F8; stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+    .link { stroke: #7CC4F8; stroke-width: 2; fill: none; }
+    .back { stroke: #F2C14B; stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#4A5348"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+    <marker id="y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">GitOps: Git is the desired state, the cluster pulls it</text>
+  <text class="sub" x="40" y="78">Solid lime: pushes made by people and CI. Dashed blue: pulls made by Argo CD from inside the cluster. Nothing outside holds a kubeconfig.</text>
+
+  <!-- outside the cluster band -->
+  <rect class="band" x="40" y="100" width="1120" height="184" rx="10"/>
+  <text class="lab" x="56" y="126">Outside the cluster</text>
+
+  <rect class="box" x="60" y="150" width="180" height="70" rx="8"/>
+  <text class="lab" x="150" y="176" text-anchor="middle">Developer PR</text>
+  <text class="small" x="150" y="196" text-anchor="middle">app repo: code change</text>
+  <text class="small" x="150" y="212" text-anchor="middle">review, merge to main</text>
+
+  <rect class="box" x="290" y="150" width="200" height="70" rx="8"/>
+  <text class="lab" x="390" y="176" text-anchor="middle">CI: build and push</text>
+  <text class="small" x="390" y="196" text-anchor="middle">GitHub Actions builds the image</text>
+  <text class="small" x="390" y="212" text-anchor="middle">pushes to ECR by digest</text>
+
+  <rect class="box" x="540" y="150" width="180" height="70" rx="8"/>
+  <text class="lab" x="630" y="176" text-anchor="middle">ECR</text>
+  <text class="small" x="630" y="196" text-anchor="middle">api@sha256:2222...</text>
+  <text class="small" x="630" y="212" text-anchor="middle">immutable by digest</text>
+
+  <rect class="hot" x="770" y="150" width="200" height="70" rx="8"/>
+  <text class="key" x="870" y="176" text-anchor="middle">GitOps repo</text>
+  <text class="small" x="870" y="196" text-anchor="middle">CI opens a PR: new digest in</text>
+  <text class="small" x="870" y="212" text-anchor="middle">envs/prod/values.yaml</text>
+
+  <rect class="box" x="1000" y="150" width="140" height="70" rx="8"/>
+  <text class="lab" x="1070" y="176" text-anchor="middle">Reviewer</text>
+  <text class="small" x="1070" y="196" text-anchor="middle">approves, merges</text>
+  <text class="small" x="1070" y="212" text-anchor="middle">to main = deploy</text>
+
+  <path class="flow" d="M240 185L282 185" marker-end="url(#a)"/>
+  <path class="flow" d="M490 185L532 185" marker-end="url(#a)"/>
+  <path class="flow" d="M720 185L762 185" marker-end="url(#a)"/>
+  <path class="flow" d="M970 185L992 185" marker-end="url(#a)"/>
+
+  <text class="note" x="60" y="252">Promotion is a PR too: copy the digest from envs/staging to envs/prod. The Git log is the audit trail of every deploy.</text>
+  <text class="amber" x="60" y="274">Rollback: git revert the merge commit on the GitOps repo. No kubectl, no helm rollback, same path as a deploy.</text>
+
+  <!-- rollback arrow: from reviewer back to the gitops repo -->
+  <path class="back" d="M1070 220L1070 236L870 236L870 228" marker-end="url(#y)"/>
+
+  <!-- cluster band -->
+  <rect class="band" x="40" y="314" width="1120" height="292" rx="10"/>
+  <text class="lab" x="56" y="340">Inside the EKS cluster</text>
+  <text class="small" x="300" y="340">Argo CD runs here; only an outbound HTTPS connection to Git and ECR is needed</text>
+
+  <!-- argo cd components -->
+  <rect class="cold" x="60" y="364" width="215" height="64" rx="8"/>
+  <text class="blue" x="167" y="389" text-anchor="middle">repo server</text>
+  <text class="small" x="167" y="408" text-anchor="middle">git clone, helm template</text>
+  <text class="small" x="167" y="422" text-anchor="middle">or kustomize build</text>
+
+  <rect class="cold" x="291" y="364" width="290" height="64" rx="8"/>
+  <text class="blue" x="436" y="389" text-anchor="middle">application controller</text>
+  <text class="small" x="436" y="408" text-anchor="middle">diff Git vs live, every 3 min</text>
+  <text class="small" x="436" y="422" text-anchor="middle">OutOfSync: apply, prune, self-heal</text>
+
+  <rect class="cold" x="597" y="364" width="160" height="64" rx="8"/>
+  <text class="blue" x="677" y="389" text-anchor="middle">API server, Redis</text>
+  <text class="small" x="677" y="408" text-anchor="middle">UI, CLI, RBAC</text>
+  <text class="small" x="677" y="422" text-anchor="middle">Redis is a cache</text>
+
+  <!-- pull from git -->
+  <path class="pull" d="M167 364L167 304L1172 304L1172 136L870 136L870 142" marker-end="url(#b)"/>
+  <text class="small" x="180" y="295">git pull of main, started from inside the cluster, out through the cluster egress</text>
+
+  <path class="link" d="M275 396L283 396" marker-end="url(#b)"/>
+  <path class="link" d="M581 396L589 396" marker-end="url(#b)"/>
+
+  <!-- kubernetes api -->
+  <rect class="box" x="773" y="364" width="190" height="64" rx="8"/>
+  <text class="lab" x="868" y="389" text-anchor="middle">kube-apiserver</text>
+  <text class="small" x="868" y="408" text-anchor="middle">Argo applies with its</text>
+  <text class="small" x="868" y="422" text-anchor="middle">own ServiceAccount</text>
+  <path class="flow" d="M436 428L436 448L868 448L868 436" marker-end="url(#a)"/>
+
+  <!-- workloads -->
+  <rect class="box" x="979" y="364" width="161" height="64" rx="8"/>
+  <text class="lab" x="1059" y="389" text-anchor="middle">Deployment api</text>
+  <text class="small" x="1059" y="408" text-anchor="middle">pulls by digest,</text>
+  <text class="small" x="1059" y="422" text-anchor="middle">rolls out pods</text>
+  <path class="flow" d="M963 396L971 396" marker-end="url(#a)"/>
+
+  <!-- status row -->
+  <rect class="box" x="60" y="476" width="350" height="56" rx="8"/>
+  <text class="lab" x="76" y="499">Sync status</text>
+  <text class="small" x="76" y="519">Synced: Git equals live; else OutOfSync</text>
+
+  <rect class="box" x="426" y="476" width="350" height="56" rx="8"/>
+  <text class="lab" x="442" y="499">Health status</text>
+  <text class="small" x="442" y="519">Healthy, Progressing, Degraded, Missing</text>
+
+  <rect class="box" x="792" y="476" width="348" height="56" rx="8"/>
+  <text class="lab" x="808" y="499">Drift</text>
+  <text class="small" x="808" y="519">edit by hand: OutOfSync, selfHeal reverts</text>
+
+  <text class="note" x="60" y="566">AppProject limits each team to its repos, clusters and namespaces. An Application that points outside them is refused before any sync.</text>
+  <text class="note" x="60" y="588">Secrets never sit in Git: an ExternalSecret in the repo tells the External Secrets Operator which Secrets Manager entry to copy into a Secret.</text>
+</svg>

@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">One LSTM step: three gates around a cell state that is only scaled and added to</title>
+  <desc id="d">The cell state runs straight across the top. It is multiplied by the forget gate, then the input gate times the candidate is added to it. The output gate decides how much of the cell state becomes the hidden state. All four blocks read the previous hidden state and the current input.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .op { font-size: 20px; font-weight: 700; fill: #F2F4EC; text-anchor: middle; }
+    .opk { font-size: 20px; font-weight: 700; fill: #C6F432; text-anchor: middle; }
+    .mid { text-anchor: middle; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .wire { stroke: #8A9185; stroke-width: 1.5; fill: none; }
+    .lane { stroke: #C6F432; stroke-width: 4; fill: none; stroke-linecap: round; }
+    .node { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .nodek { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2.5; }
+  </style>
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+    <marker id="k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">LSTM: the cell state is scaled and added to, never rewritten</text>
+  <text class="sub" x="40" y="78">One time step. The lime lane is the long-term memory; three gates decide what happens to it.</text>
+
+  <rect class="band" x="40" y="104" width="740" height="496" rx="10"/>
+
+  <!-- cell state lane -->
+  <text class="lab" x="62" y="176">c(t-1)</text>
+  <path class="lane" d="M62 196L182 196"/>
+  <path class="lane" d="M218 196L402 196"/>
+  <path class="lane" d="M438 196L744 196" marker-end="url(#k)"/>
+  <text class="lab" x="716" y="176">c(t)</text>
+  <circle class="nodek" cx="200" cy="196" r="18"/>
+  <text class="opk" x="200" y="203">x</text>
+  <circle class="nodek" cx="420" cy="196" r="18"/>
+  <text class="opk" x="420" y="203">+</text>
+  <text class="key mid" x="200" y="150">multiply by f: keep or erase</text>
+  <text class="key mid" x="440" y="150">add i x g: write new</text>
+
+  <!-- input lane -->
+  <path class="wire" d="M62 548L640 548"/>
+  <text class="lab" x="62" y="578">h(t-1) and x(t)</text>
+  <text class="small" x="186" y="578">previous output and current input, read by all four blocks</text>
+
+  <!-- wires from the input lane up into the blocks -->
+  <path class="wire" d="M200 548L200 470" marker-end="url(#g)"/>
+  <path class="wire" d="M350 548L350 470" marker-end="url(#g)"/>
+  <path class="wire" d="M490 548L490 470" marker-end="url(#g)"/>
+  <path class="wire" d="M640 548L640 470" marker-end="url(#g)"/>
+
+  <!-- gate blocks -->
+  <rect class="box" x="138" y="412" width="124" height="56" rx="8"/>
+  <text class="lab mid" x="200" y="436">forget gate f</text>
+  <text class="small mid" x="200" y="456">sigmoid, 0 to 1</text>
+
+  <rect class="box" x="288" y="412" width="124" height="56" rx="8"/>
+  <text class="lab mid" x="350" y="436">input gate i</text>
+  <text class="small mid" x="350" y="456">sigmoid, 0 to 1</text>
+
+  <rect class="box" x="428" y="412" width="124" height="56" rx="8"/>
+  <text class="lab mid" x="490" y="436">candidate g</text>
+  <text class="small mid" x="490" y="456">tanh, -1 to 1</text>
+
+  <rect class="box" x="578" y="412" width="124" height="56" rx="8"/>
+  <text class="lab mid" x="640" y="436">output gate o</text>
+  <text class="small mid" x="640" y="456">sigmoid, 0 to 1</text>
+
+  <!-- forget gate to the multiply on the lane -->
+  <path class="wire" d="M200 412L200 218" marker-end="url(#g)"/>
+
+  <!-- input gate and candidate meet, then go to the add on the lane -->
+  <path class="wire" d="M350 412L350 320L400 320" marker-end="url(#g)"/>
+  <path class="wire" d="M490 412L490 320L440 320" marker-end="url(#g)"/>
+  <circle class="node" cx="420" cy="320" r="16"/>
+  <text class="op" x="420" y="327">x</text>
+  <path class="wire" d="M420 304L420 218" marker-end="url(#g)"/>
+
+  <!-- cell state to tanh, times output gate, gives h(t) -->
+  <path class="wire" d="M640 198L640 240" marker-end="url(#g)"/>
+  <rect class="box" x="606" y="242" width="68" height="34" rx="8"/>
+  <text class="note mid" x="640" y="264">tanh</text>
+  <path class="wire" d="M640 276L640 302" marker-end="url(#g)"/>
+  <circle class="node" cx="640" cy="320" r="16"/>
+  <text class="op" x="640" y="327">x</text>
+  <path class="wire" d="M640 412L640 338" marker-end="url(#g)"/>
+  <path class="wire" d="M656 320L744 320" marker-end="url(#g)"/>
+  <text class="lab" x="716" y="304">h(t)</text>
+  <text class="small" x="660" y="350">output, and</text>
+  <text class="small" x="660" y="368">input to step t+1</text>
+
+  <!-- notes panel -->
+  <rect x="812" y="104" width="348" height="496" rx="10" fill="#121612" stroke="#2A312A"/>
+  <text class="lab" x="832" y="138">What each block decides</text>
+  <text class="key" x="832" y="168">Forget gate f</text>
+  <text class="note" x="832" y="188">Per slot of memory: 0 erases it, 1 keeps it.</text>
+  <text class="key" x="832" y="218">Input gate i</text>
+  <text class="note" x="832" y="238">How much of the candidate to write.</text>
+  <text class="key" x="832" y="268">Candidate g</text>
+  <text class="note" x="832" y="288">The new values that could be written.</text>
+  <text class="key" x="832" y="318">Output gate o</text>
+  <text class="note" x="832" y="338">How much of the cell to show as h(t).</text>
+
+  <text class="lab" x="832" y="386">Why the memory lasts</text>
+  <text class="key" x="832" y="416">c(t) = f x c(t-1) + i x g</text>
+  <text class="note" x="832" y="442">Going back one step along the lime lane,</text>
+  <text class="note" x="832" y="462">the gradient is multiplied by f only.</text>
+  <text class="note" x="832" y="482">The network learns f, and can hold it near 1.</text>
+
+  <text class="lab" x="832" y="524">Over 100 steps</text>
+  <text class="note" x="832" y="550">f = 0.99 keeps 0.99^100 = 0.37 of the signal</text>
+  <text class="note" x="832" y="572">f = 0.90 keeps 0.90^100 = 0.00003</text>
+</svg>

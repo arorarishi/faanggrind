@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-labelledby="t d">
+  <title id="t">Request path from user to database with the failure signature at each hop</title>
+  <desc id="d">Eight hops: DNS, edge CDN and WAF, load balancer, ingress controller, Service, pod, application, database. Each hop lists what the user sees when that hop is broken and the first command to run.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .role { font-size: 13px; fill: #8A9185; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .cmd { font-size: 13px; fill: #7CC4F8; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="620" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Follow the request path: what each broken hop looks like</text>
+  <text class="sub" x="40" y="78">Walk left to right until the first hop whose contract is broken. The error the user sees tells you where to start.</text>
+  <rect class="box" x="40" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="168.0" y="128" text-anchor="middle">1. DNS</text>
+  <text class="role" x="168.0" y="148" text-anchor="middle">name to IP, TTL cached</text>
+  <rect class="band" x="40" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="56" y="194" xml:space="preserve">NXDOMAIN or wrong IP</text>
+  <text class="note" x="56" y="214" xml:space="preserve">old record after a change,</text>
+  <text class="note" x="56" y="234" xml:space="preserve">TTL not yet expired</text>
+  <text class="cmd" x="56" y="254" xml:space="preserve">dig +short api.example.com</text>
+  <text class="cmd" x="56" y="274" xml:space="preserve">dig @1.1.1.1 api.example.com</text>
+  <path class="flow" d="M296 133.0L318 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="320" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="448.0" y="128" text-anchor="middle">2. Edge: CDN and WAF</text>
+  <text class="role" x="448.0" y="148" text-anchor="middle">TLS, cache, rate limit, rules</text>
+  <rect class="band" x="320" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="336" y="194" xml:space="preserve">403 or 429 from the edge</text>
+  <text class="note" x="336" y="214" xml:space="preserve">WAF rule or rate limit hit,</text>
+  <text class="note" x="336" y="234" xml:space="preserve">or expired certificate</text>
+  <text class="cmd" x="336" y="254" xml:space="preserve">curl -sv https://api.example/</text>
+  <text class="cmd" x="336" y="274" xml:space="preserve">openssl s_client -connect ...</text>
+  <path class="flow" d="M576 133.0L598 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="600" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="728.0" y="128" text-anchor="middle">3. Load balancer</text>
+  <text class="role" x="728.0" y="148" text-anchor="middle">NLB or ALB, target health</text>
+  <rect class="band" x="600" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="616" y="194" xml:space="preserve">connection timeout or 503</text>
+  <text class="note" x="616" y="214" xml:space="preserve">no healthy targets,</text>
+  <text class="note" x="616" y="234" xml:space="preserve">security group blocks port</text>
+  <text class="cmd" x="616" y="254" xml:space="preserve">elbv2 describe-target-health</text>
+  <text class="cmd" x="616" y="274" xml:space="preserve">nc -zv lb-dns 443</text>
+  <path class="flow" d="M856 133.0L878 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="880" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="1008.0" y="128" text-anchor="middle">4. Ingress or Gateway</text>
+  <text class="role" x="1008.0" y="148" text-anchor="middle">host and path routing</text>
+  <rect class="band" x="880" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="896" y="194" xml:space="preserve">404, 502 or 504 from ingress</text>
+  <text class="note" x="896" y="214" xml:space="preserve">no rule for the host, or the</text>
+  <text class="note" x="896" y="234" xml:space="preserve">backend unreachable or slow</text>
+  <text class="cmd" x="896" y="254" xml:space="preserve">kubectl describe ingress api</text>
+  <text class="cmd" x="896" y="274" xml:space="preserve">kubectl logs -n ingress ...</text>
+  <rect class="hot" x="40" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="168.0" y="380" text-anchor="middle">5. Service</text>
+  <text class="role" x="168.0" y="400" text-anchor="middle">ClusterIP to ready pod IPs</text>
+  <rect class="band" x="40" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="56" y="446" xml:space="preserve">502 with no endpoints</text>
+  <text class="note" x="56" y="466" xml:space="preserve">selector matches no pod, or</text>
+  <text class="note" x="56" y="486" xml:space="preserve">targetPort is wrong</text>
+  <text class="cmd" x="56" y="506" xml:space="preserve">kubectl get endpointslices -l</text>
+  <text class="cmd" x="56" y="526" xml:space="preserve">  kubernetes.io/service-name=x</text>
+  <path class="flow" d="M296 385.0L318 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="320" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="448.0" y="380" text-anchor="middle">6. Pod</text>
+  <text class="role" x="448.0" y="400" text-anchor="middle">scheduled, pulled, started</text>
+  <rect class="band" x="320" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="336" y="446" xml:space="preserve">Pending, CrashLoop, NotReady</text>
+  <text class="note" x="336" y="466" xml:space="preserve">probe failing, OOMKilled,</text>
+  <text class="note" x="336" y="486" xml:space="preserve">image missing, no node room</text>
+  <text class="cmd" x="336" y="506" xml:space="preserve">kubectl describe pod POD</text>
+  <text class="cmd" x="336" y="526" xml:space="preserve">kubectl logs POD --previous</text>
+  <path class="flow" d="M576 385.0L598 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="600" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="728.0" y="380" text-anchor="middle">7. Application</text>
+  <text class="role" x="728.0" y="400" text-anchor="middle">your code, its config</text>
+  <rect class="band" x="600" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="616" y="446" xml:space="preserve">500, slow p99, wrong answer</text>
+  <text class="note" x="616" y="466" xml:space="preserve">bad config, missing secret,</text>
+  <text class="note" x="616" y="486" xml:space="preserve">thread or pool exhausted</text>
+  <text class="cmd" x="616" y="506" xml:space="preserve">kubectl exec POD -- env | sort</text>
+  <text class="cmd" x="616" y="526" xml:space="preserve">trace: find the slow span</text>
+  <path class="flow" d="M856 385.0L878 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="880" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="1008.0" y="380" text-anchor="middle">8. Database</text>
+  <text class="role" x="1008.0" y="400" text-anchor="middle">Aurora, Redis, queue</text>
+  <rect class="band" x="880" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="896" y="446" xml:space="preserve">too many connections, locks</text>
+  <text class="note" x="896" y="466" xml:space="preserve">a deploy opens too many,</text>
+  <text class="note" x="896" y="486" xml:space="preserve">disk full, failover running</text>
+  <text class="cmd" x="896" y="506" xml:space="preserve">pg_stat_activity count</text>
+  <text class="cmd" x="896" y="526" xml:space="preserve">aws rds describe-events</text>
+  <path class="flow" d="M1008.0 310L1008.0 332L168.0 332L168.0 354" marker-end="url(#a)"/>
+  <text class="small" x="1160" y="78" text-anchor="end">amber: what the user sees | blue: first command</text>
+  <text class="note" x="40" y="596">Rule: the first hop with a broken contract is where you dig. Everything after it is a symptom, not a cause.</text>
+</svg>
