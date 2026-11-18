@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" role="img" aria-labelledby="t d">
+  <title id="t">EKS on AWS: the control plane in an AWS-owned account, nodes and pods in your VPC</title>
+  <desc id="d">The EKS control plane, API server and etcd across three Availability Zones, runs in an account AWS owns and reaches your VPC through network interfaces it creates in your subnets. In your VPC a managed node group and a Fargate profile run pods. The VPC CNI gives every pod an IP from the subnet. The AWS Load Balancer Controller creates an ALB for Ingress objects. Pod Identity gives a pod an IAM role so it can call S3 and SQS without keys.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .blue { font-size: 13px; fill: #7CC4F8; }
+    .amber { font-size: 13px; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .aws { fill: #121612; stroke: #F2C14B; stroke-width: 1; stroke-dasharray: 6 4; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .pod { fill: #121612; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .watch { stroke: #7CC4F8; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+    .iam { stroke: #F2C14B; stroke-width: 1.8; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+    <marker id="o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="760" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">EKS: AWS runs the control plane, your VPC runs the pods</text>
+  <text class="sub" x="40" y="78">You never see the control plane machines. Nodes and pods are ordinary EC2 and VPC objects in your account, and IAM reaches into pods through Pod Identity.</text>
+
+  <!-- AWS-owned account band -->
+  <rect class="aws" x="40" y="100" width="1120" height="150" rx="10"/>
+  <text class="lab" x="56" y="126">AWS-owned account: EKS control plane for this cluster</text>
+  <text class="amber" x="520" y="126">0.10 USD per hour in standard support (assumed), more in extended support</text>
+
+  <rect class="hot" x="60" y="144" width="250" height="84" rx="8"/>
+  <text class="key" x="185" y="168" text-anchor="middle">kube-apiserver</text>
+  <text class="small" x="185" y="188" text-anchor="middle">at least 2 instances</text>
+  <text class="small" x="185" y="206" text-anchor="middle">across 3 AZs, scaled by AWS</text>
+
+  <rect class="box" x="330" y="144" width="200" height="84" rx="8"/>
+  <text class="lab" x="430" y="168" text-anchor="middle">etcd</text>
+  <text class="small" x="430" y="188" text-anchor="middle">3 instances, 3 AZs</text>
+  <text class="small" x="430" y="206" text-anchor="middle">backed up by AWS</text>
+
+  <rect class="box" x="550" y="144" width="270" height="84" rx="8"/>
+  <text class="lab" x="685" y="168" text-anchor="middle">scheduler, controller manager</text>
+  <text class="small" x="685" y="188" text-anchor="middle">control plane logs to CloudWatch:</text>
+  <text class="small" x="685" y="206" text-anchor="middle">api, audit, authenticator, ...</text>
+
+  <rect class="box" x="840" y="144" width="300" height="84" rx="8"/>
+  <text class="lab" x="990" y="168" text-anchor="middle">access entries</text>
+  <text class="small" x="990" y="188" text-anchor="middle">IAM principal to Kubernetes rights</text>
+  <text class="small" x="990" y="206" text-anchor="middle">replaces the aws-auth ConfigMap</text>
+
+  <!-- ENIs bridge -->
+  <text class="note" x="600" y="276" text-anchor="middle">EKS creates 2 to 4 network interfaces in your subnets so the control plane can reach kubelets and webhooks</text>
+  <path class="watch" d="M185 228L185 296" marker-end="url(#b)"/>
+  <path class="watch" d="M990 228L990 296" marker-end="url(#b)"/>
+
+  <!-- your VPC band -->
+  <rect class="band" x="40" y="300" width="1120" height="416" rx="10"/>
+  <text class="lab" x="56" y="326">Your account, your VPC 10.20.0.0/16, private subnets in 3 AZs</text>
+
+  <!-- top row: ALB on the left, IAM role on the right -->
+  <rect class="hot" x="60" y="336" width="270" height="44" rx="8"/>
+  <text class="key" x="195" y="354" text-anchor="middle">ALB, created by the LB controller</text>
+  <text class="small" x="195" y="372" text-anchor="middle">from an Ingress; targets are pod IPs</text>
+
+  <rect class="box" x="870" y="340" width="250" height="44" rx="8"/>
+  <text class="lab" x="995" y="358" text-anchor="middle">IAM role api-s3-reader</text>
+  <text class="amber" x="995" y="376" text-anchor="middle">trust: pods.eks.amazonaws.com</text>
+
+  <!-- managed node group -->
+  <rect class="box" x="60" y="396" width="520" height="210" rx="8"/>
+  <rect class="box" x="76" y="408" width="236" height="140" rx="6"/>
+  <rect class="pod" x="88" y="420" width="100" height="50" rx="6"/>
+  <text class="blue" x="138" y="440" text-anchor="middle">pod alb-ctrl</text>
+  <text class="small" x="138" y="458" text-anchor="middle">LB controller</text>
+  <rect class="pod" x="200" y="420" width="100" height="50" rx="6"/>
+  <text class="blue" x="250" y="440" text-anchor="middle">pod api</text>
+  <text class="small" x="250" y="458" text-anchor="middle">10.20.5.17</text>
+  <rect class="box" x="88" y="478" width="212" height="46" rx="6"/>
+  <text class="small" x="194" y="497" text-anchor="middle">aws-node (VPC CNI), kube-proxy,</text>
+  <text class="small" x="194" y="514" text-anchor="middle">pod identity agent, EBS CSI</text>
+  <text class="small" x="194" y="540" text-anchor="middle">node 1, 10.20.3.14</text>
+
+  <rect class="box" x="328" y="408" width="236" height="140" rx="6"/>
+  <rect class="pod" x="340" y="420" width="100" height="50" rx="6"/>
+  <text class="blue" x="390" y="440" text-anchor="middle">pod api</text>
+  <text class="small" x="390" y="458" text-anchor="middle">10.20.21.4</text>
+  <rect class="pod" x="452" y="420" width="100" height="50" rx="6"/>
+  <text class="blue" x="502" y="440" text-anchor="middle">pod worker</text>
+  <text class="small" x="502" y="458" text-anchor="middle">10.20.21.5</text>
+  <rect class="box" x="340" y="478" width="212" height="46" rx="6"/>
+  <text class="small" x="446" y="497" text-anchor="middle">Karpenter or Cluster Autoscaler</text>
+  <text class="small" x="446" y="514" text-anchor="middle">adds and removes nodes</text>
+  <text class="small" x="446" y="540" text-anchor="middle">node 2, 10.20.18.9</text>
+
+  <text class="lab" x="76" y="574">Managed node group: an ASG that AWS updates for you</text>
+  <text class="small" x="76" y="594">m6i.xlarge nodes; VPC CNI prefix delegation reserves /28 blocks per node</text>
+
+  <!-- fargate -->
+  <rect class="box" x="600" y="396" width="250" height="210" rx="8"/>
+  <text class="lab" x="616" y="420">Fargate profile</text>
+  <text class="small" x="616" y="440">batch namespace: micro VM per pod</text>
+  <rect class="pod" x="616" y="452" width="218" height="60" rx="6"/>
+  <text class="blue" x="725" y="476" text-anchor="middle">pod report-job</text>
+  <text class="small" x="725" y="496" text-anchor="middle">10.20.33.40, no node to manage</text>
+  <rect class="box" x="616" y="522" width="218" height="72" rx="6"/>
+  <text class="small" x="725" y="544" text-anchor="middle">no DaemonSets, EBS or privileged,</text>
+  <text class="small" x="725" y="562" text-anchor="middle">private subnets only, uses IRSA,</text>
+  <text class="small" x="725" y="580" text-anchor="middle">ALB target-type ip required</text>
+
+  <!-- AWS services, right column -->
+  <rect class="box" x="870" y="410" width="118" height="56" rx="8"/>
+  <text class="lab" x="929" y="433" text-anchor="middle">S3 bucket</text>
+  <text class="small" x="929" y="452" text-anchor="middle">gateway endpoint</text>
+  <rect class="box" x="1002" y="410" width="118" height="56" rx="8"/>
+  <text class="lab" x="1061" y="433" text-anchor="middle">SQS queue</text>
+  <text class="small" x="1061" y="452" text-anchor="middle">interface endpoint</text>
+  <text class="small" x="870" y="500">The pod's SDK reads credentials</text>
+  <text class="small" x="870" y="518">from the pod identity agent at</text>
+  <text class="small" x="870" y="536">169.254.170.23 on its node, then</text>
+  <text class="small" x="870" y="554">calls S3 and SQS over endpoints.</text>
+  <text class="small" x="870" y="582">No access key exists anywhere.</text>
+
+  <!-- arrows: ALB to pod IPs -->
+  <path class="flow" d="M250 380L250 418" marker-end="url(#a)"/>
+  <path class="flow" d="M310 380L310 388L390 388L390 418" marker-end="url(#a)"/>
+  <!-- controller watches Ingress and creates the ALB -->
+  <path class="watch" d="M138 420L138 382" marker-end="url(#b)"/>
+  <!-- pod identity: pod worker to IAM role, role to S3 and SQS -->
+  <path class="iam" d="M552 445L590 445L590 624L1140 624L1140 362L1128 362" marker-end="url(#o)"/>
+  <path class="iam" d="M929 384L929 402" marker-end="url(#o)"/>
+  <path class="iam" d="M1061 384L1061 402" marker-end="url(#o)"/>
+
+  <!-- legend -->
+  <text class="small" x="76" y="648">solid lime: request path, the ALB sends traffic straight to pod IPs in any node and any AZ</text>
+  <text class="small" x="76" y="666">dashed blue: watch and API calls (the controller creates the ALB; the control plane reaches kubelets)</text>
+  <text class="small" x="76" y="684">solid amber: Pod Identity, a service account to IAM role association, credentials served on the node</text>
+  <text class="note" x="76" y="708">Upgrade order: control plane first, one minor version at a time, then add-ons, then node groups by rolling replacement respecting PodDisruptionBudgets.</text>
+
+  <text class="note" x="40" y="742">The same Kubernetes you learned; only who operates each part changes. What you still own: nodes, add-ons, IAM, networking, cost, and everything inside the cluster.</text>
+</svg>

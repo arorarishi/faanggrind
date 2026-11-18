@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-labelledby="t d">
+  <title id="t">A Go worker pool: jobs channel, four worker goroutines, results channel, WaitGroup and one context</title>
+  <desc id="d">main sends 12 endpoints into an unbuffered jobs channel. Four worker goroutines range over it, call check with the shared context, and send into a results channel buffered to 12. main closes jobs, waits on the WaitGroup, closes results and drains it. A context with a timeout is passed to every check, and cancel is deferred.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .blue { font-size: 14px; font-weight: 600; fill: #7CC4F8; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; fill: #B7BDB1; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .chan { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 2; }
+    .ctx { fill: none; stroke: #F2C14B; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .cflow { stroke: #7CC4F8; stroke-width: 2; fill: none; }
+    .slot { fill: #121612; stroke: #7CC4F8; stroke-width: 1; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="620" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The worker pool: one channel in, N goroutines, one channel out</text>
+  <text class="sub" x="40" y="78">12 checks, 4 workers, one context deadline. Lime: data flow. Blue: channels. Amber dashed: the context every check receives.</text>
+
+  <!-- context envelope -->
+  <rect class="ctx" x="40" y="104" width="1120" height="330" rx="12"/>
+  <text class="amber" x="56" y="128">ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second); defer cancel()</text>
+  <text class="small" x="56" y="148">every check(ctx, ep) selects on ctx.Done(), so a slow endpoint returns context.DeadlineExceeded instead of holding a worker</text>
+
+  <!-- main producer -->
+  <rect class="hot" x="56" y="200" width="200" height="150" rx="8"/>
+  <text class="key" x="156" y="226" text-anchor="middle">main goroutine</text>
+  <text class="note" x="156" y="250" text-anchor="middle">for each endpoint:</text>
+  <text class="mono" x="156" y="270" text-anchor="middle">jobs &lt;- ep</text>
+  <text class="note" x="156" y="296" text-anchor="middle">then</text>
+  <text class="mono" x="156" y="316" text-anchor="middle">close(jobs)</text>
+  <text class="small" x="156" y="338" text-anchor="middle">ends every range loop</text>
+
+  <!-- jobs channel -->
+  <path class="flow" d="M256 275L292 275" marker-end="url(#a)"/>
+  <rect class="chan" x="300" y="245" width="166" height="60" rx="8"/>
+  <text class="blue" x="383" y="269" text-anchor="middle">jobs chan</text>
+  <text class="small" x="383" y="290" text-anchor="middle">unbuffered, blocks</text>
+
+  <!-- workers -->
+  <rect class="box" x="520" y="170" width="200" height="46" rx="8"/>
+  <text class="lab" x="620" y="190" text-anchor="middle">worker 1</text>
+  <text class="small" x="620" y="207" text-anchor="middle">for ep := range jobs</text>
+  <rect class="box" x="520" y="228" width="200" height="46" rx="8"/>
+  <text class="lab" x="620" y="248" text-anchor="middle">worker 2</text>
+  <text class="small" x="620" y="265" text-anchor="middle">results &lt;- check(ctx, ep)</text>
+  <rect class="box" x="520" y="286" width="200" height="46" rx="8"/>
+  <text class="lab" x="620" y="306" text-anchor="middle">worker 3</text>
+  <text class="small" x="620" y="323" text-anchor="middle">defer wg.Done()</text>
+  <rect class="box" x="520" y="344" width="200" height="46" rx="8"/>
+  <text class="lab" x="620" y="364" text-anchor="middle">worker 4</text>
+  <text class="small" x="620" y="381" text-anchor="middle">exits when jobs is closed</text>
+
+  <!-- fan out from jobs channel -->
+  <path class="cflow" d="M466 275L490 275L490 193L512 193" marker-end="url(#b)"/>
+  <path class="cflow" d="M490 275L490 251L512 251" marker-end="url(#b)"/>
+  <path class="cflow" d="M490 275L490 309L512 309" marker-end="url(#b)"/>
+  <path class="cflow" d="M490 275L490 367L512 367" marker-end="url(#b)"/>
+
+  <!-- fan in to results channel -->
+  <path class="cflow" d="M720 193L750 193L750 275L774 275" marker-end="url(#b)"/>
+  <path class="cflow" d="M720 251L750 251L750 275"/>
+  <path class="cflow" d="M720 309L750 309L750 275"/>
+  <path class="cflow" d="M720 367L750 367L750 275"/>
+
+  <!-- results channel with slots -->
+  <rect class="chan" x="782" y="235" width="196" height="80" rx="8"/>
+  <text class="blue" x="880" y="258" text-anchor="middle">results chan</text>
+                          <rect class="slot" x="796" y="268" width="12" height="14"/>
+  <rect class="slot" x="810" y="268" width="12" height="14"/>
+  <rect class="slot" x="824" y="268" width="12" height="14"/>
+  <rect class="slot" x="838" y="268" width="12" height="14"/>
+  <rect class="slot" x="852" y="268" width="12" height="14"/>
+  <rect class="slot" x="866" y="268" width="12" height="14"/>
+  <rect class="slot" x="880" y="268" width="12" height="14"/>
+  <rect class="slot" x="894" y="268" width="12" height="14"/>
+  <rect class="slot" x="908" y="268" width="12" height="14"/>
+  <rect class="slot" x="922" y="268" width="12" height="14"/>
+  <rect class="slot" x="936" y="268" width="12" height="14"/>
+  <rect class="slot" x="950" y="268" width="12" height="14"/>
+  <text class="small" x="880" y="302" text-anchor="middle">buffered to 12, never blocks</text>
+
+  <!-- collector -->
+  <path class="flow" d="M978 275L1000 275" marker-end="url(#a)"/>
+  <rect class="hot" x="1008" y="200" width="140" height="150" rx="8"/>
+  <text class="key" x="1078" y="226" text-anchor="middle">main, after</text>
+  <text class="mono" x="1078" y="252" text-anchor="middle">wg.Wait()</text>
+  <text class="mono" x="1078" y="274" text-anchor="middle">close(results)</text>
+  <text class="mono" x="1078" y="296" text-anchor="middle">for r := range</text>
+  <text class="mono" x="1078" y="314" text-anchor="middle">results {...}</text>
+  <text class="small" x="1078" y="338" text-anchor="middle">summary, leak check</text>
+
+  <!-- waitgroup note -->
+  <text class="note" x="56" y="418">sync.WaitGroup: wg.Add(1) before each go func, wg.Done() inside each worker, wg.Wait() in main. Count goes 4 up, then 4 down.</text>
+
+  <!-- failure band -->
+  <rect class="band" x="40" y="454" width="1120" height="124" rx="10"/>
+  <text class="lab" x="56" y="480">The three ways this deadlocks or leaks</text>
+  <text class="note" x="56" y="506">1. Forget close(jobs): the four range loops never end, wg.Wait() blocks forever, four goroutines leak.</text>
+  <text class="note" x="56" y="528">2. Make results unbuffered: each worker blocks on its first send because main is still feeding jobs; nothing finishes.</text>
+  <text class="note" x="56" y="550">3. No context: a dead endpoint holds a worker forever; with 4 workers and 4 dead endpoints the pool stops. ctx.Done() is the exit.</text>
+  <text class="small" x="56" y="570">Proof in the code example: runtime.NumGoroutine() is read before and after, and the program panics if they differ.</text>
+
+  <text class="small" x="40" y="604">A real checker swaps the fake check for http.NewRequestWithContext(ctx, ...) and client.Do(req); the pool code does not change.</text>
+</svg>

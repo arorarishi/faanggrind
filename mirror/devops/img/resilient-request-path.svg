@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-labelledby="t d">
+  <title id="t">Resilient request path with the failure each layer absorbs</title>
+  <desc id="d">Eight layers: edge CDN and WAF, rate limiter, load balancer, stateless replicas, cache, queue, workers, database with replicas. Each layer names the failure it absorbs and the setting that makes it work.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .role { font-size: 13px; fill: #8A9185; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .cmd { font-size: 13px; fill: #7CC4F8; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="620" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">A resilient path: what each layer absorbs so the next one survives</text>
+  <text class="sub" x="40" y="78">Every layer exists to stop one kind of failure from reaching the layer after it.</text>
+  <rect class="box" x="40" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="168.0" y="128" text-anchor="middle">1. Edge: CDN and WAF</text>
+  <text class="role" x="168.0" y="148" text-anchor="middle">Cloudflare or CloudFront</text>
+  <rect class="band" x="40" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="56" y="194" xml:space="preserve">absorbs DDoS, bots, hot GETs</text>
+  <text class="note" x="56" y="214" xml:space="preserve">static and hot GETs served</text>
+  <text class="note" x="56" y="234" xml:space="preserve">from the edge, WAF rules</text>
+  <text class="cmd" x="56" y="254" xml:space="preserve">Cache-Control: max-age=60</text>
+  <text class="cmd" x="56" y="274" xml:space="preserve">cache hit ratio above 90%</text>
+  <path class="flow" d="M296 133.0L318 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="320" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="448.0" y="128" text-anchor="middle">2. Rate limiter</text>
+  <text class="role" x="448.0" y="148" text-anchor="middle">gateway, per IP and token</text>
+  <rect class="band" x="320" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="336" y="194" xml:space="preserve">absorbs abuse, retry storms</text>
+  <text class="note" x="336" y="214" xml:space="preserve">token bucket: burst and rate</text>
+  <text class="note" x="336" y="234" xml:space="preserve">429 with Retry-After header</text>
+  <text class="cmd" x="336" y="254" xml:space="preserve">limit_req zone=api burst=20</text>
+  <text class="cmd" x="336" y="274" xml:space="preserve">quota 1000 req/min per token</text>
+  <path class="flow" d="M576 133.0L598 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="600" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="728.0" y="128" text-anchor="middle">3. Load balancer</text>
+  <text class="role" x="728.0" y="148" text-anchor="middle">ALB or NLB, health checks</text>
+  <rect class="band" x="600" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="616" y="194" xml:space="preserve">absorbs a dead replica or AZ</text>
+  <text class="note" x="616" y="214" xml:space="preserve">unhealthy target removed</text>
+  <text class="note" x="616" y="234" xml:space="preserve">after 3 failed checks</text>
+  <text class="cmd" x="616" y="254" xml:space="preserve">interval 10 s, threshold 3</text>
+  <text class="cmd" x="616" y="274" xml:space="preserve">deregistration delay 30 s</text>
+  <path class="flow" d="M856 133.0L878 133.0" marker-end="url(#a)"/>
+  <rect class="box" x="880" y="104" width="256" height="58" rx="8"/>
+  <text class="lab" x="1008.0" y="128" text-anchor="middle">4. Stateless replicas</text>
+  <text class="role" x="1008.0" y="148" text-anchor="middle">pods behind a Service</text>
+  <rect class="band" x="880" y="170" width="256" height="140" rx="10"/>
+  <text class="amber" x="896" y="194" xml:space="preserve">absorbs spikes, bad deploys</text>
+  <text class="note" x="896" y="214" xml:space="preserve">no state in memory or disk</text>
+  <text class="note" x="896" y="234" xml:space="preserve">timeouts, circuit breakers</text>
+  <text class="cmd" x="896" y="254" xml:space="preserve">maxUnavailable 0, PDB</text>
+  <text class="cmd" x="896" y="274" xml:space="preserve">HPA on CPU or RPS per pod</text>
+  <rect class="hot" x="40" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="168.0" y="380" text-anchor="middle">5. Cache</text>
+  <text class="role" x="168.0" y="400" text-anchor="middle">Redis or Valkey, cache-aside</text>
+  <rect class="band" x="40" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="56" y="446" xml:space="preserve">absorbs repeated reads</text>
+  <text class="note" x="56" y="466" xml:space="preserve">jittered TTL, single-flight</text>
+  <text class="note" x="56" y="486" xml:space="preserve">guard against stampedes</text>
+  <text class="cmd" x="56" y="506" xml:space="preserve">GET; miss: lock, load, SET EX</text>
+  <text class="cmd" x="56" y="526" xml:space="preserve">watch hit ratio and evictions</text>
+  <path class="flow" d="M296 385.0L318 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="320" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="448.0" y="380" text-anchor="middle">6. Queue</text>
+  <text class="role" x="448.0" y="400" text-anchor="middle">SQS, Redis streams, Kafka</text>
+  <rect class="band" x="320" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="336" y="446" xml:space="preserve">absorbs worker loss, bursts</text>
+  <text class="note" x="336" y="466" xml:space="preserve">API answers 202, work waits</text>
+  <text class="note" x="336" y="486" xml:space="preserve">DLQ after N failed receives</text>
+  <text class="cmd" x="336" y="506" xml:space="preserve">visibility timeout &gt; job time</text>
+  <text class="cmd" x="336" y="526" xml:space="preserve">alert on oldest message age</text>
+  <path class="flow" d="M576 385.0L598 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="600" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="728.0" y="380" text-anchor="middle">7. Workers</text>
+  <text class="role" x="728.0" y="400" text-anchor="middle">idempotent consumers</text>
+  <rect class="band" x="600" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="616" y="446" xml:space="preserve">absorbs duplicates, slowness</text>
+  <text class="note" x="616" y="466" xml:space="preserve">at-least-once: a key gives</text>
+  <text class="note" x="616" y="486" xml:space="preserve">one result; lag = backlog</text>
+  <text class="cmd" x="616" y="506" xml:space="preserve">XREADGROUP GROUP g c COUNT 10</text>
+  <text class="cmd" x="616" y="526" xml:space="preserve">scale on queue depth (KEDA)</text>
+  <path class="flow" d="M856 385.0L878 385.0" marker-end="url(#a)"/>
+  <rect class="box" x="880" y="356" width="256" height="58" rx="8"/>
+  <text class="lab" x="1008.0" y="380" text-anchor="middle">8. Database</text>
+  <text class="role" x="1008.0" y="400" text-anchor="middle">Aurora writer plus readers</text>
+  <rect class="band" x="880" y="422" width="256" height="140" rx="10"/>
+  <text class="amber" x="896" y="446" xml:space="preserve">absorbs reads, one AZ loss</text>
+  <text class="note" x="896" y="466" xml:space="preserve">pooler in front: pods x pool</text>
+  <text class="note" x="896" y="486" xml:space="preserve">must fit max_connections</text>
+  <text class="cmd" x="896" y="506" xml:space="preserve">reader endpoint for SELECTs</text>
+  <text class="cmd" x="896" y="526" xml:space="preserve">backups proven by restore</text>
+  <path class="flow" d="M1008.0 310L1008.0 332L168.0 332L168.0 354" marker-end="url(#a)"/>
+  <text class="small" x="1160" y="78" text-anchor="end">amber: failure absorbed | blue: the setting</text>
+  <text class="note" x="40" y="596">The order matters: cheap layers in front absorb the common failures so the expensive, stateful layer at the back sees only real work.</text>
+</svg>

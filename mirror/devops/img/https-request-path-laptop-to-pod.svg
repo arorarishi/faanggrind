@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="t d">
+  <title id="t">The path of one HTTPS request from a laptop to a pod, and where each failure appears</title>
+  <desc id="d">Six hops: DNS resolver, edge or CDN, load balancer, worker node, Service rules, pod. Under each hop is the failure it produces: NXDOMAIN, 5xx from the edge, 503 with no healthy targets, timeout from a security group, refused from a wrong targetPort, 502 or 504 from the app. A second panel shows where TLS terminates.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .bad { font-size: 14px; font-weight: 600; fill: #FF8A80; }
+    .blue { font-size: 14px; font-weight: 600; fill: #7CC4F8; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .fail { fill: #0B0E0B; stroke: #FF8A80; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .down { stroke: #FF8A80; stroke-width: 1.5; fill: none; stroke-dasharray: 5 5; }
+    .tls { stroke: #7CC4F8; stroke-width: 6; fill: none; stroke-linecap: round; }
+    .plain { stroke: #4A5348; stroke-width: 6; fill: none; stroke-linecap: round; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#FF8A80"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="700" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One HTTPS request, six hops, six different failures</text>
+  <text class="sub" x="40" y="78">GET https://api.example.com/orders from a laptop to a pod on EKS. The symptom tells you which hop to look at.</text>
+
+  <!-- band 1: hops and failures -->
+  <rect class="band" x="40" y="104" width="1120" height="396" rx="10"/>
+  <text class="lab" x="56" y="130">Request path</text>
+  <text class="small" x="176" y="130">solid lime: the request moves right. Coral cards: what the client sees when that hop fails, and the first command to run.</text>
+
+  <!-- hop boxes: width 150, gap 34; last 168 -->
+  <rect class="box" x="56" y="150" width="150" height="88" rx="8"/>
+  <text class="lab" x="131" y="176" text-anchor="middle">1. DNS</text>
+  <text class="note" x="131" y="198" text-anchor="middle">resolver asks</text>
+  <text class="note" x="131" y="216" text-anchor="middle">Route 53 for A</text>
+
+  <rect class="box" x="240" y="150" width="150" height="88" rx="8"/>
+  <text class="lab" x="315" y="176" text-anchor="middle">2. Edge / CDN</text>
+  <text class="note" x="315" y="198" text-anchor="middle">Cloudflare or</text>
+  <text class="note" x="315" y="216" text-anchor="middle">CloudFront, WAF</text>
+
+  <rect class="box" x="424" y="150" width="150" height="88" rx="8"/>
+  <text class="lab" x="499" y="176" text-anchor="middle">3. Load balancer</text>
+  <text class="note" x="499" y="198" text-anchor="middle">ALB or NLB,</text>
+  <text class="note" x="499" y="216" text-anchor="middle">health checks</text>
+
+  <rect class="box" x="608" y="150" width="150" height="88" rx="8"/>
+  <text class="lab" x="683" y="176" text-anchor="middle">4. Node</text>
+  <text class="note" x="683" y="198" text-anchor="middle">EC2 in a private</text>
+  <text class="note" x="683" y="216" text-anchor="middle">subnet, SG, NACL</text>
+
+  <rect class="box" x="792" y="150" width="150" height="88" rx="8"/>
+  <text class="lab" x="867" y="176" text-anchor="middle">5. Service</text>
+  <text class="note" x="867" y="198" text-anchor="middle">kube-proxy rules,</text>
+  <text class="note" x="867" y="216" text-anchor="middle">EndpointSlice</text>
+
+  <rect class="hot" x="976" y="150" width="168" height="88" rx="8"/>
+  <text class="key" x="1060" y="176" text-anchor="middle">6. Pod</text>
+  <text class="note" x="1060" y="198" text-anchor="middle">container listens</text>
+  <text class="note" x="1060" y="216" text-anchor="middle">on 0.0.0.0:8080</text>
+
+  <!-- arrows between hops -->
+  <path class="flow" d="M206 194L232 194" marker-end="url(#a)"/>
+  <path class="flow" d="M390 194L416 194" marker-end="url(#a)"/>
+  <path class="flow" d="M574 194L600 194" marker-end="url(#a)"/>
+  <path class="flow" d="M758 194L784 194" marker-end="url(#a)"/>
+  <path class="flow" d="M942 194L968 194" marker-end="url(#a)"/>
+
+  <!-- dashed links from hop to failure card -->
+  <path class="down" d="M131 238L131 290" marker-end="url(#r)"/>
+  <path class="down" d="M315 238L315 290" marker-end="url(#r)"/>
+  <path class="down" d="M499 238L499 290" marker-end="url(#r)"/>
+  <path class="down" d="M683 238L683 290" marker-end="url(#r)"/>
+  <path class="down" d="M867 238L867 290" marker-end="url(#r)"/>
+  <path class="down" d="M1060 238L1060 290" marker-end="url(#r)"/>
+  <text class="small" x="56" y="268">fails as</text>
+
+  <!-- failure cards -->
+  <rect class="fail" x="56" y="292" width="150" height="110" rx="8"/>
+  <text class="bad" x="131" y="316" text-anchor="middle">NXDOMAIN, or</text>
+  <text class="bad" x="131" y="334" text-anchor="middle">stale IP (TTL)</text>
+  <text class="small" x="131" y="360" text-anchor="middle">dig +short name</text>
+  <text class="small" x="131" y="378" text-anchor="middle">check TTL, SOA</text>
+
+  <rect class="fail" x="240" y="292" width="150" height="110" rx="8"/>
+  <text class="bad" x="315" y="316" text-anchor="middle">52x from edge,</text>
+  <text class="bad" x="315" y="334" text-anchor="middle">cert error, 429</text>
+  <text class="small" x="315" y="360" text-anchor="middle">openssl s_client</text>
+  <text class="small" x="315" y="378" text-anchor="middle">edge dashboard</text>
+
+  <rect class="fail" x="424" y="292" width="150" height="110" rx="8"/>
+  <text class="bad" x="499" y="316" text-anchor="middle">503 no healthy</text>
+  <text class="bad" x="499" y="334" text-anchor="middle">targets, or 504</text>
+  <text class="small" x="499" y="360" text-anchor="middle">target health tab</text>
+  <text class="small" x="499" y="378" text-anchor="middle">curl -w timings</text>
+
+  <rect class="fail" x="608" y="292" width="150" height="110" rx="8"/>
+  <text class="bad" x="683" y="316" text-anchor="middle">timeout: SG or</text>
+  <text class="bad" x="683" y="334" text-anchor="middle">NACL drops SYN</text>
+  <text class="small" x="683" y="360" text-anchor="middle">nc -zv node port</text>
+  <text class="small" x="683" y="378" text-anchor="middle">from inside VPC</text>
+
+  <rect class="fail" x="792" y="292" width="150" height="110" rx="8"/>
+  <text class="bad" x="867" y="316" text-anchor="middle">refused: wrong</text>
+  <text class="bad" x="867" y="334" text-anchor="middle">targetPort</text>
+  <text class="small" x="867" y="360" text-anchor="middle">get endpointslices</text>
+  <text class="small" x="867" y="378" text-anchor="middle">ss -tlnp in pod</text>
+
+  <rect class="fail" x="976" y="292" width="168" height="110" rx="8"/>
+  <text class="bad" x="1060" y="316" text-anchor="middle">502 app crashed,</text>
+  <text class="bad" x="1060" y="334" text-anchor="middle">504 app too slow</text>
+  <text class="small" x="1060" y="360" text-anchor="middle">ingress log, logs</text>
+  <text class="small" x="1060" y="378" text-anchor="middle">curl the pod IP</text>
+
+  <text class="note" x="56" y="434">Rule of thumb: refused means something answered (go to the app owner); timeout means nothing answered (go to firewalls</text>
+  <text class="note" x="56" y="454">and routes); 502, 503 and 504 are written by a proxy and describe what the proxy saw from the next hop: broken, absent, or slow.</text>
+  <text class="note" x="56" y="482">Walk the hops in order when nothing works. Start from the proxy log when you already have a status code.</text>
+
+  <!-- band 2: TLS termination -->
+  <rect class="band" x="40" y="520" width="1120" height="136" rx="10"/>
+  <text class="lab" x="56" y="546">Where the encryption ends</text>
+  <text class="small" x="276" y="546">blue: TLS; grey: plain HTTP. The laptop sends SNI api.example.com in the clear before the certificate is checked.</text>
+  <path class="tls" d="M64 580L574 580"/>
+  <path class="plain" d="M608 580L1136 580"/>
+  <text class="blue" x="64" y="606">laptop to edge, and edge to ALB: TLS, certificate checked at each hop</text>
+  <text class="note" x="608" y="606">ALB to pod: usually plain HTTP inside the private VPC</text>
+  <text class="small" x="64" y="634">Alternatives: terminate at the ingress controller (cert-manager Secret), inside the pod, or on every hop with mTLS from a service mesh.</text>
+
+  <text class="small" x="40" y="684">Hops 4 to 6 live inside the EKS VPC; the ALB reaches pods directly (IP targets) or through a NodePort, which is why security groups on the nodes matter.</text>
+</svg>

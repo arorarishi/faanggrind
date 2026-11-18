@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">Multi-head, grouped-query and multi-query attention: how many key/value heads are cached</title>
+  <desc id="d">Three panels, each with 8 query heads. In multi-head attention every query head has its own key/value head, so 8 are cached. In grouped-query attention with 2 groups, 4 query heads share each key/value head, so 2 are cached. In multi-query attention all 8 query heads share one key/value head, so 1 is cached.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .mut { font-size: 14px; fill: #8A9185; }
+    .key { font-size: 15px; font-weight: 600; fill: #C6F432; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .q { fill: #0B0E0B; stroke: #B7BDB1; stroke-width: 1.5; }
+    .qt { font-size: 13px; font-weight: 600; fill: #B7BDB1; }
+    .kv { fill: #C6F432; stroke: #C6F432; }
+    .kvt { font-size: 13px; font-weight: 700; fill: #0B0E0B; }
+    .ln { stroke: #6B7468; stroke-width: 1.5; fill: none; }
+  </style>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Fewer key/value heads, smaller KV cache</text>
+  <text class="sub" x="40" y="78">All three have 8 query heads. Only the key/value heads (lime) are stored in the cache.</text>
+  <rect class="panel" x="40" y="104" width="352" height="372" rx="10"/>
+  <text class="lab" x="60" y="138">Multi-head (MHA)</text>
+  <text class="note" x="60" y="162">every query head has its own</text>
+  <text class="mut" x="60" y="194">query heads, not cached</text>
+  <path class="ln" d="M76 236L76 318"/>
+  <rect class="kv" x="61" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="76" y="338" text-anchor="middle">KV</text>
+  <path class="ln" d="M116 236L116 318"/>
+  <rect class="kv" x="101" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="116" y="338" text-anchor="middle">KV</text>
+  <path class="ln" d="M156 236L156 318"/>
+  <rect class="kv" x="141" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="156" y="338" text-anchor="middle">KV</text>
+  <path class="ln" d="M196 236L196 318"/>
+  <rect class="kv" x="181" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="196" y="338" text-anchor="middle">KV</text>
+  <path class="ln" d="M236 236L236 318"/>
+  <rect class="kv" x="221" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="236" y="338" text-anchor="middle">KV</text>
+  <path class="ln" d="M276 236L276 318"/>
+  <rect class="kv" x="261" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="276" y="338" text-anchor="middle">KV</text>
+  <path class="ln" d="M316 236L316 318"/>
+  <rect class="kv" x="301" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="316" y="338" text-anchor="middle">KV</text>
+  <path class="ln" d="M356 236L356 318"/>
+  <rect class="kv" x="341" y="318" width="30" height="30" rx="5"/>
+  <text class="kvt" x="356" y="338" text-anchor="middle">KV</text>
+  <rect class="q" x="61" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="76" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="101" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="116" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="141" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="156" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="181" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="196" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="221" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="236" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="261" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="276" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="301" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="316" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="341" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="356" y="226" text-anchor="middle">Q</text>
+  <text class="mut" x="60" y="374">key/value heads, cached: 8</text>
+  <text class="note" x="60" y="418">numbers per token, per layer</text>
+  <text class="key" x="60" y="446">2 × 8 × d_head</text>
+  <text class="note" x="372" y="446" text-anchor="end">baseline</text>
+  <rect class="panel" x="424" y="104" width="352" height="372" rx="10"/>
+  <text class="lab" x="444" y="138">Grouped-query (GQA), 2 groups</text>
+  <text class="note" x="444" y="162">4 query heads share each one</text>
+  <text class="mut" x="444" y="194">query heads, not cached</text>
+  <path class="ln" d="M460 236L520 318"/>
+  <path class="ln" d="M500 236L520 318"/>
+  <path class="ln" d="M540 236L520 318"/>
+  <path class="ln" d="M580 236L520 318"/>
+  <rect class="kv" x="482" y="318" width="76" height="30" rx="5"/>
+  <text class="kvt" x="520" y="338" text-anchor="middle">K and V</text>
+  <path class="ln" d="M620 236L680 318"/>
+  <path class="ln" d="M660 236L680 318"/>
+  <path class="ln" d="M700 236L680 318"/>
+  <path class="ln" d="M740 236L680 318"/>
+  <rect class="kv" x="642" y="318" width="76" height="30" rx="5"/>
+  <text class="kvt" x="680" y="338" text-anchor="middle">K and V</text>
+  <rect class="q" x="445" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="460" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="485" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="500" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="525" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="540" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="565" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="580" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="605" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="620" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="645" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="660" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="685" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="700" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="725" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="740" y="226" text-anchor="middle">Q</text>
+  <text class="mut" x="444" y="374">key/value heads, cached: 2</text>
+  <text class="note" x="444" y="418">numbers per token, per layer</text>
+  <text class="key" x="444" y="446">2 × 2 × d_head</text>
+  <text class="note" x="756" y="446" text-anchor="end">4 times smaller</text>
+  <rect class="panel" x="808" y="104" width="352" height="372" rx="10"/>
+  <text class="lab" x="828" y="138">Multi-query (MQA)</text>
+  <text class="note" x="828" y="162">all 8 query heads share one</text>
+  <text class="mut" x="828" y="194">query heads, not cached</text>
+  <path class="ln" d="M844 236L984 318"/>
+  <path class="ln" d="M884 236L984 318"/>
+  <path class="ln" d="M924 236L984 318"/>
+  <path class="ln" d="M964 236L984 318"/>
+  <path class="ln" d="M1004 236L984 318"/>
+  <path class="ln" d="M1044 236L984 318"/>
+  <path class="ln" d="M1084 236L984 318"/>
+  <path class="ln" d="M1124 236L984 318"/>
+  <rect class="kv" x="946" y="318" width="76" height="30" rx="5"/>
+  <text class="kvt" x="984" y="338" text-anchor="middle">K and V</text>
+  <rect class="q" x="829" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="844" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="869" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="884" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="909" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="924" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="949" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="964" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="989" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="1004" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="1029" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="1044" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="1069" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="1084" y="226" text-anchor="middle">Q</text>
+  <rect class="q" x="1109" y="206" width="30" height="30" rx="5"/>
+  <text class="qt" x="1124" y="226" text-anchor="middle">Q</text>
+  <text class="mut" x="828" y="374">key/value heads, cached: 1</text>
+  <text class="note" x="828" y="418">numbers per token, per layer</text>
+  <text class="key" x="828" y="446">2 × 1 × d_head</text>
+  <text class="note" x="1140" y="446" text-anchor="end">8 times smaller</text>
+  <rect class="panel" x="40" y="496" width="1120" height="104" rx="10"/>
+  <text class="lab" x="60" y="530">What stays the same</text>
+  <text class="note" x="60" y="556">Every query head still computes its own scores and weights, so the number of scores computed per step does not shrink.</text>
+  <text class="note" x="60" y="580">The saving is memory: fewer keys and values to store, and fewer to load from memory at every decoding step.</text>
+</svg>

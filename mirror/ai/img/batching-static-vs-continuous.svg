@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="t d">
+  <title id="t">Static batching versus continuous batching on one GPU</title>
+  <desc id="d">Two timelines of the same six requests on three batch slots. Static batching holds each batch until its longest request finishes, leaving slots idle, and ends at step 13. Continuous batching gives a freed slot to the next waiting request at once and ends at step 9.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .mut { font-size: 13px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .req { fill: #1E241D; stroke: #B7BDB1; stroke-width: 1.5; }
+    .reqt { font-size: 14px; font-weight: 600; fill: #F2F4EC; }
+    .join { fill: #C6F432; stroke: #C6F432; stroke-width: 1.5; }
+    .joint { font-size: 14px; font-weight: 700; fill: #0B0E0B; }
+    .idle { fill: none; stroke: #FF8A80; stroke-width: 1.5; stroke-dasharray: 5 5; }
+    .idlet { font-size: 13px; fill: #FF8A80; }
+    .free { fill: none; stroke: #4A5348; stroke-width: 1.5; stroke-dasharray: 3 5; }
+    .axis { stroke: #4A5348; stroke-width: 1.5; }
+    .cut { stroke: #F2C14B; stroke-width: 1.5; stroke-dasharray: 4 5; }
+    .cutt { font-size: 13px; fill: #F2C14B; }
+    .big { font-size: 15px; font-weight: 700; fill: #F2F4EC; }
+    .bigk { font-size: 15px; font-weight: 700; fill: #C6F432; }
+  </style>
+  <rect x="0" y="0" width="1200" height="700" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Static vs continuous batching on one GPU</text>
+  <text class="sub" x="40" y="78">Six requests, three batch slots. One column is one decode step. A bar shows the request and its output tokens.</text>
+
+  <rect class="panel" x="40" y="100" width="1120" height="270" rx="10"/>
+  <text class="lab" x="60" y="132">Static batching</text>
+  <text class="note" x="212" y="132">the batch is held until its longest request finishes</text>
+  <text class="note" x="60" y="192">Slot 1</text>
+  <text class="note" x="60" y="236">Slot 2</text>
+  <text class="note" x="60" y="280">Slot 3</text>
+  <path class="axis" d="M132 304L834 304"/>
+  <path class="axis" d="M132 304L132 310"/>
+  <text class="mut" x="132" y="328" text-anchor="middle">0</text>
+  <path class="axis" d="M186 304L186 310"/>
+  <text class="mut" x="186" y="328" text-anchor="middle">1</text>
+  <path class="axis" d="M240 304L240 310"/>
+  <text class="mut" x="240" y="328" text-anchor="middle">2</text>
+  <path class="axis" d="M294 304L294 310"/>
+  <text class="mut" x="294" y="328" text-anchor="middle">3</text>
+  <path class="axis" d="M348 304L348 310"/>
+  <text class="mut" x="348" y="328" text-anchor="middle">4</text>
+  <path class="axis" d="M402 304L402 310"/>
+  <text class="mut" x="402" y="328" text-anchor="middle">5</text>
+  <path class="axis" d="M456 304L456 310"/>
+  <text class="mut" x="456" y="328" text-anchor="middle">6</text>
+  <path class="axis" d="M510 304L510 310"/>
+  <text class="mut" x="510" y="328" text-anchor="middle">7</text>
+  <path class="axis" d="M564 304L564 310"/>
+  <text class="mut" x="564" y="328" text-anchor="middle">8</text>
+  <path class="axis" d="M618 304L618 310"/>
+  <text class="mut" x="618" y="328" text-anchor="middle">9</text>
+  <path class="axis" d="M672 304L672 310"/>
+  <text class="mut" x="672" y="328" text-anchor="middle">10</text>
+  <path class="axis" d="M726 304L726 310"/>
+  <text class="mut" x="726" y="328" text-anchor="middle">11</text>
+  <path class="axis" d="M780 304L780 310"/>
+  <text class="mut" x="780" y="328" text-anchor="middle">12</text>
+  <path class="axis" d="M834 304L834 310"/>
+  <text class="mut" x="834" y="328" text-anchor="middle">13</text>
+  <text class="mut" x="132" y="352">decode steps</text>
+  <rect class="req" x="134" y="170" width="104" height="34" rx="5"/>
+  <text class="reqt" x="186" y="192" text-anchor="middle">A: 2</text>
+  <rect class="idle" x="242" y="170" width="320" height="34" rx="5"/>
+  <text class="idlet" x="402" y="192" text-anchor="middle">idle for 6 steps</text>
+  <rect class="req" x="134" y="214" width="428" height="34" rx="5"/>
+  <text class="reqt" x="348" y="236" text-anchor="middle">B: 8</text>
+  <rect class="req" x="134" y="258" width="212" height="34" rx="5"/>
+  <text class="reqt" x="240" y="280" text-anchor="middle">C: 4</text>
+  <rect class="idle" x="350" y="258" width="212" height="34" rx="5"/>
+  <text class="idlet" x="456" y="280" text-anchor="middle">idle for 4 steps</text>
+  <rect class="req" x="566" y="170" width="158" height="34" rx="5"/>
+  <text class="reqt" x="645" y="192" text-anchor="middle">D: 3</text>
+  <rect class="idle" x="728" y="170" width="104" height="34" rx="5"/>
+  <text class="idlet" x="780" y="192" text-anchor="middle">idle</text>
+  <rect class="req" x="566" y="214" width="266" height="34" rx="5"/>
+  <text class="reqt" x="699" y="236" text-anchor="middle">E: 5</text>
+  <rect class="req" x="566" y="258" width="104" height="34" rx="5"/>
+  <text class="reqt" x="618" y="280" text-anchor="middle">F: 2</text>
+  <rect class="idle" x="674" y="258" width="158" height="34" rx="5"/>
+  <text class="idlet" x="753" y="280" text-anchor="middle">idle</text>
+  <path class="cut" d="M564 156L564 298"/>
+  <text class="cutt" x="572" y="162">batch 2 starts only when B is done</text>
+  <text class="mut" x="134" y="162">batch 1: A, B, C</text>
+  <rect x="868" y="156" width="272" height="150" rx="8" fill="#0B0E0B" stroke="#2A312A"/>
+  <text class="note" x="884" y="186">All six done at</text>
+  <text class="big" x="1124" y="186" text-anchor="end">step 13</text>
+  <text class="note" x="884" y="218">GPU busy</text>
+  <text class="big" x="1124" y="218" text-anchor="end">61.5%</text>
+  <text class="note" x="884" y="250">Average wait</text>
+  <text class="big" x="1124" y="250" text-anchor="end">4.0 steps</text>
+  <text class="note" x="884" y="282">Average latency</text>
+  <text class="big" x="1124" y="282" text-anchor="end">10.5 steps</text>
+  <rect class="panel" x="40" y="390" width="1120" height="270" rx="10"/>
+  <text class="lab" x="60" y="422">Continuous batching</text>
+  <text class="note" x="249" y="422">a finished request frees its slot at the next step</text>
+  <text class="note" x="60" y="482">Slot 1</text>
+  <text class="note" x="60" y="526">Slot 2</text>
+  <text class="note" x="60" y="570">Slot 3</text>
+  <path class="axis" d="M132 594L834 594"/>
+  <path class="axis" d="M132 594L132 600"/>
+  <text class="mut" x="132" y="618" text-anchor="middle">0</text>
+  <path class="axis" d="M186 594L186 600"/>
+  <text class="mut" x="186" y="618" text-anchor="middle">1</text>
+  <path class="axis" d="M240 594L240 600"/>
+  <text class="mut" x="240" y="618" text-anchor="middle">2</text>
+  <path class="axis" d="M294 594L294 600"/>
+  <text class="mut" x="294" y="618" text-anchor="middle">3</text>
+  <path class="axis" d="M348 594L348 600"/>
+  <text class="mut" x="348" y="618" text-anchor="middle">4</text>
+  <path class="axis" d="M402 594L402 600"/>
+  <text class="mut" x="402" y="618" text-anchor="middle">5</text>
+  <path class="axis" d="M456 594L456 600"/>
+  <text class="mut" x="456" y="618" text-anchor="middle">6</text>
+  <path class="axis" d="M510 594L510 600"/>
+  <text class="mut" x="510" y="618" text-anchor="middle">7</text>
+  <path class="axis" d="M564 594L564 600"/>
+  <text class="mut" x="564" y="618" text-anchor="middle">8</text>
+  <path class="axis" d="M618 594L618 600"/>
+  <text class="mut" x="618" y="618" text-anchor="middle">9</text>
+  <path class="axis" d="M672 594L672 600"/>
+  <text class="mut" x="672" y="618" text-anchor="middle">10</text>
+  <path class="axis" d="M726 594L726 600"/>
+  <text class="mut" x="726" y="618" text-anchor="middle">11</text>
+  <path class="axis" d="M780 594L780 600"/>
+  <text class="mut" x="780" y="618" text-anchor="middle">12</text>
+  <path class="axis" d="M834 594L834 600"/>
+  <text class="mut" x="834" y="618" text-anchor="middle">13</text>
+  <text class="mut" x="132" y="642">decode steps</text>
+  <rect class="req" x="134" y="460" width="104" height="34" rx="5"/>
+  <text class="reqt" x="186" y="482" text-anchor="middle">A: 2</text>
+  <rect class="join" x="242" y="460" width="158" height="34" rx="5"/>
+  <text class="joint" x="321" y="482" text-anchor="middle">D: 3</text>
+  <rect class="join" x="404" y="460" width="104" height="34" rx="5"/>
+  <text class="joint" x="456" y="482" text-anchor="middle">F: 2</text>
+  <rect class="free" x="512" y="460" width="104" height="34" rx="5"/>
+  <rect class="req" x="134" y="504" width="428" height="34" rx="5"/>
+  <text class="reqt" x="348" y="526" text-anchor="middle">B: 8</text>
+  <rect class="free" x="566" y="504" width="50" height="34" rx="5"/>
+  <rect class="req" x="134" y="548" width="212" height="34" rx="5"/>
+  <text class="reqt" x="240" y="570" text-anchor="middle">C: 4</text>
+  <rect class="join" x="350" y="548" width="266" height="34" rx="5"/>
+  <text class="joint" x="483" y="570" text-anchor="middle">E: 5</text>
+  <text class="mut" x="564" y="482" text-anchor="middle">queue empty</text>
+  <text class="key" x="242" y="452">lime: joined while the batch was running</text>
+  <path class="cut" d="M618 446L618 588"/>
+  <text class="cutt" x="628" y="520">done at step 9:</text>
+  <text class="cutt" x="628" y="538">4 steps earlier</text>
+  <rect x="868" y="446" width="272" height="150" rx="8" fill="#0B0E0B" stroke="#2A312A"/>
+  <text class="note" x="884" y="476">All six done at</text>
+  <text class="bigk" x="1124" y="476" text-anchor="end">step 9</text>
+  <text class="note" x="884" y="508">GPU busy</text>
+  <text class="bigk" x="1124" y="508" text-anchor="end">88.9%</text>
+  <text class="note" x="884" y="540">Average wait</text>
+  <text class="bigk" x="1124" y="540" text-anchor="end">1.8 steps</text>
+  <text class="note" x="884" y="572">Average latency</text>
+  <text class="bigk" x="1124" y="572" text-anchor="end">5.8 steps</text>
+</svg>

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 690" width="1200" height="690" role="img" aria-labelledby="t d">
+  <title id="t">Causal attention weights for five tokens: each token reads itself and earlier tokens only</title>
+  <desc id="d">A five by five grid. Rows are the token being updated, columns are the token being read. Cells on and below the diagonal hold attention weights and each row sums to 1. Cells above the diagonal are blocked by the causal mask and have weight 0.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .tok { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .axis { font-size: 14px; fill: #8A9185; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .num { font-size: 17px; font-weight: 700; }
+    .zero { font-size: 15px; fill: #8A9185; }
+    .cell { stroke: #2A312A; stroke-width: 1; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="12" height="12" fill="#0B0E0B"/>
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#3A4238" stroke-width="3"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="1200" height="690" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The causal mask: a token reads only itself and the past</text>
+  <text class="sub" x="40" y="78">Attention weights for "I like hot masala chai". Example numbers, not from a real model.</text>
+  <rect class="panel" x="40" y="104" width="690" height="546" rx="10"/>
+  <text class="axis" x="460" y="138" text-anchor="middle">token being read (key)</text>
+  <text class="axis" x="78" y="406" text-anchor="middle" transform="rotate(-90 78 406)">token being updated (query)</text>
+  <text class="tok" x="292" y="182" text-anchor="middle">I</text>
+  <text class="tok" x="376" y="182" text-anchor="middle">like</text>
+  <text class="tok" x="460" y="182" text-anchor="middle">hot</text>
+  <text class="tok" x="544" y="182" text-anchor="middle">masala</text>
+  <text class="tok" x="628" y="182" text-anchor="middle">chai</text>
+  <text class="tok" x="234" y="244" text-anchor="end">I</text>
+  <text class="tok" x="234" y="328" text-anchor="end">like</text>
+  <text class="tok" x="234" y="412" text-anchor="end">hot</text>
+  <text class="tok" x="234" y="496" text-anchor="end">masala</text>
+  <text class="tok" x="234" y="580" text-anchor="end">chai</text>
+  <rect class="cell" x="250" y="196" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="251" y="197" width="82" height="82" fill="#C6F432" fill-opacity="1.00"/>
+  <text class="num" x="292" y="244" text-anchor="middle" fill="#0B0E0B">1.00</text>
+  <rect class="cell" x="334" y="196" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="376" y="244" text-anchor="middle">0</text>
+  <rect class="cell" x="418" y="196" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="460" y="244" text-anchor="middle">0</text>
+  <rect class="cell" x="502" y="196" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="544" y="244" text-anchor="middle">0</text>
+  <rect class="cell" x="586" y="196" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="628" y="244" text-anchor="middle">0</text>
+  <rect class="cell" x="250" y="280" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="251" y="281" width="82" height="82" fill="#C6F432" fill-opacity="0.42"/>
+  <text class="num" x="292" y="328" text-anchor="middle" fill="#F2F4EC">0.35</text>
+  <rect class="cell" x="334" y="280" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="335" y="281" width="82" height="82" fill="#C6F432" fill-opacity="0.69"/>
+  <text class="num" x="376" y="328" text-anchor="middle" fill="#0B0E0B">0.65</text>
+  <rect class="cell" x="418" y="280" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="460" y="328" text-anchor="middle">0</text>
+  <rect class="cell" x="502" y="280" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="544" y="328" text-anchor="middle">0</text>
+  <rect class="cell" x="586" y="280" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="628" y="328" text-anchor="middle">0</text>
+  <rect class="cell" x="250" y="364" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="251" y="365" width="82" height="82" fill="#C6F432" fill-opacity="0.19"/>
+  <text class="num" x="292" y="412" text-anchor="middle" fill="#F2F4EC">0.10</text>
+  <rect class="cell" x="334" y="364" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="335" y="365" width="82" height="82" fill="#C6F432" fill-opacity="0.55"/>
+  <text class="num" x="376" y="412" text-anchor="middle" fill="#0B0E0B">0.50</text>
+  <rect class="cell" x="418" y="364" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="419" y="365" width="82" height="82" fill="#C6F432" fill-opacity="0.46"/>
+  <text class="num" x="460" y="412" text-anchor="middle" fill="#F2F4EC">0.40</text>
+  <rect class="cell" x="502" y="364" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="544" y="412" text-anchor="middle">0</text>
+  <rect class="cell" x="586" y="364" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="628" y="412" text-anchor="middle">0</text>
+  <rect class="cell" x="250" y="448" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="251" y="449" width="82" height="82" fill="#C6F432" fill-opacity="0.15"/>
+  <text class="num" x="292" y="496" text-anchor="middle" fill="#F2F4EC">0.05</text>
+  <rect class="cell" x="334" y="448" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="335" y="449" width="82" height="82" fill="#C6F432" fill-opacity="0.24"/>
+  <text class="num" x="376" y="496" text-anchor="middle" fill="#F2F4EC">0.15</text>
+  <rect class="cell" x="418" y="448" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="419" y="449" width="82" height="82" fill="#C6F432" fill-opacity="0.51"/>
+  <text class="num" x="460" y="496" text-anchor="middle" fill="#0B0E0B">0.45</text>
+  <rect class="cell" x="502" y="448" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="503" y="449" width="82" height="82" fill="#C6F432" fill-opacity="0.42"/>
+  <text class="num" x="544" y="496" text-anchor="middle" fill="#F2F4EC">0.35</text>
+  <rect class="cell" x="586" y="448" width="84" height="84" fill="url(#hatch)"/>
+  <text class="zero" x="628" y="496" text-anchor="middle">0</text>
+  <rect class="cell" x="250" y="532" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="251" y="533" width="82" height="82" fill="#C6F432" fill-opacity="0.15"/>
+  <text class="num" x="292" y="580" text-anchor="middle" fill="#F2F4EC">0.05</text>
+  <rect class="cell" x="334" y="532" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="335" y="533" width="82" height="82" fill="#C6F432" fill-opacity="0.28"/>
+  <text class="num" x="376" y="580" text-anchor="middle" fill="#F2F4EC">0.20</text>
+  <rect class="cell" x="418" y="532" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="419" y="533" width="82" height="82" fill="#C6F432" fill-opacity="0.33"/>
+  <text class="num" x="460" y="580" text-anchor="middle" fill="#F2F4EC">0.25</text>
+  <rect class="cell" x="502" y="532" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="503" y="533" width="82" height="82" fill="#C6F432" fill-opacity="0.42"/>
+  <text class="num" x="544" y="580" text-anchor="middle" fill="#F2F4EC">0.35</text>
+  <rect class="cell" x="586" y="532" width="84" height="84" fill="#0B0E0B"/>
+  <rect x="587" y="533" width="82" height="82" fill="#C6F432" fill-opacity="0.24"/>
+  <text class="num" x="628" y="580" text-anchor="middle" fill="#F2F4EC">0.15</text>
+  <rect x="250" y="196" width="420" height="420" fill="none" stroke="#8A9185" stroke-width="1.5"/>
+  <rect class="panel" x="762" y="104" width="398" height="546" rx="10"/>
+  <text class="lab" x="782" y="138">How to read the grid</text>
+  <rect x="782" y="156" width="18" height="18" fill="#C6F432" fill-opacity="0.75" stroke="#2A312A"/>
+  <text class="note" x="810" y="170">weight: brighter means more attention</text>
+  <rect x="782" y="184" width="18" height="18" fill="url(#hatch)" stroke="#2A312A"/>
+  <text class="note" x="810" y="198">blocked by the mask: weight is exactly 0</text>
+  <text class="note" x="782" y="236">Each row is one token being updated.</text>
+  <text class="note" x="782" y="258">It reads itself and earlier tokens only,</text>
+  <text class="note" x="782" y="280">and its weights sum to 1.</text>
+  <text class="key" x="782" y="318">Row "chai"</text>
+  <text class="note" x="782" y="342">0.35 on masala and 0.25 on hot, so its new</text>
+  <text class="note" x="782" y="364">vector is mostly a blend of those two values.</text>
+  <text class="lab" x="782" y="410">Why block the future</text>
+  <text class="note" x="782" y="436">When the model generates, later tokens do</text>
+  <text class="note" x="782" y="458">not exist yet. Training uses the same rule,</text>
+  <text class="note" x="782" y="480">or the model would copy the next token.</text>
+  <text class="lab" x="782" y="526">How it is done</text>
+  <text class="note" x="782" y="552">Scores above the diagonal are set to -1e9</text>
+  <text class="note" x="782" y="574">before the softmax. Their weights become 0</text>
+  <text class="note" x="782" y="596">and the rest of the row still sums to 1.</text>
+  <text class="key" x="782" y="630">Mask first, softmax second.</text>
+</svg>

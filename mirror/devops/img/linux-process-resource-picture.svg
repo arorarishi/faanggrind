@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">Linux processes, the kernel, cgroups, namespaces and the OOM killer</title>
+  <desc id="d">User space holds processes, some plain and some grouped into containers. Each container is a cgroup that limits CPU and memory and a set of namespaces that limits what the processes see. Below is the one shared kernel, with the scheduler, the page cache and the OOM killer, which kills the process with the highest oom_score when memory runs out.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .amber { font-size: 13px; fill: #F2C14B; }
+    .coral { font-size: 13px; font-weight: 600; fill: #FF8A80; }
+    .blue { font-size: 13px; fill: #7CC4F8; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .cg { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .ns { fill: none; stroke: #7CC4F8; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .oom { fill: #0B0E0B; stroke: #FF8A80; stroke-width: 2; }
+    .kill { stroke: #FF8A80; stroke-width: 2; fill: none; }
+  </style>
+  <defs>
+    <marker id="r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#FF8A80"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One kernel, many processes: cgroups limit use, namespaces limit view</text>
+  <text class="sub" x="40" y="78">A container is a normal process tree with a cgroup around it and its own namespaces. The kernel underneath is shared.</text>
+
+  <!-- user space band -->
+  <rect class="band" x="40" y="100" width="1120" height="310" rx="10"/>
+  <text class="lab" x="56" y="126">User space</text>
+  <text class="small" x="156" y="126">every process has a PID, a UID, open file descriptors and an oom_score computed from its memory use</text>
+
+  <!-- plain processes -->
+  <rect class="box" x="60" y="150" width="310" height="234" rx="8"/>
+  <text class="lab" x="76" y="176">Plain processes on the host</text>
+  <text class="small" x="76" y="194">root PID namespace, root cgroup</text>
+  <rect class="box" x="76" y="210" width="278" height="44" rx="6"/>
+  <text class="note" x="90" y="229">PID 1 systemd</text>
+  <text class="small" x="90" y="246">oom_score_adj -1000, never killed</text>
+  <rect class="box" x="76" y="264" width="278" height="44" rx="6"/>
+  <text class="note" x="90" y="283">PID 3002 sshd</text>
+  <text class="small" x="90" y="300">oom_score_adj -1000, never killed</text>
+  <rect class="box" x="76" y="318" width="278" height="44" rx="6"/>
+  <text class="note" x="90" y="337">PID 2044 postgres, rss 896 MiB</text>
+  <text class="small" x="90" y="354">oom_score_adj -900, protected</text>
+
+  <!-- container A -->
+  <rect class="cg" x="394" y="150" width="372" height="234" rx="8"/>
+  <text class="key" x="410" y="176">cgroup: container api</text>
+  <text class="small" x="410" y="194">memory.max 512Mi, cpu.max 1.5 CPUs</text>
+  <rect class="ns" x="410" y="206" width="340" height="166" rx="6"/>
+  <text class="blue" x="424" y="226">namespaces: own PIDs, network, mounts, hostname</text>
+  <rect class="box" x="424" y="238" width="312" height="44" rx="6"/>
+  <text class="note" x="438" y="257">PID 1 inside = PID 1821 outside: java</text>
+  <text class="small" x="438" y="274">rss 3 GiB, the biggest process on the node</text>
+  <rect class="box" x="424" y="292" width="312" height="44" rx="6"/>
+  <text class="note" x="438" y="311">PID 7 inside: otel-agent sidecar</text>
+  <text class="small" x="438" y="328">rss 40 MiB</text>
+  <text class="amber" x="424" y="358">over memory.max: OOM kill inside this cgroup only</text>
+
+  <!-- container B -->
+  <rect class="cg" x="790" y="150" width="350" height="234" rx="8"/>
+  <text class="key" x="806" y="176">cgroup: container worker</text>
+  <text class="small" x="806" y="194">memory.max 256Mi, cpu.max 0.5 CPU</text>
+  <rect class="ns" x="806" y="206" width="318" height="166" rx="6"/>
+  <text class="blue" x="820" y="226">namespaces: sees only its own PIDs and ports</text>
+  <rect class="box" x="820" y="238" width="290" height="44" rx="6"/>
+  <text class="note" x="834" y="257">PID 1 inside = PID 2310 outside: node</text>
+  <text class="small" x="834" y="274">rss 400 MiB</text>
+  <text class="small" x="820" y="306">ss -tlnp inside shows port 3000; outside</text>
+  <text class="small" x="820" y="324">it is a veth pair plugged into a bridge</text>
+  <text class="amber" x="820" y="358">over cpu.max: throttled, not killed</text>
+
+  <!-- kernel band -->
+  <rect class="band" x="40" y="440" width="1120" height="160" rx="10"/>
+  <text class="lab" x="56" y="466">Kernel, shared by everything above</text>
+  <text class="small" x="356" y="466">system calls are the only way in: open, read, fork, exec, kill</text>
+
+  <rect class="box" x="60" y="486" width="250" height="96" rx="8"/>
+  <text class="lab" x="185" y="512" text-anchor="middle">Scheduler</text>
+  <text class="small" x="185" y="534" text-anchor="middle">runs R tasks on CPUs; load average</text>
+  <text class="small" x="185" y="552" text-anchor="middle">counts R and D tasks, divide by nproc</text>
+
+  <rect class="box" x="330" y="486" width="250" height="96" rx="8"/>
+  <text class="lab" x="455" y="512" text-anchor="middle">Page cache</text>
+  <text class="small" x="455" y="534" text-anchor="middle">spare RAM holds file data; MemFree</text>
+  <text class="small" x="455" y="552" text-anchor="middle">is small, MemAvailable is what counts</text>
+
+  <rect class="oom" x="600" y="486" width="290" height="96" rx="8"/>
+  <text class="coral" x="745" y="512" text-anchor="middle">OOM killer</text>
+  <text class="small" x="745" y="534" text-anchor="middle">when MemAvailable and swap hit zero,</text>
+  <text class="small" x="745" y="552" text-anchor="middle">SIGKILL the highest oom_score: java, 388</text>
+
+  <rect class="box" x="910" y="486" width="230" height="96" rx="8"/>
+  <text class="lab" x="1025" y="512" text-anchor="middle">cgroup v2 tree</text>
+  <text class="small" x="1025" y="534" text-anchor="middle">/sys/fs/cgroup/.../memory.max</text>
+  <text class="small" x="1025" y="552" text-anchor="middle">systemd MemoryMax= writes it too</text>
+
+  <!-- kill arrow from OOM killer up the gap between containers to java -->
+  <path class="kill" d="M745 486L745 426L775 426L775 260L740 260" marker-end="url(#r)"/>
+  <text class="coral" x="640" y="430" text-anchor="end">SIGKILL, exit code 137</text>
+
+  <!-- footer -->
+  <text class="note" x="40" y="626">Protect what must survive with a negative oom_score_adj. A container cannot run its own kernel; a kernel bug reaches every container on the node.</text>
+</svg>

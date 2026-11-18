@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">Terraform workflow: code, plan, state and real infrastructure, with drift</title>
+  <desc id="d">Terraform code in Git is planned against the state file in S3 and the real AWS infrastructure. Plan refreshes state from the cloud and shows the diff, including drift caused by a manual console change. Apply changes the cloud and writes the new state under a lock.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 16px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .warn { font-size: 14px; font-weight: 600; fill: #FF8A80; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .bad { fill: #0B0E0B; stroke: #FF8A80; stroke-width: 2; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .read { stroke: #7CC4F8; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Terraform: three copies of the truth, and plan is where they meet</text>
+  <text class="sub" x="40" y="78">Code says what you want. State says what Terraform made last time. The cloud says what exists now. Plan compares all three.</text>
+
+  <!-- Code band -->
+  <rect class="band" x="40" y="104" width="300" height="200" rx="10"/>
+  <text class="lab" x="56" y="130">1. Code in Git</text>
+  <rect class="box" x="56" y="146" width="268" height="142" rx="8"/>
+  <text class="note" x="72" y="172">main.tf, variables.tf</text>
+  <text class="note" x="72" y="194">modules/vpc, envs/prod</text>
+  <text class="note" x="72" y="216">desired state, reviewed in a PR</text>
+  <text class="small" x="72" y="244">resource "aws_db_instance" "main"</text>
+  <text class="small" x="72" y="264">  instance_class = "db.r6g.large"</text>
+
+  <!-- Plan -->
+  <rect class="hot" x="420" y="140" width="360" height="128" rx="10"/>
+  <text class="key" x="600" y="168" text-anchor="middle">2. terraform plan -out=tfplan</text>
+  <text class="note" x="600" y="192" text-anchor="middle">refresh: read the cloud, compare with state</text>
+  <text class="note" x="600" y="212" text-anchor="middle">diff: compare code with refreshed state</text>
+  <text class="note" x="600" y="236" text-anchor="middle">output: 2 to add, 1 to change, 1 to destroy</text>
+  <text class="small" x="600" y="256" text-anchor="middle">-detailed-exitcode: 2 means changes present</text>
+  <path class="flow" d="M340 204L412 204" marker-end="url(#a)"/>
+
+  <!-- Apply -->
+  <rect class="hot" x="860" y="140" width="300" height="128" rx="10"/>
+  <text class="key" x="1010" y="168" text-anchor="middle">3. terraform apply tfplan</text>
+  <text class="note" x="1010" y="192" text-anchor="middle">takes the state lock</text>
+  <text class="note" x="1010" y="212" text-anchor="middle">calls the AWS API in dependency order</text>
+  <text class="note" x="1010" y="236" text-anchor="middle">writes the new state, releases the lock</text>
+  <text class="small" x="1010" y="256" text-anchor="middle">only after a human approved the plan</text>
+  <path class="flow" d="M780 204L852 204" marker-end="url(#a)"/>
+
+  <!-- State -->
+  <rect class="band" x="40" y="344" width="500" height="240" rx="10"/>
+  <text class="lab" x="56" y="370">State: s3://tf-state/prod/terraform.tfstate</text>
+  <rect class="box" x="56" y="386" width="468" height="186" rx="8"/>
+  <text class="note" x="72" y="412">every managed resource and its real cloud id</text>
+  <text class="small" x="72" y="436">aws_db_instance.main = db-ABC123, class db.r6g.large</text>
+  <text class="small" x="72" y="456">aws_security_group.api = sg-0a1b2c, port 443 only</text>
+  <text class="note" x="72" y="482">in S3: versioned, encrypted, locked (use_lockfile)</text>
+  <text class="warn" x="72" y="506">contains secrets: DB passwords, private keys.</text>
+  <text class="warn" x="72" y="526">Restrict who can read it. Never commit it.</text>
+  <text class="amber" x="72" y="552">written by apply after every run, under the lock</text>
+
+  <!-- Real infra -->
+  <rect class="band" x="660" y="344" width="500" height="240" rx="10"/>
+  <text class="lab" x="676" y="370">Real infrastructure: AWS account</text>
+  <rect class="box" x="676" y="386" width="468" height="88" rx="8"/>
+  <text class="note" x="692" y="412">RDS db-ABC123, class db.r6g.large</text>
+  <text class="note" x="692" y="434">Security group sg-0a1b2c</text>
+  <text class="note" x="692" y="456">VPC, subnets, NAT gateways, EKS control plane</text>
+
+  <rect class="bad" x="676" y="490" width="468" height="82" rx="8"/>
+  <text class="warn" x="692" y="516">Drift: port 22 opened to 0.0.0.0/0 in the console</text>
+  <text class="note" x="692" y="538">state still says 443 only, so the next plan shows</text>
+  <text class="note" x="692" y="558">an update that closes it. Plan finds drift, not alerts.</text>
+
+  <!-- arrows: plan reads state and cloud -->
+  <path class="read" d="M500 268L500 338" marker-end="url(#b)"/>
+  <path class="read" d="M700 268L700 338" marker-end="url(#b)"/>
+  <text class="small" x="488" y="306" text-anchor="end">plan reads state</text>
+  <text class="small" x="712" y="292">plan reads the cloud (refresh)</text>
+
+  <!-- arrow: apply changes the cloud -->
+  <path class="flow" d="M1010 268L1010 338" marker-end="url(#a)"/>
+  <text class="small" x="998" y="326" text-anchor="end">apply changes the cloud</text>
+
+  <!-- footer -->
+  <text class="note" x="40" y="618">Solid lime: the apply path. Dashed blue: what plan reads. If state is lost, Terraform forgets what it owns and plans to create everything again.</text>
+</svg>

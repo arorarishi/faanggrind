@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">HNSW search: start in a sparse top layer, finish in the dense bottom layer</title>
+  <desc id="d">Three stacked graph layers. The search enters at the top layer, moves greedily toward the query, drops a layer, and repeats until it reaches the nearest vector in layer 0.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .edge { stroke: #4A5348; stroke-width: 1.5; fill: none; }
+    .node { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .path { stroke: #C6F432; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .drop { stroke: #C6F432; stroke-width: 2; stroke-dasharray: 5 6; fill: none; }
+    .hit { fill: #C6F432; stroke: #C6F432; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">HNSW: the search starts sparse and ends dense</text>
+  <text class="sub" x="40" y="78">Each layer is a graph over a subset of the vectors. Layer 0 holds all of them.</text>
+
+  <!-- layer bands -->
+  <rect class="band" x="40" y="104" width="740" height="130" rx="10"/>
+  <rect class="band" x="40" y="254" width="740" height="130" rx="10"/>
+  <rect class="band" x="40" y="404" width="740" height="196" rx="10"/>
+  <text class="lab" x="56" y="128">Layer 2</text>
+  <text class="note" x="122" y="128">few nodes, long links</text>
+  <text class="lab" x="56" y="278">Layer 1</text>
+  <text class="note" x="122" y="278">more nodes, medium links</text>
+  <text class="lab" x="56" y="428">Layer 0</text>
+  <text class="note" x="122" y="428">every vector, short links</text>
+
+  <!-- layer 2 edges and nodes -->
+  <path class="edge" d="M170 184L420 166M420 166L650 196"/>
+  <!-- layer 1 edges -->
+  <path class="edge" d="M170 334L300 356M300 356L420 316M420 316L540 314M540 314L650 346M650 346L720 304M540 314L720 304"/>
+  <!-- layer 0 edges -->
+  <path class="edge" d="M110 548L170 502M170 502L230 462M230 462L300 524M300 524L360 468M360 468L420 484M420 484L480 544M420 484L540 488M540 488L600 552M540 488L650 516M650 516L720 474M650 516L700 560M600 552L700 560M480 544L600 552M170 502L300 524M360 468L230 462"/>
+
+  <!-- drops between layers -->
+  <path class="drop" d="M650 206L650 334"/>
+  <path class="drop" d="M540 326L540 476"/>
+
+  <!-- search path -->
+  <path class="path" d="M420 166L640 194" marker-end="url(#a)"/>
+  <path class="path" d="M650 346L552 316" marker-end="url(#a)"/>
+  <path class="path" d="M540 488L592 544" marker-end="url(#a)"/>
+
+  <!-- nodes layer 2 -->
+  <circle class="node" cx="170" cy="184" r="9"/>
+  <circle class="hit" cx="420" cy="166" r="9"/>
+  <circle class="hit" cx="650" cy="196" r="9"/>
+  <!-- nodes layer 1 -->
+  <circle class="node" cx="170" cy="334" r="9"/>
+  <circle class="node" cx="300" cy="356" r="9"/>
+  <circle class="node" cx="420" cy="316" r="9"/>
+  <circle class="hit" cx="540" cy="314" r="9"/>
+  <circle class="hit" cx="650" cy="346" r="9"/>
+  <circle class="node" cx="720" cy="304" r="9"/>
+  <!-- nodes layer 0 -->
+  <circle class="node" cx="110" cy="548" r="8"/>
+  <circle class="node" cx="170" cy="502" r="8"/>
+  <circle class="node" cx="230" cy="462" r="8"/>
+  <circle class="node" cx="300" cy="524" r="8"/>
+  <circle class="node" cx="360" cy="468" r="8"/>
+  <circle class="node" cx="420" cy="484" r="8"/>
+  <circle class="node" cx="480" cy="544" r="8"/>
+  <circle class="hit" cx="540" cy="488" r="8"/>
+  <circle class="hit" cx="600" cy="552" r="10"/>
+  <circle class="node" cx="650" cy="516" r="8"/>
+  <circle class="node" cx="720" cy="474" r="8"/>
+  <circle class="node" cx="700" cy="560" r="8"/>
+
+  <!-- labels on the path -->
+  <text class="key" x="396" y="146">entry point</text>
+  <text class="note" x="664" y="270">drop a layer</text>
+  <path d="M572 564l8 8l-8 8l-8-8z" fill="#F2C14B"/>
+  <text class="note" x="512" y="577" style="fill:#F2C14B">query</text>
+  <text class="key" x="616" y="586">nearest neighbour</text>
+
+  <!-- notes panel -->
+  <rect x="812" y="104" width="348" height="496" rx="10" fill="#121612" stroke="#2A312A"/>
+  <text class="lab" x="832" y="138">How one search runs</text>
+  <text class="note" x="832" y="168">1. Enter at the top layer.</text>
+  <text class="note" x="832" y="192">2. Move to whichever neighbour is closer</text>
+  <text class="note" x="850" y="212">to the query. Stop when none is.</text>
+  <text class="note" x="832" y="236">3. Drop one layer and repeat.</text>
+  <text class="note" x="832" y="260">4. In layer 0, keep the best efSearch</text>
+  <text class="note" x="850" y="280">candidates and return the top k.</text>
+
+  <text class="lab" x="832" y="328">The three knobs</text>
+  <text class="key" x="832" y="358">M</text>
+  <text class="note" x="850" y="358">links per node. Higher means</text>
+  <text class="note" x="850" y="378">better recall and more memory.</text>
+  <text class="key" x="832" y="408">efConstruction</text>
+  <text class="note" x="850" y="428">build effort. Higher means a better</text>
+  <text class="note" x="850" y="448">graph and a slower build.</text>
+  <text class="key" x="832" y="478">efSearch</text>
+  <text class="note" x="850" y="498">candidates kept per query. Raise it</text>
+  <text class="note" x="850" y="518">for recall, lower it for speed.</text>
+
+  <text class="lab" x="832" y="560">Cost</text>
+  <text class="note" x="876" y="560">memory: vectors plus graph links</text>
+  <text class="note" x="876" y="580">time: roughly log(N) hops per query</text>
+</svg>

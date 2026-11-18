@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 656" width="1200" height="656" role="img" aria-labelledby="t d">
+  <title id="t">The telemetry pipeline: application with OpenTelemetry SDK, collector, Prometheus, Loki, Tempo, Grafana and Alertmanager</title>
+  <desc id="d">A service emits metrics, logs and traces through the OpenTelemetry SDK to a collector. The collector runs receivers, processors and exporters and sends metrics to Prometheus, logs to Loki and traces to Tempo. Grafana queries all three stores; Prometheus alerting rules send alerts to Alertmanager, which pages the on-call engineer. The trace id joins the three signals.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .store { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .query { stroke: #7CC4F8; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+    .alert { stroke: #F2C14B; stroke-width: 2.2; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+    <marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="656" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The telemetry pipeline: one SDK, one collector, three stores, one screen</text>
+  <text class="sub" x="40" y="78">Solid lime: telemetry flows out of the app. Dashed blue: Grafana queries. Amber: alerts on their way to a human.</text>
+
+  <!-- row 1: app and collector -->
+  <rect class="band" x="40" y="104" width="300" height="150" rx="10"/>
+  <text class="lab" x="56" y="130">Service pod: checkout</text>
+  <rect class="hot" x="56" y="144" width="268" height="40" rx="8"/>
+  <text class="key" x="190" y="169" text-anchor="middle">OTel SDK, auto-instrumented</text>
+  <text class="note" x="56" y="208">metrics: counters and histograms</text>
+  <text class="note" x="56" y="226">logs: JSON lines carrying trace_id</text>
+  <text class="note" x="56" y="244">traces: spans, W3C traceparent header</text>
+
+  <path class="flow" d="M340 180L392 180" marker-end="url(#a)"/>
+  <text class="small" x="344" y="170">OTLP</text>
+
+  <rect class="band" x="400" y="104" width="760" height="150" rx="10"/>
+  <text class="lab" x="416" y="130">OpenTelemetry Collector, one DaemonSet or Deployment</text>
+  <rect class="box" x="416" y="144" width="220" height="94" rx="8"/>
+  <text class="lab" x="526" y="167" text-anchor="middle">receivers</text>
+  <text class="small" x="526" y="190" text-anchor="middle">otlp on 4317 grpc, 4318 http</text>
+  <text class="small" x="526" y="208" text-anchor="middle">prometheus: scrape /metrics</text>
+  <text class="small" x="526" y="226" text-anchor="middle">filelog: container log files</text>
+  <path class="flow" d="M636 191L664 191" marker-end="url(#a)"/>
+  <rect class="box" x="672" y="144" width="220" height="94" rx="8"/>
+  <text class="lab" x="782" y="167" text-anchor="middle">processors</text>
+  <text class="small" x="782" y="190" text-anchor="middle">memory_limiter first</text>
+  <text class="small" x="782" y="208" text-anchor="middle">k8sattributes: pod, namespace</text>
+  <text class="small" x="782" y="226" text-anchor="middle">batch last; tail_sampling for traces</text>
+  <path class="flow" d="M892 191L920 191" marker-end="url(#a)"/>
+  <rect class="box" x="928" y="144" width="216" height="94" rx="8"/>
+  <text class="lab" x="1036" y="167" text-anchor="middle">exporters</text>
+  <text class="small" x="1036" y="190" text-anchor="middle">prometheus_remote_write</text>
+  <text class="small" x="1036" y="208" text-anchor="middle">otlphttp to Loki /otlp</text>
+  <text class="small" x="1036" y="226" text-anchor="middle">otlp to Tempo 4317</text>
+
+  <!-- exporters to stores -->
+  <path class="flow" d="M950 238L950 266L210 266L210 298" marker-end="url(#a)"/>
+  <text class="small" x="220" y="290">metrics</text>
+  <path class="flow" d="M1010 238L1010 282L600 282L600 298" marker-end="url(#a)"/>
+  <text class="small" x="610" y="296">logs</text>
+  <path class="flow" d="M1100 238L1100 298" marker-end="url(#a)"/>
+  <text class="small" x="1110" y="272">traces</text>
+
+  <!-- row 2: stores -->
+  <rect class="store" x="40" y="306" width="340" height="110" rx="10"/>
+  <text class="lab" x="56" y="332">Prometheus: metrics</text>
+  <text class="note" x="56" y="356">time series, a sample every 15 s</text>
+  <text class="note" x="56" y="374">PromQL; recording and alerting rules</text>
+  <text class="small" x="56" y="398">1 to 2 bytes per sample; 15 d default retention</text>
+
+  <rect class="store" x="430" y="306" width="340" height="110" rx="10"/>
+  <text class="lab" x="446" y="332">Loki: logs</text>
+  <text class="note" x="446" y="356">indexes labels only, not the text</text>
+  <text class="note" x="446" y="374">LogQL: {app="checkout"} |= "error"</text>
+  <text class="small" x="446" y="398">chunks in S3; cost follows GB ingested per day</text>
+
+  <rect class="store" x="820" y="306" width="340" height="110" rx="10"/>
+  <text class="lab" x="836" y="332">Tempo: traces</text>
+  <text class="note" x="836" y="356">looked up by trace_id; TraceQL search</text>
+  <text class="note" x="836" y="374">one trace = spans across every service</text>
+  <text class="small" x="836" y="398">sampled: keep 10 percent plus all errors</text>
+
+  <!-- row 3: alertmanager and grafana -->
+  <path class="alert" d="M120 416L120 458" marker-end="url(#c)"/>
+  <text class="small" x="132" y="442">alerting rules fire</text>
+  <path class="query" d="M340 416L340 440L480 440L480 458" marker-end="url(#b)"/>
+  <text class="small" x="372" y="434">PromQL</text>
+  <path class="query" d="M600 416L600 458" marker-end="url(#b)"/>
+  <text class="small" x="612" y="442">LogQL</text>
+  <path class="query" d="M990 416L990 458" marker-end="url(#b)"/>
+  <text class="small" x="1002" y="442">TraceQL</text>
+
+  <rect class="band" x="40" y="466" width="340" height="130" rx="10"/>
+  <text class="lab" x="56" y="492">Alertmanager</text>
+  <text class="note" x="56" y="516">group by alertname and namespace</text>
+  <text class="note" x="56" y="534">inhibit, silence, route by severity</text>
+  <rect class="box" x="56" y="548" width="308" height="36" rx="8"/>
+  <text class="note" x="210" y="571" text-anchor="middle">page the on-call engineer; ticket the rest</text>
+
+  <rect class="band" x="430" y="466" width="730" height="130" rx="10"/>
+  <text class="lab" x="446" y="492">Grafana: one screen for all three</text>
+  <text class="note" x="446" y="516">RED dashboard per service: rate, errors, duration, from Prometheus</text>
+  <text class="note" x="446" y="534">a spike on the p95 panel: open logs for that minute in Loki</text>
+  <text class="note" x="446" y="552">click the trace_id in the log line: Tempo shows which of 6 services was slow</text>
+  <text class="small" x="446" y="578">dashboards as code: JSON in Git, provisioned, not hand-edited in the browser</text>
+
+  <text class="note" x="40" y="630">The trace_id written into every log line and every span is what joins the three stores. Without it you have three silos.</text>
+</svg>

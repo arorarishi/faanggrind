@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="1200" height="780" role="img" aria-labelledby="t d">
+  <title id="t">A production VPC across three Availability Zones: public, private and database subnets</title>
+  <desc id="d">One VPC with three Availability Zones. Each zone has a public subnet holding an ALB node and a NAT gateway, a private subnet holding Auto Scaling group instances, and a database subnet. RDS runs as a primary in zone a with a synchronous standby in zone b. Inbound traffic enters through the internet gateway to the ALB; outbound traffic from private instances leaves through the NAT gateway in the same zone.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .amber { font-size: 13px; fill: #F2C14B; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .pub { fill: #0F140F; stroke: #4A5348; stroke-width: 1; stroke-dasharray: 4 4; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .db { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 1.5; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .out { stroke: #F2C14B; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+    .sync { stroke: #7CC4F8; stroke-width: 1.8; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+    <marker id="s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#7CC4F8"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="780" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One VPC, three Availability Zones, three subnet tiers</text>
+  <text class="sub" x="40" y="78">VPC 10.20.0.0/16. Inbound goes internet gateway to ALB to private instances. Outbound leaves through the NAT gateway of the same zone.</text>
+
+  <!-- internet and IGW -->
+  <rect class="box" x="40" y="98" width="200" height="40" rx="8"/>
+  <text class="lab" x="140" y="124" text-anchor="middle">Internet</text>
+  <rect class="hot" x="300" y="98" width="260" height="40" rx="8"/>
+  <text class="key" x="430" y="124" text-anchor="middle">Internet gateway (one per VPC)</text>
+  <path class="flow" d="M240 118L292 118" marker-end="url(#a)"/>
+  <text class="small" x="600" y="112">solid lime: inbound request path</text>
+  <text class="small" x="600" y="130">dashed amber: outbound from private subnets</text>
+  <text class="small" x="940" y="112">blue: synchronous replication</text>
+  <text class="small" x="940" y="130">DNS: Route 53 alias to the ALB</text>
+
+  <!-- AZ columns -->
+  <rect class="band" x="40" y="160" width="360" height="544" rx="10"/>
+  <rect class="band" x="420" y="160" width="360" height="544" rx="10"/>
+  <rect class="band" x="800" y="160" width="360" height="544" rx="10"/>
+  <text class="lab" x="56" y="186">AZ ap-south-1a</text>
+  <text class="small" x="190" y="186">3 of 9 ASG instances</text>
+  <text class="lab" x="436" y="186">AZ ap-south-1b</text>
+  <text class="small" x="570" y="186">target: 230 req/s per target</text>
+  <text class="lab" x="816" y="186">AZ ap-south-1c</text>
+  <text class="small" x="950" y="186">ASG min 3, max 20, 3 zones</text>
+
+  <!-- public subnets -->
+  <rect class="pub" x="56" y="200" width="328" height="128" rx="8"/>
+  <rect class="pub" x="436" y="200" width="328" height="128" rx="8"/>
+  <rect class="pub" x="816" y="200" width="328" height="128" rx="8"/>
+  <text class="small" x="372" y="218" text-anchor="end">public 10.20.100.0/24</text>
+  <text class="small" x="372" y="234" text-anchor="end">default route: internet gateway</text>
+  <text class="small" x="752" y="218" text-anchor="end">public 10.20.101.0/24</text>
+  <text class="small" x="752" y="234" text-anchor="end">default route: internet gateway</text>
+  <text class="small" x="1132" y="218" text-anchor="end">public 10.20.102.0/24</text>
+  <text class="small" x="1132" y="234" text-anchor="end">default route: internet gateway</text>
+
+  <rect class="hot" x="68" y="242" width="150" height="72" rx="8"/>
+  <text class="key" x="143" y="264" text-anchor="middle">ALB node</text>
+  <text class="small" x="143" y="283" text-anchor="middle">listener 443</text>
+  <text class="small" x="143" y="300" text-anchor="middle">target group</text>
+  <rect class="box" x="234" y="242" width="138" height="72" rx="8"/>
+  <text class="lab" x="303" y="264" text-anchor="middle">NAT gateway</text>
+  <text class="amber" x="303" y="283" text-anchor="middle">elastic IP, zonal</text>
+  <text class="small" x="303" y="300" text-anchor="middle">hourly plus per GB</text>
+
+  <rect class="hot" x="448" y="242" width="150" height="72" rx="8"/>
+  <text class="key" x="523" y="264" text-anchor="middle">ALB node</text>
+  <text class="small" x="523" y="283" text-anchor="middle">same ALB, zone b</text>
+  <text class="small" x="523" y="300" text-anchor="middle">cross-zone is on</text>
+  <rect class="box" x="614" y="242" width="138" height="72" rx="8"/>
+  <text class="lab" x="683" y="264" text-anchor="middle">NAT gateway</text>
+  <text class="amber" x="683" y="283" text-anchor="middle">one per zone</text>
+  <text class="small" x="683" y="300" text-anchor="middle">survives loss of 1a</text>
+
+  <rect class="hot" x="828" y="242" width="150" height="72" rx="8"/>
+  <text class="key" x="903" y="264" text-anchor="middle">ALB node</text>
+  <text class="small" x="903" y="283" text-anchor="middle">8 free IPs needed</text>
+  <text class="small" x="903" y="300" text-anchor="middle">subnet /27 or larger</text>
+  <rect class="box" x="994" y="242" width="138" height="72" rx="8"/>
+  <text class="lab" x="1063" y="264" text-anchor="middle">NAT gateway</text>
+  <text class="amber" x="1063" y="283" text-anchor="middle">route to own zone</text>
+  <text class="small" x="1063" y="300" text-anchor="middle">no cross-zone NAT</text>
+
+  <!-- IGW to ALB nodes -->
+  <path class="flow" d="M430 138L430 150L100 150L100 234" marker-end="url(#a)"/>
+  <path class="flow" d="M430 150L480 150L480 234" marker-end="url(#a)"/>
+  <path class="flow" d="M480 150L860 150L860 234" marker-end="url(#a)"/>
+
+  <!-- private subnets -->
+  <rect class="band" x="56" y="346" width="328" height="188" rx="8"/>
+  <rect class="band" x="436" y="346" width="328" height="188" rx="8"/>
+  <rect class="band" x="816" y="346" width="328" height="188" rx="8"/>
+  <text class="small" x="372" y="364" text-anchor="end">private 10.20.0.0/20</text>
+  <text class="small" x="372" y="380" text-anchor="end">default route: NAT-1a</text>
+  <text class="small" x="752" y="364" text-anchor="end">private 10.20.16.0/20</text>
+  <text class="small" x="752" y="380" text-anchor="end">default route: NAT-1b</text>
+  <text class="small" x="1132" y="364" text-anchor="end">private 10.20.32.0/20</text>
+  <text class="small" x="1132" y="380" text-anchor="end">default route: NAT-1c</text>
+
+  <rect class="box" x="68" y="398" width="146" height="60" rx="6"/>
+  <text class="lab" x="141" y="422" text-anchor="middle">EC2 m6i.xlarge</text>
+  <text class="small" x="141" y="442" text-anchor="middle">app :8080, IMDSv2</text>
+  <rect class="box" x="226" y="398" width="146" height="60" rx="6"/>
+  <text class="lab" x="299" y="422" text-anchor="middle">EC2 m6i.xlarge</text>
+  <text class="small" x="299" y="442" text-anchor="middle">IAM role, no keys</text>
+  <rect class="box" x="68" y="466" width="304" height="56" rx="6"/>
+  <text class="small" x="220" y="488" text-anchor="middle">security group: 8080 only from the ALB SG</text>
+  <text class="small" x="220" y="508" text-anchor="middle">no SSH; use Session Manager</text>
+
+  <rect class="box" x="448" y="398" width="146" height="60" rx="6"/>
+  <text class="lab" x="521" y="422" text-anchor="middle">EC2 m6i.xlarge</text>
+  <text class="small" x="521" y="442" text-anchor="middle">launch template v7</text>
+  <rect class="box" x="606" y="398" width="146" height="60" rx="6"/>
+  <text class="lab" x="679" y="422" text-anchor="middle">EC2 m6i.xlarge</text>
+  <text class="small" x="679" y="442" text-anchor="middle">user data bootstrap</text>
+  <rect class="box" x="448" y="466" width="304" height="56" rx="6"/>
+  <text class="small" x="600" y="488" text-anchor="middle">ALB health check GET /healthz every 30 s</text>
+  <text class="small" x="600" y="508" text-anchor="middle">ASG replaces instances that fail it</text>
+
+  <rect class="box" x="828" y="398" width="146" height="60" rx="6"/>
+  <text class="lab" x="901" y="422" text-anchor="middle">EC2 m6i.xlarge</text>
+  <text class="small" x="901" y="442" text-anchor="middle">CloudWatch agent</text>
+  <rect class="box" x="986" y="398" width="146" height="60" rx="6"/>
+  <text class="lab" x="1059" y="422" text-anchor="middle">EC2 m6i.xlarge</text>
+  <text class="small" x="1059" y="442" text-anchor="middle">gp3 root volume</text>
+  <rect class="box" x="828" y="466" width="304" height="56" rx="6"/>
+  <text class="small" x="980" y="488" text-anchor="middle">instance refresh rolls out a new AMI</text>
+  <text class="small" x="980" y="508" text-anchor="middle">MinHealthyPercentage 90, warmup 300 s</text>
+
+  <!-- ALB to instances (inbound) -->
+  <path class="flow" d="M100 314L100 390" marker-end="url(#a)"/>
+  <path class="flow" d="M480 314L480 390" marker-end="url(#a)"/>
+  <path class="flow" d="M860 314L860 390" marker-end="url(#a)"/>
+  <!-- instances to NAT (outbound), routed through the gap between panels -->
+  <path class="out" d="M190 398L190 336L303 336L303 322" marker-end="url(#o)"/>
+  <path class="out" d="M570 398L570 336L683 336L683 322" marker-end="url(#o)"/>
+  <path class="out" d="M950 398L950 336L1063 336L1063 322" marker-end="url(#o)"/>
+
+  <!-- database subnets -->
+  <rect class="band" x="56" y="552" width="328" height="136" rx="8"/>
+  <rect class="band" x="436" y="552" width="328" height="136" rx="8"/>
+  <rect class="band" x="816" y="552" width="328" height="136" rx="8"/>
+  <text class="small" x="372" y="570" text-anchor="end">database 10.20.110.0/24, no internet route</text>
+  <text class="small" x="752" y="570" text-anchor="end">database 10.20.111.0/24, no internet route</text>
+  <text class="small" x="1132" y="570" text-anchor="end">database 10.20.112.0/24, no internet route</text>
+
+  <rect class="db" x="68" y="586" width="304" height="88" rx="8"/>
+  <text class="lab" x="220" y="610" text-anchor="middle">RDS primary (Multi-AZ)</text>
+  <text class="small" x="220" y="630" text-anchor="middle">one DNS endpoint for the app</text>
+  <text class="small" x="220" y="650" text-anchor="middle">port 5432 only from the app SG</text>
+  <rect class="db" x="448" y="586" width="304" height="88" rx="8"/>
+  <text class="lab" x="600" y="610" text-anchor="middle">RDS standby</text>
+  <text class="small" x="600" y="630" text-anchor="middle">synchronous copy, serves no reads</text>
+  <text class="small" x="600" y="650" text-anchor="middle">failover 60 to 120 s, DNS record moves</text>
+  <rect class="box" x="828" y="586" width="304" height="88" rx="8"/>
+  <text class="lab" x="980" y="610" text-anchor="middle">read replica (optional)</text>
+  <text class="small" x="980" y="630" text-anchor="middle">asynchronous, for read scaling</text>
+  <text class="small" x="980" y="650" text-anchor="middle">subnet group spans all 3 zones</text>
+
+  <!-- app to db, sync -->
+  <path class="flow" d="M100 522L100 578" marker-end="url(#a)"/>
+  <path class="sync" d="M372 630L440 630" marker-end="url(#s)"/>
+
+  <!-- footer -->
+  <text class="note" x="40" y="736">Nothing in a private subnet has a public IP. The only public things are the ALB nodes and the NAT gateways. Losing one zone leaves two thirds of the capacity</text>
+  <text class="note" x="40" y="758">and the standby takes over the database, which is why the ASG is sized so that two zones can carry the peak.</text>
+</svg>

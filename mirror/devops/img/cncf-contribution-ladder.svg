@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="t d">
+  <title id="t">The open source contribution ladder, from first issue to maintainer, with LFX Mentorship and GSoC entry points</title>
+  <desc id="d">Seven steps rise from left to right: use the project, docs and typos, tests and triage, bug fixes, features and KEPs, reviewer, approver and maintainer. GSoC and LFX Mentorship are marked as entry points that expect the first steps to be done already. A side panel lists what each step proves to an interviewer.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 15px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .blue { font-size: 14px; fill: #7CC4F8; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .step { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .hot { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .entry { fill: #121612; stroke: #F2C14B; stroke-width: 1.8; }
+    .edge { stroke: #4A5348; stroke-width: 1.5; fill: none; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .in { stroke: #F2C14B; stroke-width: 1.8; fill: none; stroke-dasharray: 5 5; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#F2C14B"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="700" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The contribution ladder: each step is small, the order is not</text>
+  <text class="sub" x="40" y="78">Lime: the path most contributors take. Amber: where LFX Mentorship and GSoC plug in, and what they expect you to have done first.</text>
+
+  <!-- ladder panel -->
+  <rect class="band" x="40" y="104" width="784" height="556" rx="10"/>
+  <text class="lab" x="56" y="130">In the project</text>
+  <text class="small" x="170" y="130">Kubernetes role names in brackets</text>
+
+  <!-- step 1 -->
+  <rect class="step" x="60" y="560" width="232" height="74" rx="8"/>
+  <text class="lab" x="76" y="585">1. Use it</text>
+  <text class="note" x="76" y="605">run it on kind, read the docs,</text>
+  <text class="note" x="76" y="623">read issues for a week</text>
+
+  <!-- step 2 -->
+  <rect class="step" x="170" y="470" width="232" height="74" rx="8"/>
+  <text class="lab" x="186" y="495">2. Docs and typos</text>
+  <text class="note" x="186" y="515">first PR, CLA signed, learn</text>
+  <text class="note" x="186" y="533">the bot and the review flow</text>
+
+  <!-- step 3 -->
+  <rect class="step" x="280" y="380" width="232" height="74" rx="8"/>
+  <text class="lab" x="296" y="405">3. Tests and triage</text>
+  <text class="note" x="296" y="425">reproduce issues, add a</text>
+  <text class="note" x="296" y="443">unit test, confirm bugs</text>
+
+  <!-- step 4 -->
+  <rect class="hot" x="390" y="290" width="232" height="74" rx="8"/>
+  <text class="key" x="406" y="315">4. Small bug fixes</text>
+  <text class="note" x="406" y="335">good first issue, help wanted</text>
+  <text class="note" x="406" y="353">one fix, one test, one PR</text>
+
+  <!-- step 5 -->
+  <rect class="step" x="500" y="200" width="232" height="74" rx="8"/>
+  <text class="lab" x="516" y="225">5. Features</text>
+  <text class="note" x="516" y="245">design in an issue or KEP,</text>
+  <text class="note" x="516" y="263">then code; join the SIG call</text>
+
+  <!-- step 6 -->
+  <rect class="step" x="588" y="112" width="232" height="74" rx="8"/>
+  <text class="lab" x="604" y="137">6. Review, own</text>
+  <text class="note" x="604" y="157">[member, reviewer, approver]</text>
+  <text class="note" x="604" y="175">OWNERS file, /lgtm, /approve</text>
+
+  <!-- arrows up the ladder -->
+  <path class="flow" d="M292 597L320 597L320 552" marker-end="url(#a)"/>
+  <path class="flow" d="M402 507L430 507L430 462" marker-end="url(#a)"/>
+  <path class="flow" d="M512 417L540 417L540 372" marker-end="url(#a)"/>
+  <path class="flow" d="M622 327L650 327L650 282" marker-end="url(#a)"/>
+  <path class="flow" d="M732 237L760 237L760 194" marker-end="url(#a)"/>
+
+  <!-- entry points -->
+  <rect class="entry" x="60" y="160" width="300" height="120" rx="8"/>
+  <text class="amber" x="76" y="186">Entry points</text>
+  <text class="note" x="76" y="208">GSoC: for beginners to open source,</text>
+  <text class="note" x="76" y="226">18+, proposal to a listed organisation</text>
+  <text class="note" x="76" y="248">LFX Mentorship: 12-week terms, apply</text>
+  <text class="note" x="76" y="266">on the LFX site, mentors pick mentees</text>
+  <path class="in" d="M360 220L420 220L420 282" marker-end="url(#y)"/>
+  <text class="small" x="62" y="300">Both select on steps 1 to 4 already done</text>
+  <text class="small" x="62" y="318">in that project, not on marks or college</text>
+
+  <text class="small" x="60" y="372">Time, roughly:</text>
+  <text class="small" x="60" y="390">steps 1 to 4 in 12 weeks</text>
+  <text class="small" x="60" y="408">step 5 during a mentorship</text>
+  <text class="small" x="60" y="426">step 6 after months of reviews</text>
+
+  <!-- right panel: what it proves -->
+  <rect class="band" x="840" y="104" width="320" height="556" rx="10"/>
+  <text class="lab" x="856" y="130">What each step proves</text>
+  <text class="blue" x="856" y="166">1.</text>
+  <text class="note" x="880" y="166">You can run the real thing</text>
+  <text class="note" x="880" y="184">and read its logs</text>
+  <text class="blue" x="856" y="218">2.</text>
+  <text class="note" x="880" y="218">You can follow a process:</text>
+  <text class="note" x="880" y="236">fork, branch, sign, PR, rebase</text>
+  <text class="blue" x="856" y="270">3.</text>
+  <text class="note" x="880" y="270">You can reproduce a bug and</text>
+  <text class="note" x="880" y="288">write a test that fails first</text>
+  <text class="blue" x="856" y="322">4.</text>
+  <text class="note" x="880" y="322">You can read a large Go codebase</text>
+  <text class="note" x="880" y="340">and change it without breaking it</text>
+  <text class="blue" x="856" y="374">5.</text>
+  <text class="note" x="880" y="374">You can design in the open and</text>
+  <text class="note" x="880" y="392">take review from strangers</text>
+  <text class="blue" x="856" y="426">6.</text>
+  <text class="note" x="880" y="426">Others trust your judgement</text>
+  <text class="note" x="880" y="444">on their code</text>
+
+  <text class="small" x="856" y="490">On a resume, each merged PR is</text>
+  <text class="small" x="856" y="508">a link, one line on what changed,</text>
+  <text class="small" x="856" y="526">and one line on what it taught you.</text>
+  <text class="small" x="856" y="560">Interviewers open the link. They</text>
+  <text class="small" x="856" y="578">read the review thread, not the</text>
+  <text class="small" x="856" y="596">diff. Answer every comment well.</text>
+
+  <text class="note" x="40" y="688">Nobody skips step 2 to get to step 6. The ladder is the proof interviewers and mentors look for.</text>
+</svg>

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img" aria-labelledby="t d">
+  <title id="t">Merge, rebase and squash: the same feature branch integrated three ways</title>
+  <desc id="d">Three panels. Left: a merge commit M joins main (A, B, C) and the feature branch (F1, F2). Middle: rebase replays F1 and F2 as new commits F1' and F2' after C, then main fast-forwards. Right: squash creates one commit S after C that contains both feature changes.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .cid { font-size: 14px; font-weight: 700; fill: #0B0E0B; }
+    .cidl { font-size: 14px; font-weight: 700; fill: #F2F4EC; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .main { fill: #B7BDB1; stroke: #F2F4EC; stroke-width: 1.5; }
+    .feat { fill: #0B0E0B; stroke: #7CC4F8; stroke-width: 2; }
+    .new { fill: #C6F432; stroke: #C6F432; stroke-width: 1.5; }
+    .gone { fill: none; stroke: #4A5348; stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .edge { stroke: #8A9185; stroke-width: 2; fill: none; }
+    .fedge { stroke: #7CC4F8; stroke-width: 2; fill: none; }
+    .gedge { stroke: #4A5348; stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; }
+    .nedge { stroke: #C6F432; stroke-width: 2; fill: none; }
+    .ptr { font-size: 13px; font-weight: 600; fill: #F2C14B; }
+  </style>
+  <rect x="0" y="0" width="1200" height="560" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Merge, rebase, squash: the same two feature commits, three histories</text>
+  <text class="sub" x="40" y="78">main has A, B, C. The feature branch has F1, F2 made from B. Lime: the commits that are new on main afterwards.</text>
+
+  <!-- panel 1: merge -->
+  <rect class="band" x="40" y="104" width="360" height="330" rx="10"/>
+  <text class="lab" x="56" y="130">1. Merge commit</text>
+  <text class="small" x="56" y="150">git merge feat/x</text>
+  <!-- main row y=250 -->
+  <path class="edge" d="M100 250L160 250"/>
+  <path class="edge" d="M160 250L220 250"/>
+  <path class="edge" d="M220 250L300 250"/>
+  <circle class="main" cx="100" cy="250" r="16"/><text class="cid" x="100" y="255" text-anchor="middle">A</text>
+  <circle class="main" cx="160" cy="250" r="16"/><text class="cid" x="160" y="255" text-anchor="middle">B</text>
+  <circle class="main" cx="220" cy="250" r="16"/><text class="cid" x="220" y="255" text-anchor="middle">C</text>
+  <!-- feature row y=190 -->
+  <path class="fedge" d="M169 237L200 190"/>
+  <path class="fedge" d="M200 190L260 190"/>
+  <path class="fedge" d="M269 203L300 250"/>
+  <circle class="feat" cx="200" cy="190" r="16"/><text class="cidl" x="200" y="195" text-anchor="middle">F1</text>
+  <circle class="feat" cx="260" cy="190" r="16"/><text class="cidl" x="260" y="195" text-anchor="middle">F2</text>
+  <circle class="new" cx="300" cy="250" r="16"/><text class="cid" x="300" y="255" text-anchor="middle">M</text>
+  <text class="ptr" x="300" y="290" text-anchor="middle">main</text>
+  <text class="note" x="56" y="330">M has two parents: C and F2.</text>
+  <text class="note" x="56" y="350">All original commits stay; history</text>
+  <text class="note" x="56" y="370">shows the branch. 3 new commits</text>
+  <text class="note" x="56" y="390">on main: F1, F2 and M.</text>
+  <text class="small" x="56" y="416">Use for long-lived branches.</text>
+
+  <!-- panel 2: rebase -->
+  <rect class="band" x="420" y="104" width="360" height="330" rx="10"/>
+  <text class="lab" x="436" y="130">2. Rebase, then fast-forward</text>
+  <text class="small" x="436" y="150">git rebase main; git merge --ff-only</text>
+  <path class="edge" d="M480 250L540 250"/>
+  <path class="edge" d="M540 250L600 250"/>
+  <path class="nedge" d="M600 250L660 250"/>
+  <path class="nedge" d="M660 250L720 250"/>
+  <circle class="main" cx="480" cy="250" r="16"/><text class="cid" x="480" y="255" text-anchor="middle">A</text>
+  <circle class="main" cx="540" cy="250" r="16"/><text class="cid" x="540" y="255" text-anchor="middle">B</text>
+  <circle class="main" cx="600" cy="250" r="16"/><text class="cid" x="600" y="255" text-anchor="middle">C</text>
+  <circle class="new" cx="660" cy="250" r="16"/><text class="cid" x="660" y="255" text-anchor="middle">F1'</text>
+  <circle class="new" cx="720" cy="250" r="16"/><text class="cid" x="720" y="255" text-anchor="middle">F2'</text>
+  <text class="ptr" x="720" y="290" text-anchor="middle">main</text>
+  <!-- old feature commits, dashed -->
+  <path class="gedge" d="M549 237L580 190"/>
+  <path class="gedge" d="M580 190L640 190"/>
+  <circle class="gone" cx="580" cy="190" r="16"/><text class="small" x="580" y="195" text-anchor="middle">F1</text>
+  <circle class="gone" cx="640" cy="190" r="16"/><text class="small" x="640" y="195" text-anchor="middle">F2</text>
+  <text class="small" x="672" y="195">old, unreachable</text>
+  <text class="note" x="436" y="330">F1' and F2' are new commits with new</text>
+  <text class="note" x="436" y="350">hashes; the originals are discarded.</text>
+  <text class="note" x="436" y="370">Linear history, 2 new commits on main.</text>
+  <text class="note" x="436" y="390">Only safe if nobody pulled F1, F2.</text>
+  <text class="small" x="436" y="416">Use on your own branch before a PR.</text>
+
+  <!-- panel 3: squash -->
+  <rect class="band" x="800" y="104" width="360" height="330" rx="10"/>
+  <text class="lab" x="816" y="130">3. Squash merge</text>
+  <text class="small" x="816" y="150">git merge --squash feat/x; git commit</text>
+  <path class="edge" d="M860 250L920 250"/>
+  <path class="edge" d="M920 250L980 250"/>
+  <path class="nedge" d="M980 250L1060 250"/>
+  <circle class="main" cx="860" cy="250" r="16"/><text class="cid" x="860" y="255" text-anchor="middle">A</text>
+  <circle class="main" cx="920" cy="250" r="16"/><text class="cid" x="920" y="255" text-anchor="middle">B</text>
+  <circle class="main" cx="980" cy="250" r="16"/><text class="cid" x="980" y="255" text-anchor="middle">C</text>
+  <circle class="new" cx="1060" cy="250" r="16"/><text class="cid" x="1060" y="255" text-anchor="middle">S</text>
+  <text class="ptr" x="1060" y="290" text-anchor="middle">main</text>
+  <path class="gedge" d="M929 237L960 190"/>
+  <path class="gedge" d="M960 190L1020 190"/>
+  <circle class="gone" cx="960" cy="190" r="16"/><text class="small" x="960" y="195" text-anchor="middle">F1</text>
+  <circle class="gone" cx="1020" cy="190" r="16"/><text class="small" x="1020" y="195" text-anchor="middle">F2</text>
+  <text class="small" x="1052" y="195">branch deleted</text>
+  <text class="note" x="816" y="330">S holds the combined change of F1</text>
+  <text class="note" x="816" y="350">and F2 with one parent, C. Linear,</text>
+  <text class="note" x="816" y="370">1 new commit on main, one revert</text>
+  <text class="note" x="816" y="390">or bisect step per reviewed change.</text>
+  <text class="small" x="816" y="416">Use for pull requests on trunk.</text>
+
+  <!-- legend -->
+  <circle class="main" cx="56" cy="470" r="9"/><text class="note" x="74" y="475">existing commit on main</text>
+  <circle class="feat" cx="300" cy="470" r="9"/><text class="note" x="318" y="475">commit on the feature branch</text>
+  <circle class="new" cx="560" cy="470" r="9"/><text class="note" x="578" y="475">new commit on main after integration</text>
+  <circle class="gone" cx="870" cy="470" r="9"/><text class="note" x="888" y="475">no longer reachable from any branch</text>
+  <text class="note" x="40" y="520">Whichever you pick, the final tree (the files) is the same. What differs is what git log, git bisect and git revert will see later.</text>
+  <text class="small" x="40" y="542">Rule: rebase only unpushed work; squash pull requests; never rewrite a branch others have pulled.</text>
+</svg>

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="t d">
+  <title id="t">One pre-norm decoder block: a residual path with an attention branch and a feed-forward branch</title>
+  <desc id="d">A vertical residual path carries the token vectors x from top to bottom. A first branch applies layer norm and masked multi-head attention and adds the result back to the path, giving h. A second branch applies layer norm and a feed-forward layer and adds the result back, giving y, which has the same shape as x and goes to the next block.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .big { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .eq { font-size: 15px; font-weight: 600; fill: #C6F432; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .stream { stroke: #C6F432; stroke-width: 4; fill: none; stroke-linecap: round; }
+    .branch { stroke: #8A9185; stroke-width: 2; fill: none; }
+    .plus { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2.5; }
+    .plust { font-size: 22px; font-weight: 700; fill: #C6F432; }
+    .tap { fill: #C6F432; }
+  </style>
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+    <marker id="l" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="700" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">One transformer block: a residual path with two branches</text>
+  <text class="sub" x="40" y="78">Pre-norm decoder block. Each branch reads from the path and adds its result back.</text>
+
+  <!-- left panel -->
+  <rect class="panel" x="40" y="104" width="740" height="556" rx="10"/>
+  <text class="lab" x="60" y="136">One block, repeated N times</text>
+
+  <!-- residual stream -->
+  <path class="stream" d="M170 176L170 626" marker-end="url(#l)"/>
+  <text class="big" x="196" y="172">x</text>
+  <text class="note" x="214" y="172">input: n token vectors, each of size d_model</text>
+
+  <!-- branch 1: norm + attention -->
+  <circle class="tap" cx="170" cy="232" r="6"/>
+  <path class="branch" d="M176 232L268 232" marker-end="url(#g)"/>
+  <rect class="box" x="270" y="206" width="130" height="52" rx="8"/>
+  <text class="lab" x="335" y="237" text-anchor="middle">Layer norm</text>
+  <path class="branch" d="M400 232L438 232" marker-end="url(#g)"/>
+  <rect class="box" x="440" y="198" width="300" height="68" rx="8"/>
+  <text class="lab" x="590" y="227" text-anchor="middle">Masked multi-head attention</text>
+  <text class="note" x="590" y="249" text-anchor="middle">tokens exchange information</text>
+  <path class="branch" d="M590 266L590 330L190 330" marker-end="url(#g)"/>
+  <circle class="plus" cx="170" cy="330" r="16"/>
+  <text class="plust" x="170" y="338" text-anchor="middle">+</text>
+  <text class="eq" x="200" y="368">h = x + Attention(Norm(x))</text>
+
+  <!-- branch 2: norm + feed-forward -->
+  <circle class="tap" cx="170" cy="432" r="6"/>
+  <path class="branch" d="M176 432L268 432" marker-end="url(#g)"/>
+  <rect class="box" x="270" y="406" width="130" height="52" rx="8"/>
+  <text class="lab" x="335" y="437" text-anchor="middle">Layer norm</text>
+  <path class="branch" d="M400 432L438 432" marker-end="url(#g)"/>
+  <rect class="box" x="440" y="398" width="300" height="68" rx="8"/>
+  <text class="lab" x="590" y="427" text-anchor="middle">Feed-forward layer</text>
+  <text class="note" x="590" y="449" text-anchor="middle">each token on its own, 4 x wider inside</text>
+  <path class="branch" d="M590 466L590 530L190 530" marker-end="url(#g)"/>
+  <circle class="plus" cx="170" cy="530" r="16"/>
+  <text class="plust" x="170" y="538" text-anchor="middle">+</text>
+  <text class="eq" x="200" y="568">y = h + FFN(Norm(h))</text>
+
+  <text class="big" x="196" y="628">y</text>
+  <text class="note" x="214" y="628">output: same shape as x, goes to the next block</text>
+
+  <!-- stream label -->
+  <text class="key" x="60" y="290">residual</text>
+  <text class="key" x="60" y="308">path</text>
+
+  <!-- right panel -->
+  <rect class="panel" x="812" y="104" width="348" height="556" rx="10"/>
+  <text class="lab" x="832" y="138">What each part does</text>
+
+  <text class="key" x="832" y="172">Attention</text>
+  <text class="note" x="850" y="194">moves information between tokens.</text>
+  <text class="note" x="850" y="214">The causal mask hides later tokens.</text>
+
+  <text class="key" x="832" y="250">Feed-forward</text>
+  <text class="note" x="850" y="272">transforms each token on its own:</text>
+  <text class="note" x="850" y="292">expand, non-linearity, shrink.</text>
+
+  <text class="key" x="832" y="328">Residual path</text>
+  <text class="note" x="850" y="350">adds, never replaces. Gradients get</text>
+  <text class="note" x="850" y="370">a direct path to every layer.</text>
+
+  <text class="key" x="832" y="406">Layer norm</text>
+  <text class="note" x="850" y="428">keeps values in a stable range.</text>
+  <text class="note" x="850" y="448">Pre-norm: it sits inside the branch,</text>
+  <text class="note" x="850" y="468">so the lime path is never rescaled.</text>
+
+  <text class="lab" x="832" y="516">Shapes</text>
+  <text class="note" x="832" y="540">In and out are both n x d_model,</text>
+  <text class="note" x="832" y="560">so blocks stack: dozens of them.</text>
+
+  <text class="lab" x="832" y="604">After the last block</text>
+  <text class="note" x="832" y="628">one final norm, then the output layer</text>
+  <text class="note" x="832" y="648">gives one logit per vocabulary token.</text>
+</svg>

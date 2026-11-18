@@ -1,0 +1,198 @@
+{
+ "amazon": {
+  "problems": [
+   {
+    "number": 457,
+    "title": "E-commerce Product Search (Amazon / Flipkart search)",
+    "slug": "ecommerce-search",
+    "difficulty": "Hard"
+   },
+   {
+    "number": 861,
+    "title": "Amazon Locker (package pickup)",
+    "slug": "lld-amazon-locker",
+    "difficulty": "Medium"
+   }
+  ],
+  "companies": [
+   {
+    "name": "Amazon",
+    "slug": "amazon",
+    "logo": "/logos/amazon.ico",
+    "color": "#FF9900",
+    "problemCount": 679
+   }
+  ],
+  "topics": []
+ },
+ "array": {
+  "problems": [
+   {
+    "number": 890,
+    "title": "Longest Consecutive Sequence in an Array",
+    "slug": "longest-consecutive-sequence-in-an-array",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 303,
+    "title": "Count subarrays with given sum",
+    "slug": "count-subarrays-with-given-sum",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 785,
+    "title": "K-th Largest element in an array",
+    "slug": "k-th-largest-element-in-an-array",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1122,
+    "title": "Median of 2 sorted arrays",
+    "slug": "median-of-2-sorted-arrays",
+    "difficulty": "Hard"
+   },
+   {
+    "number": 1139,
+    "title": "Merge two sorted arrays without extra space",
+    "slug": "merge-two-sorted-arrays-without-extra-space",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1690,
+    "title": "Search in rotated sorted array-I",
+    "slug": "search-in-rotated-sorted-array-i",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1767,
+    "title": "Sort an array of 0's 1's and 2's",
+    "slug": "sort-an-array-of-0-s-1-s-and-2-s",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1605,
+    "title": "Remove duplicates from sorted array",
+    "slug": "remove-duplicates-from-sorted-array",
+    "difficulty": "Easy"
+   },
+   {
+    "number": 1542,
+    "title": "Product of Array Except Self",
+    "slug": "product-of-array-except-self",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1787,
+    "title": "Split array - largest sum",
+    "slug": "split-array-largest-sum",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1068,
+    "title": "Maximum Product Subarray in an Array",
+    "slug": "maximum-product-subarray-in-an-array",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 834,
+    "title": "Left Rotate Array by K Places",
+    "slug": "left-rotate-array-by-k-places",
+    "difficulty": "Easy"
+   }
+  ],
+  "companies": [],
+  "topics": [
+   {
+    "name": "Arrays",
+    "slug": "arrays",
+    "problemCount": 196
+   }
+  ]
+ },
+ "two": {
+  "problems": [
+   {
+    "number": 1923,
+    "title": "Two Sum",
+    "slug": "two-sum",
+    "difficulty": "Easy"
+   },
+   {
+    "number": 1140,
+    "title": "Merge two Sorted Lists",
+    "slug": "merge-two-sorted-lists",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 20,
+    "title": "Add two numbers in Linked List",
+    "slug": "add-two-numbers-in-linked-list",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1139,
+    "title": "Merge two sorted arrays without extra space",
+    "slug": "merge-two-sorted-arrays-without-extra-space",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1924,
+    "title": "Two Sum II - Input Array Is Sorted",
+    "slug": "two-sum-ii-input-array-is-sorted",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 759,
+    "title": "Intersection of Two Arrays",
+    "slug": "intersection-of-two-arrays",
+    "difficulty": "Easy"
+   },
+   {
+    "number": 1708,
+    "title": "Set difference of two arrays",
+    "slug": "set-difference-of-two-arrays",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1340,
+    "title": "Network Delay Time",
+    "slug": "network-delay-time",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 1524,
+    "title": "Power of Two",
+    "slug": "power-of-two",
+    "difficulty": "Easy"
+   },
+   {
+    "number": 1925,
+    "title": "Two sum in BST",
+    "slug": "two-sum-in-bst",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 760,
+    "title": "Intersection of two sorted arrays",
+    "slug": "intersection-of-two-sorted-arrays",
+    "difficulty": "Medium"
+   },
+   {
+    "number": 172,
+    "title": "Check if two trees are identical or not",
+    "slug": "check-if-two-trees-are-identical-or-not",
+    "difficulty": "Medium"
+   }
+  ],
+  "companies": [
+   {
+    "name": "Palo Alto Networks",
+    "slug": "palo-alto-networks",
+    "logo": "/logos/palo-alto-networks.png",
+    "color": "#FA582D",
+    "problemCount": 192
+   }
+  ],
+  "topics": []
+ }
+}

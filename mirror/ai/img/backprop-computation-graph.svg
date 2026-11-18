@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-labelledby="t d">
+  <title id="t">Backpropagation on a computation graph: values go forward, gradients come back</title>
+  <desc id="d">A chain of six operations: multiply by w1, add b1, ReLU, multiply by w2, add b2, and a squared-error loss. Forward values are written above each arrow and the gradient of the loss is written below it. Each weight shows its value and its gradient: w1 gets 4.0, b1 gets 2.0, w2 gets 1.5 and b2 gets 1.0.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .val { font-size: 15px; font-weight: 600; fill: #F2F4EC; text-anchor: middle; }
+    .grad { font-size: 14px; font-weight: 700; fill: #C6F432; text-anchor: middle; }
+    .op { font-size: 20px; font-weight: 700; fill: #F2F4EC; text-anchor: middle; }
+    .ops { font-size: 15px; font-weight: 700; fill: #F2F4EC; text-anchor: middle; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .notec { font-size: 14px; fill: #B7BDB1; text-anchor: middle; }
+    .key { font-size: 14px; font-weight: 700; fill: #C6F432; }
+    .warn { font-size: 14px; fill: #F2C14B; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .node { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .pbox { fill: #0B0E0B; stroke: #2A312A; stroke-width: 1; }
+    .fw { stroke: #B7BDB1; stroke-width: 2; fill: none; }
+    .bw { stroke: #C6F432; stroke-width: 2.5; fill: none; }
+  </style>
+  <defs>
+    <marker id="af" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#B7BDB1"/>
+    </marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="660" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Backprop: values go forward, gradients come back</text>
+  <text class="sub" x="40" y="78">One input x = 2, one hidden unit, target y = 1. Every gradient is "how much the loss changes if this value changes".</text>
+
+  <!-- graph panel -->
+  <rect class="panel" x="40" y="104" width="1120" height="302" rx="10"/>
+
+  <!-- legend -->
+  <path class="fw" d="M60 136L104 136" marker-end="url(#af)"/>
+  <text class="note" x="116" y="141">forward pass: compute each value and store it</text>
+  <path class="bw" d="M104 162L60 162" marker-end="url(#ab)"/>
+  <text class="note" x="116" y="167" style="fill:#C6F432">backward pass: gradient of the loss, from the loss back to every weight</text>
+
+  <!-- forward edges (y=244) and backward edges (y=262) between nodes -->
+  <path class="fw" d="M58 252L98 252" marker-end="url(#af)"/>
+  <g>
+    <path class="fw" d="M200 244L273 244" marker-end="url(#af)"/>
+    <path class="bw" d="M275 262L202 262" marker-end="url(#ab)"/>
+    <path class="fw" d="M375 244L448 244" marker-end="url(#af)"/>
+    <path class="bw" d="M450 262L377 262" marker-end="url(#ab)"/>
+    <path class="fw" d="M550 244L623 244" marker-end="url(#af)"/>
+    <path class="bw" d="M625 262L552 262" marker-end="url(#ab)"/>
+    <path class="fw" d="M725 244L798 244" marker-end="url(#af)"/>
+    <path class="bw" d="M800 262L727 262" marker-end="url(#ab)"/>
+    <path class="fw" d="M900 244L973 244" marker-end="url(#af)"/>
+    <path class="bw" d="M975 262L902 262" marker-end="url(#ab)"/>
+    <path class="fw" d="M1075 244L1130 244" marker-end="url(#af)"/>
+    <path class="bw" d="M1132 262L1077 262" marker-end="url(#ab)"/>
+  </g>
+
+  <!-- values above, gradients below -->
+  <text class="val" x="76" y="232">x = 2</text>
+  <text class="val" x="237" y="232">1.0</text>
+  <text class="grad" x="237" y="286">grad 2.0</text>
+  <text class="val" x="412" y="232">z = 1.5</text>
+  <text class="grad" x="412" y="286">grad 2.0</text>
+  <text class="val" x="587" y="232">h = 1.5</text>
+  <text class="grad" x="587" y="286">grad 2.0</text>
+  <text class="val" x="762" y="232">3.0</text>
+  <text class="grad" x="762" y="286">grad 1.0</text>
+  <text class="val" x="937" y="232">pred = 2.0</text>
+  <text class="grad" x="937" y="286">grad 1.0</text>
+  <text class="val" x="1104" y="232">L = 0.5</text>
+  <text class="grad" x="1104" y="286">start: 1</text>
+
+  <!-- op nodes -->
+  <rect class="node" x="104" y="222" width="92" height="60" rx="10"/>
+  <text class="op" x="150" y="259">&#215; w1</text>
+  <rect class="node" x="279" y="222" width="92" height="60" rx="10"/>
+  <text class="op" x="325" y="259">+ b1</text>
+  <rect class="node" x="454" y="222" width="92" height="60" rx="10"/>
+  <text class="op" x="500" y="259">ReLU</text>
+  <rect class="node" x="629" y="222" width="92" height="60" rx="10"/>
+  <text class="op" x="675" y="259">&#215; w2</text>
+  <rect class="node" x="804" y="222" width="92" height="60" rx="10"/>
+  <text class="op" x="850" y="259">+ b2</text>
+  <rect class="node" x="979" y="222" width="92" height="60" rx="10" style="stroke:#C6F432"/>
+  <text class="ops" x="1025" y="248">loss</text>
+  <text class="notec" x="1025" y="270">(pred - y)&#178;/2</text>
+
+  <!-- parameter boxes with value and gradient -->
+  <path class="fw" d="M142 330L142 288" marker-end="url(#af)"/>
+  <path class="bw" d="M158 286L158 326" marker-end="url(#ab)"/>
+  <rect class="pbox" x="85" y="332" width="130" height="56" rx="8"/>
+  <text class="val" x="150" y="355">w1 = 0.5</text>
+  <text class="grad" x="150" y="376">grad 4.0</text>
+
+  <path class="fw" d="M317 330L317 288" marker-end="url(#af)"/>
+  <path class="bw" d="M333 286L333 326" marker-end="url(#ab)"/>
+  <rect class="pbox" x="260" y="332" width="130" height="56" rx="8"/>
+  <text class="val" x="325" y="355">b1 = 0.5</text>
+  <text class="grad" x="325" y="376">grad 2.0</text>
+
+  <text class="notec" x="500" y="352">slope is 1</text>
+  <text class="notec" x="500" y="372">because z &gt; 0</text>
+
+  <path class="fw" d="M667 330L667 288" marker-end="url(#af)"/>
+  <path class="bw" d="M683 286L683 326" marker-end="url(#ab)"/>
+  <rect class="pbox" x="610" y="332" width="130" height="56" rx="8"/>
+  <text class="val" x="675" y="355">w2 = 2.0</text>
+  <text class="grad" x="675" y="376">grad 1.5</text>
+
+  <path class="fw" d="M842 330L842 288" marker-end="url(#af)"/>
+  <path class="bw" d="M858 286L858 326" marker-end="url(#ab)"/>
+  <rect class="pbox" x="785" y="332" width="130" height="56" rx="8"/>
+  <text class="val" x="850" y="355">b2 = -1.0</text>
+  <text class="grad" x="850" y="376">grad 1.0</text>
+
+  <path class="fw" d="M1025 330L1025 288" marker-end="url(#af)"/>
+  <rect class="pbox" x="960" y="332" width="130" height="56" rx="8"/>
+  <text class="val" x="1025" y="355">y = 1</text>
+  <text class="notec" x="1025" y="376">target, fixed</text>
+
+  <!-- backward steps panel -->
+  <rect class="panel" x="40" y="424" width="670" height="212" rx="10"/>
+  <text class="lab" x="60" y="454">Backward pass, right to left: gradient in &#215; local slope</text>
+  <text class="key" x="60" y="484">loss</text>
+  <text class="note" x="126" y="484">d(loss)/d(pred) = pred - y = 2.0 - 1 = 1.0</text>
+  <text class="key" x="60" y="508">+ b2</text>
+  <text class="note" x="126" y="508">an add passes the gradient on unchanged: b2 gets 1.0</text>
+  <text class="key" x="60" y="532">&#215; w2</text>
+  <text class="note" x="126" y="532">w2 gets 1.0 &#215; h = 1.5, and h gets 1.0 &#215; w2 = 2.0</text>
+  <text class="key" x="60" y="556">ReLU</text>
+  <text class="note" x="126" y="556">z is positive, so the slope is 1: z gets 2.0 &#215; 1 = 2.0</text>
+  <text class="key" x="60" y="580">+ b1</text>
+  <text class="note" x="126" y="580">b1 gets 2.0</text>
+  <text class="key" x="60" y="604">&#215; w1</text>
+  <text class="note" x="126" y="604">w1 gets 2.0 &#215; x = 4.0</text>
+
+  <!-- update panel -->
+  <rect class="panel" x="730" y="424" width="430" height="212" rx="10"/>
+  <text class="lab" x="750" y="454">One update: new = old - 0.05 &#215; grad</text>
+  <text class="key" x="750" y="484">w1</text>
+  <text class="note" x="790" y="484">0.5 - 0.05 &#215; 4.0 = 0.3</text>
+  <text class="key" x="750" y="508">b1</text>
+  <text class="note" x="790" y="508">0.5 - 0.05 &#215; 2.0 = 0.4</text>
+  <text class="key" x="750" y="532">w2</text>
+  <text class="note" x="790" y="532">2.0 - 0.05 &#215; 1.5 = 1.925</text>
+  <text class="key" x="750" y="556">b2</text>
+  <text class="note" x="790" y="556">-1.0 - 0.05 &#215; 1.0 = -1.05</text>
+  <text class="lab" x="750" y="588" style="fill:#C6F432">Loss falls from 0.5 to 0.0078</text>
+  <text class="warn" x="750" y="614">With rate 0.1 the step overshoots: loss rises to 0.69</text>
+</svg>

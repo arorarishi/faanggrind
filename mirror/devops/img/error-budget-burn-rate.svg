@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">Error budget draining over a 30 day window with burn-rate alert lines</title>
+  <desc id="d">A chart of remaining error budget against days of a 30 day window. Reference lines show burn rates 1, 6 and 14.4 draining the budget in 30 days, 5 days and 50 hours. A realistic service line drains slowly, drops sharply during a 90 minute incident on day 10 and a 6 hour incident on day 20, and ends the month with about 69 percent of budget left. A side panel lists the SRE workbook alert table.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .amber { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+    .coral { font-size: 14px; font-weight: 600; fill: #FF8A80; }
+    .blue { font-size: 14px; font-weight: 600; fill: #7CC4F8; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .grid { stroke: #2A312A; stroke-width: 1; }
+    .axis { stroke: #8A9185; stroke-width: 1.5; }
+    .actual { stroke: #C6F432; stroke-width: 3; fill: none; }
+    .fill { fill: #C6F432; fill-opacity: 0.10; }
+    .b1 { stroke: #7CC4F8; stroke-width: 1.8; stroke-dasharray: 6 5; fill: none; }
+    .b6 { stroke: #F2C14B; stroke-width: 1.8; stroke-dasharray: 6 5; fill: none; }
+    .b14 { stroke: #FF8A80; stroke-width: 1.8; stroke-dasharray: 6 5; fill: none; }
+  </style>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The error budget is a bucket that drains: burn rate is how fast</text>
+  <text class="sub" x="40" y="78">SLO 99.9 percent over 30 days. Budget = 0.1 percent of requests = 43.2 minutes of full outage. Burn rate 1 empties it in exactly 30 days.</text>
+
+  <!-- chart panel -->
+  <rect class="band" x="40" y="96" width="740" height="500" rx="10"/>
+  <!-- grid -->
+  <line class="grid" x1="80" y1="220" x2="720" y2="220"/>
+  <line class="grid" x1="80" y1="320" x2="720" y2="320"/>
+  <line class="grid" x1="80" y1="420" x2="720" y2="420"/>
+  <line class="grid" x1="187" y1="120" x2="187" y2="520"/>
+  <line class="grid" x1="293" y1="120" x2="293" y2="520"/>
+  <line class="grid" x1="400" y1="120" x2="400" y2="520"/>
+  <line class="grid" x1="507" y1="120" x2="507" y2="520"/>
+  <line class="grid" x1="613" y1="120" x2="613" y2="520"/>
+  <!-- axes -->
+  <line class="axis" x1="80" y1="120" x2="80" y2="520"/>
+  <line class="axis" x1="80" y1="520" x2="720" y2="520"/>
+  <text class="small" x="72" y="125" text-anchor="end">100%</text>
+  <text class="small" x="72" y="225" text-anchor="end">75%</text>
+  <text class="small" x="72" y="325" text-anchor="end">50%</text>
+  <text class="small" x="72" y="425" text-anchor="end">25%</text>
+  <text class="small" x="72" y="525" text-anchor="end">0%</text>
+  <text class="small" x="80" y="542" text-anchor="middle">day 0</text>
+  <text class="small" x="187" y="542" text-anchor="middle">5</text>
+  <text class="small" x="293" y="542" text-anchor="middle">10</text>
+  <text class="small" x="400" y="542" text-anchor="middle">15</text>
+  <text class="small" x="507" y="542" text-anchor="middle">20</text>
+  <text class="small" x="613" y="542" text-anchor="middle">25</text>
+  <text class="small" x="720" y="542" text-anchor="middle">30</text>
+  <text class="note" x="400" y="572" text-anchor="middle">days into the 30 day SLO window</text>
+  <text class="note" x="56" y="112">budget left</text>
+
+  <!-- reference burn lines -->
+  <path class="b14" d="M80 120L124 520"/>
+  <path class="b6" d="M80 120L187 520"/>
+  <path class="b1" d="M80 120L720 520"/>
+  <text class="coral" x="150" y="330">burn 14.4: empty in 50 h</text>
+  <text class="amber" x="196" y="400">burn 6: empty in 5 days</text>
+  <text class="blue" x="330" y="470">burn 1: empty on day 30 exactly</text>
+
+  <!-- actual service -->
+  <path class="fill" d="M80 120L293 147L295 172L507 198L512 218L720 245L720 520L80 520Z"/>
+  <path class="actual" d="M80 120L293 147L295 172L507 198L512 218L720 245"/>
+  <circle cx="294" cy="160" r="5" fill="#C6F432"/>
+  <circle cx="510" cy="208" r="5" fill="#C6F432"/>
+  <text class="key" x="304" y="150">day 10: 90 min at burn 30</text>
+  <text class="note" x="304" y="168">costs 6.25% of budget, pages at 14.4x</text>
+  <text class="key" x="520" y="196">day 20: 6 h at burn 6</text>
+  <text class="note" x="520" y="214">costs 5%, pages on the 6 h window</text>
+  <text class="key" x="600" y="276">quiet days: burn 0.2</text>
+  <text class="note" x="600" y="294">month ends with 69% left</text>
+
+  <!-- alert table panel -->
+  <rect class="band" x="800" y="96" width="360" height="500" rx="10"/>
+  <text class="lab" x="816" y="124">Workbook alert table, 99.9% SLO</text>
+  <text class="small" x="816" y="146">both windows must exceed the burn rate</text>
+
+  <rect x="816" y="162" width="328" height="92" rx="8" fill="#0B0E0B" stroke="#FF8A80" stroke-width="1.5"/>
+  <text class="coral" x="832" y="186">PAGE: burn 14.4 over 1 h and 5 m</text>
+  <text class="note" x="832" y="208">spends 2% of the month in 1 hour</text>
+  <text class="note" x="832" y="228">error rate 1.44% sustained</text>
+  <text class="small" x="832" y="246">5 m window: alert resolves fast after the fix</text>
+
+  <rect x="816" y="270" width="328" height="92" rx="8" fill="#0B0E0B" stroke="#F2C14B" stroke-width="1.5"/>
+  <text class="amber" x="832" y="294">PAGE: burn 6 over 6 h and 30 m</text>
+  <text class="note" x="832" y="316">spends 5% of the month in 6 hours</text>
+  <text class="note" x="832" y="336">error rate 0.6% sustained</text>
+  <text class="small" x="832" y="354">catches the slow leak the 1 h rule misses</text>
+
+  <rect x="816" y="378" width="328" height="92" rx="8" fill="#0B0E0B" stroke="#7CC4F8" stroke-width="1.5"/>
+  <text class="blue" x="832" y="402">TICKET: burn 1 over 3 d and 6 h</text>
+  <text class="note" x="832" y="424">spends 10% of the month in 3 days</text>
+  <text class="note" x="832" y="444">error rate 0.1%, exactly the SLO line</text>
+  <text class="small" x="832" y="462">no page: fix it next working day</text>
+
+  <text class="note" x="816" y="500">budget spent = burn x window / 30 days</text>
+  <text class="note" x="816" y="520">14.4 x 1 h / 720 h = 2%</text>
+  <text class="note" x="816" y="540">6 x 6 h / 720 h = 5%</text>
+  <text class="note" x="816" y="560">1 x 72 h / 720 h = 10%</text>
+  <text class="small" x="816" y="584">short window = long window / 12</text>
+
+  <text class="note" x="40" y="620">Alert on how fast the budget drains, not on a fixed error count: a blip that burns at 30x for 2 minutes costs 0.14% and should not wake anyone.</text>
+</svg>

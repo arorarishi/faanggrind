@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">Docker build cache: the same source edit rebuilds three layers in a bad Dockerfile order and one layer in a good order</title>
+  <desc id="d">Two stacks of image layers. In the bad order, COPY . . comes before RUN npm ci, so editing one source file invalidates the copy, the install and the build layers. In the good order, the package manifests are copied and installed first, so a source edit keeps the dependency layer cached and only the final copy and build run again. On the right, a running container adds a thin writable layer on top of the read-only image layers.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .warn { font-size: 14px; font-weight: 600; fill: #FF8A80; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .mono { font-size: 14px; fill: #F2F4EC; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .cached { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .rebuilt { fill: #0B0E0B; stroke: #FF8A80; stroke-width: 2; stroke-dasharray: 6 4; }
+    .ro { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .rw { fill: #121612; stroke: #7CC4F8; stroke-width: 2; }
+    .arrow { stroke: #B7BDB1; stroke-width: 1.5; fill: none; }
+  </style>
+  <defs>
+    <marker id="m" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#B7BDB1"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Layer order decides what the build cache can reuse</text>
+  <text class="sub" x="40" y="78">You edit src/app.js. A layer is reused only if its inputs and every layer below it are unchanged.</text>
+
+  <!-- bad order -->
+  <rect class="band" x="40" y="104" width="360" height="440" rx="10"/>
+  <text class="lab" x="56" y="130">Bad order</text>
+  <text class="small" x="150" y="130">COPY . . before npm ci</text>
+
+  <rect class="rebuilt" x="56" y="150" width="328" height="56" rx="8"/>
+  <text class="mono" x="72" y="174">RUN npm run build</text>
+  <text class="warn" x="72" y="194">rebuilt: parent changed, 40 s</text>
+
+  <rect class="rebuilt" x="56" y="218" width="328" height="56" rx="8"/>
+  <text class="mono" x="72" y="242">RUN npm ci</text>
+  <text class="warn" x="72" y="262">rebuilt: parent changed, 90 s, 180 MB</text>
+
+  <rect class="rebuilt" x="56" y="286" width="328" height="56" rx="8"/>
+  <text class="mono" x="72" y="310">COPY . .</text>
+  <text class="warn" x="72" y="330">rebuilt: src/app.js differs, 2 s</text>
+
+  <rect class="cached" x="56" y="354" width="328" height="56" rx="8"/>
+  <text class="mono" x="72" y="378">FROM node:24-bookworm-slim</text>
+  <text class="key" x="72" y="398">cached</text>
+
+  <text class="note" x="56" y="446">Every source edit re-downloads all</text>
+  <text class="note" x="56" y="466">dependencies: 132 s per build.</text>
+  <text class="small" x="56" y="500">Image size is the same either way;</text>
+  <text class="small" x="56" y="520">only build time and cache hits differ.</text>
+
+  <!-- good order -->
+  <rect class="band" x="424" y="104" width="360" height="440" rx="10"/>
+  <text class="lab" x="440" y="130">Good order</text>
+  <text class="small" x="545" y="130">manifests first, source last</text>
+
+  <rect class="rebuilt" x="440" y="150" width="328" height="56" rx="8"/>
+  <text class="mono" x="456" y="174">RUN npm run build</text>
+  <text class="warn" x="456" y="194">rebuilt: parent changed, 40 s</text>
+
+  <rect class="rebuilt" x="440" y="218" width="328" height="56" rx="8"/>
+  <text class="mono" x="456" y="242">COPY . .</text>
+  <text class="warn" x="456" y="262">rebuilt: src/app.js differs, 1 s</text>
+
+  <rect class="cached" x="440" y="286" width="328" height="56" rx="8"/>
+  <text class="mono" x="456" y="310">RUN npm ci</text>
+  <text class="key" x="456" y="330">cached: package-lock.json unchanged</text>
+
+  <rect class="cached" x="440" y="354" width="328" height="56" rx="8"/>
+  <text class="mono" x="456" y="378">COPY package*.json ./</text>
+  <text class="key" x="456" y="398">cached</text>
+
+  <rect class="cached" x="440" y="422" width="328" height="40" rx="8"/>
+  <text class="mono" x="456" y="447">FROM node:24-bookworm-slim</text>
+
+  <text class="note" x="440" y="490">A source edit costs 43 s, not 132 s.</text>
+  <text class="note" x="440" y="510">A package.json edit still rebuilds</text>
+  <text class="note" x="440" y="530">everything above the manifest layer.</text>
+
+  <!-- container view -->
+  <rect class="band" x="808" y="104" width="352" height="440" rx="10"/>
+  <text class="lab" x="824" y="130">A running container</text>
+
+  <rect class="rw" x="824" y="150" width="320" height="64" rx="8"/>
+  <text class="mono" x="840" y="174">writable layer (container)</text>
+  <text class="small" x="840" y="194">logs, temp files; gone with docker rm</text>
+
+  <rect class="ro" x="824" y="226" width="320" height="40" rx="8"/>
+  <text class="mono" x="840" y="251">app layer: dist/ and node_modules</text>
+  <rect class="ro" x="824" y="276" width="320" height="40" rx="8"/>
+  <text class="mono" x="840" y="301">runtime layer: node binary</text>
+  <rect class="ro" x="824" y="326" width="320" height="40" rx="8"/>
+  <text class="mono" x="840" y="351">base layer: debian-slim files</text>
+
+  <text class="small" x="840" y="392">read-only image layers, bottom first</text>
+  <text class="note" x="840" y="446">Image layers are read-only and shared:</text>
+  <text class="note" x="840" y="466">ten containers from one image hold</text>
+  <text class="note" x="840" y="486">one copy of the layers on disk.</text>
+  <text class="small" x="840" y="516">A file deleted in a higher layer is hidden</text>
+  <text class="small" x="840" y="536">by a whiteout; the lower copy still costs space.</text>
+
+  <text class="note" x="40" y="580">Lime solid: layer reused from cache. Coral dashed: layer rebuilt. Blue: the only layer a running container can write.</text>
+  <text class="small" x="40" y="606">Times are illustrative: a 180 MB npm ci from the registry takes about 90 s on a small CI runner; the numbers are used in the worked example.</text>
+</svg>

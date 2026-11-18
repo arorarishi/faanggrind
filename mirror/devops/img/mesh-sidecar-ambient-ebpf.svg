@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img" aria-labelledby="t d">
+  <title id="t">Three mesh data paths: sidecar, ambient and eBPF</title>
+  <desc id="d">Three panels compare where mesh logic runs for a request from pod A to pod B. Sidecar mode puts an Envoy proxy in every pod, so each request crosses two proxies. Istio ambient mode runs one ztunnel per node for Layer 4 and an optional waypoint per namespace for Layer 7. Cilium with eBPF runs the Layer 4 logic in the kernel on each node with no proxy.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 16px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .small { font-size: 13px; fill: #8A9185; }
+    .band { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .node { fill: #0B0E0B; stroke: #4A5348; stroke-width: 1.5; }
+    .pod { fill: #121612; stroke: #7CC4F8; stroke-width: 1.5; }
+    .app { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .proxy { fill: #0B0E0B; stroke: #F2C14B; stroke-width: 2; }
+    .kern { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .flow { stroke: #C6F432; stroke-width: 2.2; fill: none; }
+    .ptxt { font-size: 14px; font-weight: 600; fill: #F2C14B; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="640" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Where the mesh runs: sidecar, ambient, eBPF</text>
+  <text class="sub" x="40" y="78">One request from pod A to pod B on different nodes. Amber boxes are proxies you pay for; the lime box is kernel code.</text>
+
+  <!-- Panel 1: sidecar -->
+  <rect class="band" x="40" y="100" width="360" height="440" rx="10"/>
+  <text class="lab" x="56" y="126">1. Sidecar mode</text>
+  <text class="small" x="56" y="146">Istio classic, Linkerd: one proxy per pod</text>
+
+  <rect class="node" x="56" y="166" width="328" height="150" rx="8"/>
+  <text class="small" x="68" y="186">Node 1</text>
+  <rect class="pod" x="68" y="196" width="304" height="108" rx="8"/>
+  <text class="small" x="80" y="216">Pod A</text>
+  <rect class="app" x="80" y="228" width="130" height="60" rx="6"/>
+  <text class="note" x="145" y="254" text-anchor="middle">app A</text>
+  <text class="small" x="145" y="272" text-anchor="middle">plain HTTP</text>
+  <rect class="proxy" x="230" y="228" width="130" height="60" rx="6"/>
+  <text class="ptxt" x="295" y="254" text-anchor="middle">Envoy sidecar</text>
+  <text class="small" x="295" y="272" text-anchor="middle">mTLS, retries, L7</text>
+  <path class="flow" d="M210 258L224 258" marker-end="url(#a)"/>
+
+  <rect class="node" x="56" y="372" width="328" height="140" rx="8"/>
+  <text class="small" x="68" y="392">Node 2</text>
+  <rect class="pod" x="68" y="402" width="304" height="100" rx="8"/>
+  <text class="small" x="80" y="422">Pod B</text>
+  <rect class="proxy" x="80" y="434" width="130" height="60" rx="6"/>
+  <text class="ptxt" x="145" y="460" text-anchor="middle">Envoy sidecar</text>
+  <text class="small" x="145" y="478" text-anchor="middle">mTLS, L7 policy</text>
+  <rect class="app" x="230" y="434" width="130" height="60" rx="6"/>
+  <text class="note" x="295" y="460" text-anchor="middle">app B</text>
+  <text class="small" x="295" y="478" text-anchor="middle">plain HTTP</text>
+  <path class="flow" d="M210 464L224 464" marker-end="url(#a)"/>
+  <path class="flow" d="M244 288L244 356L145 356L145 428" marker-end="url(#a)"/>
+  <text class="small" x="256" y="338">mTLS over the wire</text>
+
+  <text class="key" x="56" y="534">cost: 2 proxies per request, 1 per pod</text>
+
+  <!-- Panel 2: ambient -->
+  <rect class="band" x="420" y="100" width="360" height="440" rx="10"/>
+  <text class="lab" x="436" y="126">2. Istio ambient mode</text>
+  <text class="small" x="436" y="146">ztunnel per node, waypoint per namespace</text>
+
+  <rect class="node" x="436" y="166" width="328" height="150" rx="8"/>
+  <text class="small" x="448" y="186">Node 1</text>
+  <rect class="pod" x="448" y="196" width="130" height="80" rx="8"/>
+  <text class="small" x="460" y="216">Pod A</text>
+  <rect class="app" x="460" y="226" width="106" height="40" rx="6"/>
+  <text class="note" x="513" y="251" text-anchor="middle">app A only</text>
+  <rect class="proxy" x="600" y="196" width="150" height="80" rx="6"/>
+  <text class="ptxt" x="675" y="222" text-anchor="middle">ztunnel</text>
+  <text class="small" x="675" y="240" text-anchor="middle">per node, Rust, L4</text>
+  <text class="small" x="675" y="258" text-anchor="middle">mTLS and L4 authz</text>
+  <path class="flow" d="M578 236L594 236" marker-end="url(#a)"/>
+
+  <rect class="proxy" x="500" y="326" width="200" height="52" rx="6"/>
+  <text class="ptxt" x="600" y="347" text-anchor="middle">waypoint, optional L7</text>
+  <text class="small" x="600" y="366" text-anchor="middle">Envoy, one per namespace</text>
+
+  <rect class="node" x="436" y="386" width="328" height="126" rx="8"/>
+  <text class="small" x="448" y="406">Node 2</text>
+  <rect class="proxy" x="448" y="416" width="150" height="80" rx="6"/>
+  <text class="ptxt" x="523" y="442" text-anchor="middle">ztunnel</text>
+  <text class="small" x="523" y="460" text-anchor="middle">per node, Rust, L4</text>
+  <text class="small" x="523" y="478" text-anchor="middle">terminates mTLS</text>
+  <rect class="pod" x="620" y="416" width="130" height="80" rx="8"/>
+  <text class="small" x="632" y="436">Pod B</text>
+  <rect class="app" x="632" y="446" width="106" height="40" rx="6"/>
+  <text class="note" x="685" y="471" text-anchor="middle">app B only</text>
+  <path class="flow" d="M598 456L614 456" marker-end="url(#a)"/>
+  <path class="flow" d="M675 276L675 306L640 306L640 320" marker-end="url(#a)"/>
+  <path class="flow" d="M560 378L560 410" marker-end="url(#a)"/>
+
+  <text class="key" x="436" y="534">cost: 1 ztunnel per node, waypoints as needed</text>
+
+  <!-- Panel 3: eBPF -->
+  <rect class="band" x="800" y="100" width="360" height="440" rx="10"/>
+  <text class="lab" x="816" y="126">3. Cilium with eBPF</text>
+  <text class="small" x="816" y="146">L4 logic runs in the kernel, no proxy</text>
+
+  <rect class="node" x="816" y="166" width="328" height="150" rx="8"/>
+  <text class="small" x="828" y="186">Node 1</text>
+  <rect class="pod" x="828" y="196" width="130" height="80" rx="8"/>
+  <text class="small" x="840" y="216">Pod A</text>
+  <rect class="app" x="840" y="226" width="106" height="40" rx="6"/>
+  <text class="note" x="893" y="251" text-anchor="middle">app A only</text>
+  <rect class="kern" x="980" y="196" width="150" height="80" rx="6"/>
+  <text class="key" x="1055" y="222" text-anchor="middle">eBPF in kernel</text>
+  <text class="small" x="1055" y="240" text-anchor="middle">Service LB, policy,</text>
+  <text class="small" x="1055" y="258" text-anchor="middle">WireGuard, Hubble</text>
+  <path class="flow" d="M958 236L974 236" marker-end="url(#a)"/>
+
+  <rect class="node" x="816" y="372" width="328" height="140" rx="8"/>
+  <text class="small" x="828" y="392">Node 2</text>
+  <rect class="kern" x="828" y="402" width="150" height="80" rx="6"/>
+  <text class="key" x="903" y="428" text-anchor="middle">eBPF in kernel</text>
+  <text class="small" x="903" y="446" text-anchor="middle">decrypt, enforce</text>
+  <text class="small" x="903" y="464" text-anchor="middle">NetworkPolicy</text>
+  <rect class="pod" x="1000" y="402" width="130" height="80" rx="8"/>
+  <text class="small" x="1012" y="422">Pod B</text>
+  <rect class="app" x="1012" y="432" width="106" height="40" rx="6"/>
+  <text class="note" x="1065" y="457" text-anchor="middle">app B only</text>
+  <path class="flow" d="M978 442L994 442" marker-end="url(#a)"/>
+  <path class="flow" d="M994 276L994 356L903 356L903 396" marker-end="url(#a)"/>
+  <text class="small" x="1006" y="332">encrypted</text>
+  <text class="small" x="1006" y="348">node to node</text>
+
+  <text class="key" x="816" y="534">cost: CPU inside the existing CNI agent</text>
+
+  <!-- footer -->
+  <text class="note" x="40" y="576">Sidecar scales with pods. Ambient scales with nodes plus the namespaces that need L7. eBPF adds no proxy for L4; L7 needs Envoy again.</text>
+  <text class="small" x="40" y="602">Istio 1.24 measurements at 1000 rps: sidecar about 0.20 vCPU and 60 MB per pod, ztunnel about 0.06 vCPU and 12 MB per node.</text>
+</svg>

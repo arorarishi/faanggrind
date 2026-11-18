@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-labelledby="t d">
+  <title id="t">Timeline of AI from 1950 to today, with the years since 2012 enlarged</title>
+  <desc id="d">A time axis drawn to scale from 1950 to 2026 shows symbolic AI and the perceptron, two AI winters, expert systems, statistical machine learning, deep learning, and transformers and LLMs. The short stretch from 2012 onward is enlarged into eight steps: deep learning on GPUs, word embeddings, sequence-to-sequence models with attention, the transformer, pretraining, few-shot LLMs, chat assistants, and retrieval, agents and reasoning.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .key { font-size: 15px; font-weight: 700; fill: #C6F432; }
+    .era { font-size: 13px; font-weight: 600; fill: #F2F4EC; text-anchor: middle; }
+    .erad { font-size: 13px; fill: #8A9185; text-anchor: middle; }
+    .erak { font-size: 13px; font-weight: 700; fill: #0B0E0B; text-anchor: middle; }
+    .tick { font-size: 13px; fill: #8A9185; text-anchor: middle; }
+    .ev { font-size: 13px; fill: #B7BDB1; text-anchor: middle; }
+    .zoom { font-size: 13px; font-weight: 600; fill: #C6F432; text-anchor: middle; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .band { fill: #1A201A; stroke: #4A5348; stroke-width: 1; }
+    .winter { fill: #0B0E0B; stroke: #4A5348; stroke-width: 1; stroke-dasharray: 4 4; }
+    .axis { stroke: #8A9185; stroke-width: 1.5; fill: none; }
+    .z { stroke: #C6F432; stroke-width: 1.5; stroke-dasharray: 5 6; fill: none; }
+  </style>
+  <rect x="0" y="0" width="1200" height="620" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">70 years of AI on one axis</text>
+  <text class="sub" x="40" y="78">The top bar is drawn to scale. Everything from deep learning to today's LLMs fits in its last sliver, enlarged below.</text>
+
+  <!-- to-scale panel -->
+  <rect class="panel" x="40" y="104" width="1120" height="170" rx="10"/>
+
+  <!-- era bands: x = 70 + (year - 1950) * 13.9 -->
+  <rect class="band" x="153.4" y="124" width="250.2" height="56" rx="6"/>
+  <text class="era" x="278.5" y="148">Symbolic AI and the perceptron</text>
+  <text class="erad" x="278.5" y="166">rules written by hand</text>
+
+  <rect class="winter" x="403.6" y="124" width="83.4" height="56" rx="6"/>
+  <text class="erad" x="445.3" y="157">AI winter</text>
+
+  <rect class="band" x="487" y="124" width="97.3" height="56" rx="6"/>
+  <text class="era" x="535.6" y="148">Expert</text>
+  <text class="era" x="535.6" y="166">systems</text>
+
+  <rect class="winter" x="584.3" y="124" width="83.4" height="56" rx="6"/>
+  <text class="erad" x="626" y="157">AI winter</text>
+
+  <rect class="band" x="667.7" y="124" width="264.1" height="56" rx="6"/>
+  <text class="era" x="799.7" y="148">Statistical machine learning</text>
+  <text class="erad" x="799.7" y="166">SVMs, trees, boosting</text>
+
+  <rect x="931.8" y="124" width="69.5" height="56" rx="6" fill="#1A201A" stroke="#C6F432" stroke-width="1.5"/>
+  <text class="era" x="966.5" y="148">Deep</text>
+  <text class="era" x="966.5" y="166">learning</text>
+
+  <rect x="1001.3" y="124" width="125.1" height="56" rx="6" fill="#C6F432" stroke="#C6F432" stroke-width="1.5"/>
+  <text class="erak" x="1063.8" y="148">Transformers</text>
+  <text class="erak" x="1063.8" y="166">and LLMs</text>
+
+  <!-- axis with decade ticks -->
+  <path class="axis" d="M70 200L1130 200"/>
+  <path class="axis" d="M70 194L70 206M209 194L209 206M348 194L348 206M487 194L487 206M626 194L626 206M765 194L765 206M904 194L904 206M1043 194L1043 206"/>
+  <text class="tick" x="70" y="224">1950</text>
+  <text class="tick" x="209" y="224">1960</text>
+  <text class="tick" x="348" y="224">1970</text>
+  <text class="tick" x="487" y="224">1980</text>
+  <text class="tick" x="626" y="224">1990</text>
+  <text class="tick" x="765" y="224">2000</text>
+  <text class="tick" x="904" y="224">2010</text>
+  <text class="tick" x="1043" y="224">2020</text>
+
+  <!-- dated events on the axis -->
+  <circle cx="181.2" cy="200" r="5" fill="#F2F4EC"/>
+  <circle cx="334.1" cy="200" r="5" fill="#F2F4EC"/>
+  <circle cx="570.4" cy="200" r="5" fill="#F2F4EC"/>
+  <circle cx="723.3" cy="200" r="5" fill="#F2F4EC"/>
+  <text class="ev" x="181.2" y="254">1958: perceptron</text>
+  <text class="ev" x="334.1" y="254">1969: XOR limit shown</text>
+  <text class="ev" x="570.4" y="254">1986: backprop</text>
+  <text class="ev" x="723.3" y="254">1997: LSTM</text>
+
+  <!-- zoom guides -->
+  <path class="z" d="M931.8 182L931.8 274L40 300"/>
+  <path class="z" d="M1126.4 182L1126.4 274L1160 300"/>
+  <text class="zoom" x="1029" y="254">2012 to today</text>
+
+  <!-- zoomed cards, row 1 -->
+  <rect class="panel" x="40" y="300" width="268" height="124" rx="10"/>
+  <text class="key" x="56" y="328">2012</text>
+  <text class="lab" x="56" y="354">Deep learning on GPUs</text>
+  <text class="note" x="56" y="380">A deep CNN learns features</text>
+  <text class="note" x="56" y="400">from 1.2M labelled images.</text>
+
+  <rect class="panel" x="324" y="300" width="268" height="124" rx="10"/>
+  <text class="key" x="340" y="328">2013</text>
+  <text class="lab" x="340" y="354">Word embeddings</text>
+  <text class="note" x="340" y="380">Words become vectors learned</text>
+  <text class="note" x="340" y="400">from raw, unlabelled text.</text>
+
+  <rect class="panel" x="608" y="300" width="268" height="124" rx="10"/>
+  <text class="key" x="624" y="328">2014</text>
+  <text class="lab" x="624" y="354">Seq2seq and attention</text>
+  <text class="note" x="624" y="380">RNN encoder and decoder;</text>
+  <text class="note" x="624" y="400">attention looks at every input.</text>
+
+  <rect x="892" y="300" width="268" height="124" rx="10" fill="#121612" stroke="#C6F432" stroke-width="1.5"/>
+  <text class="key" x="908" y="328">2017</text>
+  <text class="lab" x="908" y="354">Transformer</text>
+  <text class="note" x="908" y="380">Attention only, no recurrence.</text>
+  <text class="note" x="908" y="400">Trains in parallel on GPUs.</text>
+
+  <!-- zoomed cards, row 2 -->
+  <rect class="panel" x="40" y="440" width="268" height="124" rx="10"/>
+  <text class="key" x="56" y="468">2018</text>
+  <text class="lab" x="56" y="494">Pretrain, then fine-tune</text>
+  <text class="note" x="56" y="520">One model learns from raw text,</text>
+  <text class="note" x="56" y="540">then adapts to many tasks.</text>
+
+  <rect class="panel" x="324" y="440" width="268" height="124" rx="10"/>
+  <text class="key" x="340" y="468">2020</text>
+  <text class="lab" x="340" y="494">Few-shot LLMs</text>
+  <text class="note" x="340" y="520">175B parameters. New tasks</text>
+  <text class="note" x="340" y="540">from examples in the prompt.</text>
+
+  <rect class="panel" x="608" y="440" width="268" height="124" rx="10"/>
+  <text class="key" x="624" y="468">2022</text>
+  <text class="lab" x="624" y="494">Chat assistants</text>
+  <text class="note" x="624" y="520">Tuned to follow instructions,</text>
+  <text class="note" x="624" y="540">so anyone can use an LLM.</text>
+
+  <rect class="panel" x="892" y="440" width="268" height="124" rx="10"/>
+  <text class="key" x="908" y="468">After 2022</text>
+  <text class="lab" x="908" y="494">Retrieval, agents, reasoning</text>
+  <text class="note" x="908" y="520">Fresh facts, tool use, and</text>
+  <text class="note" x="908" y="540">thinking before answering.</text>
+
+  <text class="sub" x="40" y="596" style="font-size:13px">Era boundaries are approximate. On the top axis one decade has the same width everywhere.</text>
+</svg>

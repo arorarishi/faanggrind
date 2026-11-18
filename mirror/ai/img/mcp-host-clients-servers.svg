@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 690" width="1200" height="690" role="img" aria-labelledby="t d">
+  <title id="t">MCP architecture: a host runs one client per server, and the model never talks to a server</title>
+  <desc id="d">A host application contains the model, the host logic and three clients. Each client connects to exactly one server, over stdio for a local server or Streamable HTTP for a remote one. Servers expose tools, resources and prompts. The model has no direct path to any server: it writes a tool call and the host decides whether to send it.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .small { font-size: 13px; fill: #B7BDB1; }
+    .muted { font-size: 13px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .bad { font-size: 14px; font-weight: 600; fill: #FF8A80; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .client { fill: #0B0E0B; stroke: #C6F432; stroke-width: 2; }
+    .chip { fill: #121612; stroke: #8A9185; stroke-width: 1; }
+    .chiptext { font-size: 13px; fill: #F2F4EC; }
+    .edge { stroke: #8A9185; stroke-width: 1.5; fill: none; }
+    .link { stroke: #C6F432; stroke-width: 3; fill: none; }
+    .no { stroke: #FF8A80; stroke-width: 2; stroke-dasharray: 5 6; fill: none; }
+    .cross { stroke: #FF8A80; stroke-width: 3; fill: none; stroke-linecap: round; }
+  </style>
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="w" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="690" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">MCP: one host, one client per server</text>
+  <text class="sub" x="40" y="78">The model only writes a tool call. The host decides what is sent, and a client carries it to exactly one server.</text>
+
+  <!-- host panel -->
+  <rect class="panel" x="40" y="104" width="620" height="380" rx="10"/>
+  <text class="lab" x="60" y="134">Host: the AI application</text>
+  <text class="note" x="248" y="134">chat app, IDE or agent runtime</text>
+
+  <!-- model -->
+  <rect class="box" x="60" y="156" width="190" height="112" rx="10"/>
+  <text class="lab" x="76" y="186">Model (LLM)</text>
+  <text class="small" x="76" y="212">reads tool definitions</text>
+  <text class="small" x="76" y="232">writes a tool call as JSON</text>
+  <text class="small" x="76" y="252">runs nothing itself</text>
+
+  <!-- model to host logic -->
+  <path class="edge" d="M100 268L100 326" marker-end="url(#w)"/>
+  <path class="edge" d="M180 330L180 272" marker-end="url(#w)"/>
+  <text class="muted" x="108" y="302">tool call</text>
+  <text class="muted" x="188" y="302">tool result</text>
+
+  <!-- host logic -->
+  <rect class="box" x="60" y="330" width="190" height="134" rx="10"/>
+  <text class="lab" x="76" y="360">Host logic</text>
+  <text class="small" x="76" y="386">runs the agent loop</text>
+  <text class="small" x="76" y="406">validates every call</text>
+  <text class="small" x="76" y="426">asks the user to approve</text>
+  <text class="small" x="76" y="446">builds the context</text>
+
+  <!-- no direct path -->
+  <text class="bad" x="264" y="178">no direct path</text>
+  <path class="no" d="M250 192L384 192"/>
+  <path class="cross" d="M392 184L408 200M408 184L392 200"/>
+
+  <!-- host logic to clients -->
+  <path class="edge" d="M250 397L440 397M440 205L440 425M440 205L464 205M440 315L464 315M440 425L464 425"/>
+  <path class="edge" d="M452 205L466 205" marker-end="url(#w)"/>
+  <path class="edge" d="M452 315L466 315" marker-end="url(#w)"/>
+  <path class="edge" d="M452 425L466 425" marker-end="url(#w)"/>
+
+  <!-- clients -->
+  <rect class="client" x="470" y="160" width="170" height="90" rx="10"/>
+  <text class="lab" x="555" y="198" text-anchor="middle">Client 1</text>
+  <text class="small" x="555" y="222" text-anchor="middle">talks to one server</text>
+  <rect class="client" x="470" y="270" width="170" height="90" rx="10"/>
+  <text class="lab" x="555" y="308" text-anchor="middle">Client 2</text>
+  <text class="small" x="555" y="332" text-anchor="middle">talks to one server</text>
+  <rect class="client" x="470" y="380" width="170" height="90" rx="10"/>
+  <text class="lab" x="555" y="418" text-anchor="middle">Client 3</text>
+  <text class="small" x="555" y="442" text-anchor="middle">talks to one server</text>
+
+  <!-- links -->
+  <path class="link" d="M650 205L810 205" marker-start="url(#g)" marker-end="url(#g)"/>
+  <path class="link" d="M650 315L810 315" marker-start="url(#g)" marker-end="url(#g)"/>
+  <path class="link" d="M650 425L810 425" marker-start="url(#g)" marker-end="url(#g)"/>
+  <text class="key" x="730" y="192" text-anchor="middle">stdio</text>
+  <text class="muted" x="730" y="228" text-anchor="middle">JSON-RPC 2.0</text>
+  <text class="key" x="730" y="302" text-anchor="middle">Streamable HTTP</text>
+  <text class="muted" x="730" y="338" text-anchor="middle">JSON-RPC 2.0</text>
+  <text class="key" x="730" y="412" text-anchor="middle">Streamable HTTP</text>
+  <text class="muted" x="730" y="448" text-anchor="middle">JSON-RPC 2.0</text>
+
+  <!-- servers -->
+  <rect class="panel" x="820" y="160" width="340" height="90" rx="10"/>
+  <text class="lab" x="836" y="188">Local server: project files</text>
+  <rect class="chip" x="836" y="204" width="62" height="28" rx="14"/>
+  <text class="chiptext" x="867" y="223" text-anchor="middle">tools</text>
+  <rect class="chip" x="908" y="204" width="94" height="28" rx="14"/>
+  <text class="chiptext" x="955" y="223" text-anchor="middle">resources</text>
+
+  <rect class="panel" x="820" y="270" width="340" height="90" rx="10"/>
+  <text class="lab" x="836" y="298">Remote server: orders API</text>
+  <rect class="chip" x="836" y="314" width="62" height="28" rx="14"/>
+  <text class="chiptext" x="867" y="333" text-anchor="middle">tools</text>
+  <rect class="chip" x="908" y="314" width="82" height="28" rx="14"/>
+  <text class="chiptext" x="949" y="333" text-anchor="middle">prompts</text>
+
+  <rect class="panel" x="820" y="380" width="340" height="90" rx="10"/>
+  <text class="lab" x="836" y="408">Remote server: docs search</text>
+  <rect class="chip" x="836" y="424" width="62" height="28" rx="14"/>
+  <text class="chiptext" x="867" y="443" text-anchor="middle">tools</text>
+  <rect class="chip" x="908" y="424" width="94" height="28" rx="14"/>
+  <text class="chiptext" x="955" y="443" text-anchor="middle">resources</text>
+  <rect class="chip" x="1012" y="424" width="82" height="28" rx="14"/>
+  <text class="chiptext" x="1053" y="443" text-anchor="middle">prompts</text>
+
+  <!-- primitives -->
+  <rect class="panel" x="40" y="510" width="360" height="150" rx="10"/>
+  <text class="lab" x="56" y="540">Tools</text>
+  <text class="key" x="56" y="566">the model decides when to call</text>
+  <text class="note" x="56" y="594">Functions with a name, a description</text>
+  <text class="note" x="56" y="614">and a JSON schema for the arguments.</text>
+  <text class="note" x="56" y="640">Methods: tools/list and tools/call.</text>
+
+  <rect class="panel" x="420" y="510" width="360" height="150" rx="10"/>
+  <text class="lab" x="436" y="540">Resources</text>
+  <text class="key" x="436" y="566">the application loads them</text>
+  <text class="note" x="436" y="594">Read-only context addressed by URI:</text>
+  <text class="note" x="436" y="614">a file, a database row, a document.</text>
+  <text class="note" x="436" y="640">The model does not choose them.</text>
+
+  <rect class="panel" x="800" y="510" width="360" height="150" rx="10"/>
+  <text class="lab" x="816" y="540">Prompts</text>
+  <text class="key" x="816" y="566">the user picks one</text>
+  <text class="note" x="816" y="594">Reusable templates the server offers,</text>
+  <text class="note" x="816" y="614">shown as a menu or a slash command.</text>
+  <text class="note" x="816" y="640">Nothing runs until the user chooses.</text>
+</svg>

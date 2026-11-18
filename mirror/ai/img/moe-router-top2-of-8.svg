@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-labelledby="t d">
+  <title id="t">Mixture of experts: a router sends each token to 2 of 8 experts</title>
+  <desc id="d">A token vector enters a router. The router scores eight expert feed-forward networks and keeps the top two, expert 3 with weight 0.7 and expert 6 with weight 0.3. Only those two run. Their outputs are added with the router weights and passed to the next layer. The other six experts stay idle for this token.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 15px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .mute { font-size: 14px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .box { fill: #0B0E0B; stroke: #8A9185; stroke-width: 1.5; }
+    .idle { fill: #0B0E0B; stroke: #3A4238; stroke-width: 1.2; stroke-dasharray: 5 5; }
+    .on { fill: #1B2118; stroke: #C6F432; stroke-width: 2; }
+    .wire { stroke: #3A4238; stroke-width: 1.2; fill: none; }
+    .hot { stroke: #C6F432; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .flow { stroke: #8A9185; stroke-width: 2; fill: none; }
+  </style>
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+    <marker id="w" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="600" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">Mixture of experts: 8 experts stored, 2 run per token</text>
+  <text class="sub" x="40" y="78">The feed-forward layer of one transformer block, split into experts. Attention is unchanged.</text>
+
+  <rect class="panel" x="40" y="100" width="744" height="468" rx="10"/>
+
+  <!-- token -->
+  <rect class="box" x="60" y="306" width="112" height="56" rx="8"/>
+  <text class="lab" x="116" y="330" text-anchor="middle">Token</text>
+  <text class="note" x="116" y="350" text-anchor="middle">vector</text>
+  <path class="flow" d="M174 334L212 334" marker-end="url(#w)"/>
+
+  <!-- router -->
+  <rect class="box" x="216" y="286" width="136" height="96" rx="8"/>
+  <text class="lab" x="284" y="314" text-anchor="middle">Router</text>
+  <text class="note" x="284" y="338" text-anchor="middle">scores 8 experts</text>
+  <text class="key" x="284" y="360" text-anchor="middle">keeps the top 2</text>
+
+  <!-- wires to idle experts -->
+  <path class="wire" d="M352 334L440 138M352 334L440 194M352 334L440 306M352 334L440 362M352 334L440 474M352 334L440 530"/>
+  <!-- wires to chosen experts -->
+  <path class="hot" d="M352 334L434 252" marker-end="url(#g)"/>
+  <path class="hot" d="M352 334L434 416" marker-end="url(#g)"/>
+
+  <!-- experts -->
+  <rect class="idle" x="440" y="116" width="180" height="44" rx="8"/>
+  <text class="mute" x="456" y="143">Expert 1</text><text class="mute" x="604" y="143" text-anchor="end">idle</text>
+  <rect class="idle" x="440" y="172" width="180" height="44" rx="8"/>
+  <text class="mute" x="456" y="199">Expert 2</text><text class="mute" x="604" y="199" text-anchor="end">idle</text>
+  <rect class="on" x="440" y="228" width="180" height="44" rx="8"/>
+  <text class="lab" x="456" y="255">Expert 3</text><text class="key" x="604" y="255" text-anchor="end">runs</text>
+  <rect class="idle" x="440" y="284" width="180" height="44" rx="8"/>
+  <text class="mute" x="456" y="311">Expert 4</text><text class="mute" x="604" y="311" text-anchor="end">idle</text>
+  <rect class="idle" x="440" y="340" width="180" height="44" rx="8"/>
+  <text class="mute" x="456" y="367">Expert 5</text><text class="mute" x="604" y="367" text-anchor="end">idle</text>
+  <rect class="on" x="440" y="396" width="180" height="44" rx="8"/>
+  <text class="lab" x="456" y="423">Expert 6</text><text class="key" x="604" y="423" text-anchor="end">runs</text>
+  <rect class="idle" x="440" y="452" width="180" height="44" rx="8"/>
+  <text class="mute" x="456" y="479">Expert 7</text><text class="mute" x="604" y="479" text-anchor="end">idle</text>
+  <rect class="idle" x="440" y="508" width="180" height="44" rx="8"/>
+  <text class="mute" x="456" y="535">Expert 8</text><text class="mute" x="604" y="535" text-anchor="end">idle</text>
+
+  <!-- sum -->
+  <path class="hot" d="M620 250L668 316" marker-end="url(#g)"/>
+  <path class="hot" d="M620 418L668 352" marker-end="url(#g)"/>
+  <text class="key" x="656" y="272">x 0.7</text>
+  <text class="key" x="656" y="408">x 0.3</text>
+  <circle cx="684" cy="334" r="22" fill="#0B0E0B" stroke="#C6F432" stroke-width="2"/>
+  <text x="684" y="342" text-anchor="middle" style="font-size:24px; font-weight:700; fill:#C6F432">+</text>
+  <text class="note" x="726" y="372" text-anchor="middle">weighted sum</text>
+  <path class="flow" d="M708 334L762 334" marker-end="url(#w)"/>
+  <text class="note" x="738" y="318" text-anchor="middle">output</text>
+
+  <!-- notes -->
+  <rect class="panel" x="812" y="100" width="348" height="468" rx="10"/>
+  <text class="lab" x="832" y="134">What happens for one token</text>
+  <text class="note" x="832" y="164">1. The router gives every expert a score.</text>
+  <text class="note" x="832" y="188">2. Only the top 2 experts run.</text>
+  <text class="note" x="832" y="212">3. Their outputs are added, weighted</text>
+  <text class="note" x="850" y="232">by the router scores: 0.7 and 0.3.</text>
+  <text class="note" x="832" y="256">4. The next token may pick other experts.</text>
+
+  <text class="lab" x="832" y="304">The arithmetic</text>
+  <text class="key" x="832" y="334">Compute</text>
+  <text class="note" x="850" y="354">2 of 8 experts run, so about 25% of</text>
+  <text class="note" x="850" y="374">the feed-forward work per token.</text>
+  <text class="key" x="832" y="404">Memory</text>
+  <text class="note" x="850" y="424">All 8 experts stay loaded. Size the</text>
+  <text class="note" x="850" y="444">GPU by total parameters.</text>
+
+  <text class="lab" x="832" y="484">Watch out</text>
+  <text class="note" x="832" y="510">A router that always picks the same</text>
+  <text class="note" x="832" y="530">experts wastes the rest. Training adds</text>
+  <text class="note" x="832" y="550">a load-balancing loss to spread tokens.</text>
+</svg>

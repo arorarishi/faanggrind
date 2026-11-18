@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-labelledby="t d">
+  <title id="t">The five layers of an LLM system, with data and tools on the side and observability underneath</title>
+  <desc id="d">A stack of five layers: client, API gateway, orchestration, model serving and GPU nodes. Requests flow down and tokens stream back up. The orchestration layer reads from and writes to a side box of data and tools. A bar for observability and evals runs under every layer.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .h { font-size: 26px; font-weight: 700; fill: #F2F4EC; }
+    .sub { font-size: 15px; fill: #8A9185; }
+    .lab { font-size: 17px; font-weight: 600; fill: #F2F4EC; }
+    .note { font-size: 14px; fill: #B7BDB1; }
+    .mut { font-size: 13px; fill: #8A9185; }
+    .key { font-size: 14px; font-weight: 600; fill: #C6F432; }
+    .num { font-size: 15px; font-weight: 700; fill: #8A9185; }
+    .panel { fill: #121612; stroke: #2A312A; stroke-width: 1; }
+    .hot { fill: #121612; stroke: #C6F432; stroke-width: 2; }
+    .flow { stroke: #8A9185; stroke-width: 2; fill: none; }
+    .link { stroke: #C6F432; stroke-width: 2; fill: none; }
+    .obs { fill: #121612; stroke: #7CC4F8; stroke-width: 1.5; }
+    .obst { font-size: 16px; font-weight: 600; fill: #7CC4F8; }
+    .tick { stroke: #7CC4F8; stroke-width: 1.5; stroke-dasharray: 3 5; fill: none; }
+  </style>
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8A9185"/>
+    </marker>
+    <marker id="l" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#C6F432"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="800" rx="16" fill="#0B0E0B" stroke="#1E231D"/>
+  <text class="h" x="40" y="52">The five layers of an LLM system</text>
+  <text class="sub" x="40" y="78">A request flows top to bottom. Tokens stream back up the same path.</text>
+
+  <!-- observability ticks behind the layers -->
+  <path class="tick" d="M720 150L756 150L756 706"/>
+  <path class="tick" d="M720 268L756 268"/>
+  <path class="tick" d="M720 410L756 410"/>
+  <path class="tick" d="M720 504L756 504"/>
+  <path class="tick" d="M720 622L756 622"/>
+
+  <!-- layer 1 -->
+  <rect class="panel" x="40" y="104" width="680" height="92" rx="10"/>
+  <text class="num" x="62" y="142">1</text>
+  <text class="lab" x="92" y="142">Client</text>
+  <text class="note" x="92" y="170">Web or mobile app; tokens stream back to the user</text>
+  <path class="flow" d="M380 198L380 218" marker-end="url(#g)"/>
+
+  <!-- layer 2 -->
+  <rect class="panel" x="40" y="222" width="680" height="92" rx="10"/>
+  <text class="num" x="62" y="260">2</text>
+  <text class="lab" x="92" y="260">API gateway</text>
+  <text class="note" x="92" y="288">Auth, rate limits, model routing, response cache, fallback</text>
+  <path class="flow" d="M380 316L380 336" marker-end="url(#g)"/>
+
+  <!-- layer 3 -->
+  <rect class="hot" x="40" y="340" width="680" height="92" rx="10"/>
+  <text class="num" x="62" y="378" style="fill:#C6F432">3</text>
+  <text class="lab" x="92" y="378">Orchestration</text>
+  <text class="key" x="216" y="378">most of the design discussion happens here</text>
+  <text class="note" x="92" y="406">Builds the context: prompt, retrieval, agent loop, guardrails</text>
+  <path class="flow" d="M380 434L380 454" marker-end="url(#g)"/>
+
+  <!-- layer 4 -->
+  <rect class="panel" x="40" y="458" width="680" height="92" rx="10"/>
+  <text class="num" x="62" y="496">4</text>
+  <text class="lab" x="92" y="496">Model serving</text>
+  <text class="note" x="92" y="524">vLLM or SGLang: continuous batching, KV cache, LoRA adapters</text>
+  <path class="flow" d="M380 552L380 572" marker-end="url(#g)"/>
+
+  <!-- layer 5 -->
+  <rect class="panel" x="40" y="576" width="680" height="92" rx="10"/>
+  <text class="num" x="62" y="614">5</text>
+  <text class="lab" x="92" y="614">GPU nodes</text>
+  <text class="note" x="92" y="642">Autoscaled on queue depth, with warm replicas</text>
+
+  <!-- data and tools side box -->
+  <path class="link" d="M726 372L802 372" marker-start="url(#l)" marker-end="url(#l)"/>
+  <rect class="panel" x="808" y="290" width="352" height="164" rx="10"/>
+  <text class="lab" x="828" y="324">Data and tools</text>
+  <text class="note" x="828" y="356">Vector DB and keyword index</text>
+  <text class="note" x="828" y="384">MCP servers and external APIs</text>
+  <text class="note" x="828" y="412">Long-term memory store</text>
+  <text class="mut" x="828" y="438">read and written by orchestration only</text>
+
+  <!-- top right note -->
+  <rect class="panel" x="808" y="104" width="352" height="164" rx="10"/>
+  <text class="lab" x="828" y="138">How to use this picture</text>
+  <text class="note" x="828" y="168">Draw the layers first.</text>
+  <text class="note" x="828" y="192">Name what sits in each one.</text>
+  <text class="note" x="828" y="216">Then go deep where the</text>
+  <text class="note" x="828" y="240">interviewer pushes.</text>
+
+  <!-- bottom right note -->
+  <rect class="panel" x="808" y="476" width="352" height="192" rx="10"/>
+  <text class="lab" x="828" y="506">The hard part is one of three</text>
+  <text class="key" x="828" y="534">Retrieval quality</text>
+  <text class="note" x="828" y="553">layer 3 with data and tools</text>
+  <text class="key" x="828" y="580">Agent reliability</text>
+  <text class="note" x="828" y="599">layer 3: the loop and its limits</text>
+  <text class="key" x="828" y="626">Serving capacity</text>
+  <text class="note" x="828" y="645">layers 4 and 5</text>
+
+  <!-- observability bar -->
+  <rect class="obs" x="40" y="706" width="1120" height="62" rx="10"/>
+  <text class="obst" x="62" y="743">Observability and evals</text>
+  <text class="note" x="262" y="743">sit under every layer: traces, latency, cost and quality scores</text>
+</svg>
